@@ -6,15 +6,23 @@ require_once("transaction.inc.php");
 loginRequire();
 
 function matchFilter($transaction, $filter) {
-	return true;
-	switch ($filter->type) {
+	switch ($filter["type"]) {
+	case "num":
+		if (isset($filter["num"]))
+			return $transaction["num"] == $filter["num"];
+		else
+			return !empty($transaction["num"]);
 	case "and":
-		return !in_array(false, array_map("matchFilter", $filter->conds));
+		return !in_array(false, array_map("matchFilter", array_fill(0, count($filter["conds"]), $transaction), $filter["conds"]));
 	case "or":
-		return in_array(true, array_map("matchFilter", $filter->conds));
+		return in_array(true, array_map("matchFilter", array_fill(0, count($filter["conds"]), $transaction), $filter["conds"]));
 	case "not":
-		return !$this->matchFilter($filter->cond);
-	case 
+		return !matchFilter($transaction, $filter["cond"]);
+	case "true":
+		return true;
+	default:
+	case "false":
+		return false;
 	}
 }
 

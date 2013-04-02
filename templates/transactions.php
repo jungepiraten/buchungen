@@ -220,14 +220,17 @@ function refreshFilters() {
 	if ($(".filterButton.active").length > 0) {
 		var conds = [];
 		$(".filterButton.active").each(function (i, button) {
-			conds.push({type: $(button).data("filter")});
+			if ($(button).data("filter").substring(0,4) == "not-")
+				conds.push({type: "not", cond: {type: $(button).data("filter").substring(4)}});
+			else
+				conds.push({type: $(button).data("filter")});
 		});
 		flagsFilter = {type: "or", conds: conds};
 	}
 
 	var belegFilter = {type: "true"};
 	if ($(".belegFilter").val() != "") {
-		belegFilter = {type: "beleg", value: $(".belegFilter").val()};
+		belegFilter = {type: "num", value: $(".belegFilter").val()};
 	}
 
 	var kontenFilter = {type: "true"};
