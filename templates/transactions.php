@@ -52,7 +52,7 @@ foreach ($accounts as $account) {
 		</tbody>
 		<tfoot>
 			<tr class="transactions-loading">
-				<td colspan="3"><img src="loading.gif" /></td>
+				<td colspan="3"><img src="loading.gif" /> Bitte warten, weitere Transaktionen werden geladen ...</td>
 			</tr>
 		</tfoot>
 	</table>
