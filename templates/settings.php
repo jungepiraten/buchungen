@@ -55,8 +55,10 @@ foreach ($users as $user) {
 		$perms[] = "Datenbank";
 	if ($user["belege"])
 		$perms[] = "Belege";
+	if ($user["verifyTransaction"])
+		$perms[] = "Verifizieren";
 ?>
-		<tr class="userRow" data-username="<?php print(htmlentities($user["username"])) ?>" data-accountprefixes="<?php print(implode(",", $user["accountPrefixes"])) ?>" data-grant="<?php print($user["grant"]) ?>" data-database="<?php print($user["database"]) ?>" data-belege="<?php print($user["belege"]) ?>">
+		<tr class="userRow" data-username="<?php print(htmlentities($user["username"])) ?>" data-accountprefixes="<?php print(implode(",", $user["accountPrefixes"])) ?>" data-grant="<?php print($user["grant"]) ?>" data-database="<?php print($user["database"]) ?>" data-belege="<?php print($user["belege"]) ?>" data-verifyTransaction="<?php print($user["verifyTransaction"]) ?>">
 			<td><?php print(htmlentities($user["username"])) ?></td>
 			<td><?php if (count($user["accountPrefixes"]) == 0) { ?>(keine)<?php } else { print(implode("*, ", $user["accountPrefixes"])."*"); } ?></td>
 			<td><?php print(implode(", ", $perms)) ?></td>
@@ -109,6 +111,12 @@ foreach ($users as $user) {
 						<input type="checkbox" name="belege" value="1" />
 					</div>
 				</div>
+				<div class="verifyTransaction-group">
+					<label for="verifyTransaction" class="control-label">Verifizieren</label>
+					<div class="controls">
+						<input type="checkbox" name="verifyTransaction" value="1" />
+					</div>
+				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="submit" class="btn btn-primary saveButton" value="1">Speichern</button>
@@ -129,6 +137,7 @@ $(".addUser").click(function () {
 	$(".userModal").find("input[name=grant]").prop("checked",false);
 	$(".userModal").find("input[name=database]").prop("checked",false);
 	$(".userModal").find("input[name=belege]").prop("checked",false);
+	$(".userModal").find("input[name=verifyTransaction]").prop("checked",false);
 	$(".userModal").find(".saveButton").attr("name","createUser");
 	$(".userModal").modal("show");
 });
@@ -143,6 +152,7 @@ $(".userRow").click(function () {
 	$(".userModal").find("input[name=grant]").prop("checked",$(this).data("grant")==1);
 	$(".userModal").find("input[name=database]").prop("checked",$(this).data("database")==1);
 	$(".userModal").find("input[name=belege]").prop("checked",$(this).data("belege")==1);
+	$(".userModal").find("input[name=verifyTransaction]").prop("checked",$(this).data("verifyTransaction")==1);
 	$(".userModal").find(".saveButton").attr("name","modifyUser");
 	$(".userModal").modal("show");
 });
