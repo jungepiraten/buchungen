@@ -90,16 +90,16 @@ function formatVermerkHTML(vermerk) {
 }
 
 $(function () {
-	chargeTransactions();
+	chargeTransactions(true);
 	$(window).scroll(function() {
 		if (($("body").height() - $(this).scrollTop()) < ($(this).height() * 1.5)) {
-			chargeTransactions();
+			chargeTransactions(false);
 		}
 	});
 });
 
 var nextOffset = 0;
-var chargingTransactions = false;
+var chargingTransactions = null;
 var currentFilter = {};
 
 function generateTransactionLine(transaction) {
@@ -126,16 +126,19 @@ function generateTransactionLine(transaction) {
 				));
 }
 
-function chargeTransactions() {
-	if (!chargingTransactions) {
+function chargeTransactions(force) {
+	if (force == true && chargingTransactions != null) {
+		chargingTransactions.abort();
+		chargingTransactions = null;
+	}
+	if (chargingTransactions == null) {
 		$(".transactions-loading").show();
-		chargingTransactions = true;
-		$.post("transactions.json.php", {offset: nextOffset, filter: currentFilter}, function (data) {
+		chargingTransactions = $.post("transactions.json.php", {offset: nextOffset, filter: currentFilter}, function (data) {
 			for (var i in data.transactions) {
 				$(".transactions").append(generateTransactionLine(data.transactions[i]))
 			}
 			nextOffset = data.nextOffset;
-			chargingTransactions = false;
+			chargingTransactions = null;
 			$(".transactions-loading").hide();
 		});
 	}
@@ -248,7 +251,7 @@ function refreshFilters() {
 	currentFilter = {type: "and", conds: [ flagsFilter, belegFilter, kontenFilter, monthFilter ]};
 	nextOffset = 0;
 	$(".transactions").empty();
-	chargeTransactions();
+	chargeTransactions(true);
 }
 
 $(".filterButton").click(function(ev) {
