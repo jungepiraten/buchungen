@@ -92,9 +92,7 @@ function formatVermerkHTML(vermerk) {
 $(function () {
 	chargeTransactions(true);
 	$(window).scroll(function() {
-		if (($("body").height() - $(this).scrollTop()) < ($(this).height() * 1.5)) {
-			chargeTransactions(false);
-		}
+		chargeTransactionsIfNeeded();
 	});
 });
 
@@ -126,7 +124,16 @@ function generateTransactionLine(transaction) {
 				));
 }
 
+function chargeTransactionsIfNeeded() {
+	if (($("body").height() - $(window).scrollTop()) < ($(window).height() * 1.5)) {
+		chargeTransactions();
+	}
+}
+
 function chargeTransactions(force) {
+	if (nextOffset == null) {
+		return;
+	}
 	if (force == true && chargingTransactions != null) {
 		chargingTransactions.abort();
 		chargingTransactions = null;
@@ -140,6 +147,7 @@ function chargeTransactions(force) {
 			nextOffset = data.nextOffset;
 			chargingTransactions = null;
 			$(".transactions-loading").hide();
+			chargeTransactionsIfNeeded();
 		});
 	}
 }

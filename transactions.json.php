@@ -48,4 +48,4 @@ while (($row = $result->fetch_assoc()) && count($transactions) < 20) {
 }
 
 header("Content-Type: application/json; charset=utf-8");
-print(json_encode(array("transactions" => $transactions, "nextOffset" => $i)));
+print(json_encode(array("transactions" => $transactions, "nextOffset" => ($result->num_rows >= 100 ? $i : null))));
