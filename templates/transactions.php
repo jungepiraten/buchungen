@@ -80,6 +80,25 @@ foreach ($accounts as $account) {
 				<tbody class="splits">
 				</tbody>
 			</table>
+			<div class="verifyOptions">
+<!-- Verifikationsdialog mit Checkliste (Beleg vorhanden; Buchungsdatum, Betrag, Konten stimmen; Beschluss existiert und passt; Anlagen sind vorhanden und stimmen; Buchungskonten sinnvoll gewählt und dokumentiert; Bei Mitgliedsbeiträgen: Stimmen Beitrag, Mitgliedsname, Mitgliedsnummer, Bundesland) -->
+				<label class="checkbox">
+					<input type="checkbox" />
+					Beleg vorhanden
+				</label>
+				<label class="checkbox">
+					<input type="checkbox" />
+					Buchungsdatum korrekt
+				</label>
+				<label class="checkbox">
+					<input type="checkbox" />
+					Betrag korrekt
+				</label>
+				<label class="checkbox">
+					<input type="checkbox" />
+					Buchungsdatum korrekt
+				</label>
+			</div>
 		</div>
 		<div class="modal-footer">
 			<a class="btn btn-danger revokeValidation">Freigeben</a>
@@ -161,7 +180,6 @@ function chargeTransactions(force) {
 			for (var i in data.transactions) {
 				$(".transactions").append(generateTransactionLine(data.transactions[i]))
 			}
-			$()
 			// .transactions-empty und .transactions-loading befinden sich immer in .transactions
 			$(".transactions-loading").hide();
 			$(".transactions-empty").toggle($(".transactions").children().length <= 2);
@@ -217,12 +235,25 @@ function showTransaction(data) {
 			.text(data.validations[i].username) );
 	}
 
-	$(".transactionDetailsModal").find(".createValidation").toggle(!validated).unbind("click").click(function () {
-		// TODO Verifikationsdialog mit Checkliste (Beleg vorhanden; Buchungsdatum, Betrag, Konten stimmen; Beschluss existiert und passt; Anlagen sind vorhanden und stimmen; Buchungskonten sinnvoll gewählt und dokumentiert; Bei Mitgliedsbeiträgen: Stimmen Beitrag, Mitgliedsname, Mitgliedsnummer, Bundesland)
-		$.post("transaction.validate.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
-			$(".transactions").find(".transaction-" + $(".transactionDetailsModal").data("guid")).replaceWith(generateTransactionLine(data.transaction));
-			$(".transactionDetailsModal").modal("hide");
+	$(".transactionDetailsModal").find(".verifyOptions").hide();
+	$(".transactionDetailsModal").find(".verifyOptions").find("input[type=checkbox]")
+		.prop("checked",false)
+		.unbind("change").on("change",function () {
+			var allChecked = ($(".transactionDetailsModal").find(".verifyOptions").find("input[type=checkbox]").filter(":not(:checked)").filter(":not(.disabled)").length == 0);
+			$(".transactionDetailsModal").find(".createValidation").toggleClass("disabled", !allChecked);
 		});
+	$(".transactionDetailsModal").find(".createValidation").toggle(!validated).unbind("click").click(function () {
+		if (! $(".transactionDetailsModal").find(".verifyOptions").is(":visible")) {
+			$(".transactionDetailsModal").find(".verifyOptions").fadeIn();
+			$(this).addClass("disabled");
+		} else {
+			if (!$(this).hasClass("disabled")) {
+				$.post("transaction.validate.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
+					$(".transactions").find(".transaction-" + $(".transactionDetailsModal").data("guid")).replaceWith(generateTransactionLine(data.transaction));
+					$(".transactionDetailsModal").modal("hide");
+				});
+			}
+		}
 	});
 	$(".transactionDetailsModal").find(".revokeValidation").toggle(validated).unbind("click").click(function () {
 		$.post("transaction.revokeValidation.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
