@@ -83,10 +83,17 @@ foreach ($accounts as $account) {
 		</div>
 	</div>
 <script type="text/javascript">
+
 function formatVermerkHTML(vermerk) {
 	vermerk = vermerk.replace(/(#)([1-9][0-9]{0,5})([^0-9]|$)/g, '<a href="http://verwaltung.junge-piraten.de/members.php?mitgliedersuche=$2">$1$2</a>$3');
 	vermerk = vermerk.replace(/(#)([1-9][0-9]{6,})([^0-9]|$)/g, '<a href="http://helpdesk.junge-piraten.de/otrs/index.pl?Action=AgentTicketSearch&Subaction=Search&TicketNumber=$2">$1$2</a>$3');
 	return vermerk;
+}
+
+function formatTimestamp(timestamp) {
+	// Server = CE(S)T, Client = UTC - 5 Hours offset might be not the best way, but it works
+	var date = new Date(timestamp * 1000 + 5*60*60*1000);
+	return date.getFullYear() + "-" + (date.getMonth() < 9 ? "0" : "") + (date.getMonth()+1) + "-" + (date.getDate() < 10 ? "0" : "") + date.getDate();
 }
 
 $(function () {
@@ -107,7 +114,7 @@ function generateTransactionLine(transaction) {
 			showTransaction($(this).data("transaction"));
 		})
 		.append($("<td>")
-			.text(new Date(transaction.date * 1000)) )
+			.text(formatTimestamp(transaction.date)) )
 		.append($("<td>")	
 			.append($("<a>").attr("href","/documents.php?dokumentsuche=BGS_F<?php print($year) ?>_" + transaction.num).text(transaction.num)))
 		.append($("<td>")
@@ -198,6 +205,7 @@ function showTransaction(data) {
 	}
 
 	$(".transactionDetailsModal").find(".createValidation").toggle(!validated).unbind("click").click(function () {
+		// TODO Verifikationsdialog mit Checkliste (Beleg vorhanden; Buchungsdatum, Betrag, Konten stimmen; Beschluss existiert und passt; Anlagen sind vorhanden und stimmen; Buchungskonten sinnvoll gewählt und dokumentiert)
 		$.post("transaction.validate.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
 			$(".transactions").find(".transaction-" + $(".transactionDetailsModal").data("guid")).replaceWith(generateTransactionLine(data.transaction));
 			$(".transactionDetailsModal").modal("hide");
@@ -209,11 +217,10 @@ function showTransaction(data) {
 			$(".transactionDetailsModal").modal("hide");
 		});
 	});
+
 	// createNum-String
-	// Server = CE(S)T, Client = UTC - 5 Hours offset might be not the best way, but it works
-	var date = new Date(data.date * 1000 + 5*60*60*1000);
 	var belegData = {
-		buchungsDatum: date.getFullYear() + "-" + (date.getMonth() < 9 ? "0" : "") + (date.getMonth()+1) + "-" + (date.getDate() < 10 ? "0" : "") + date.getDate(),
+		buchungsDatum: formatTimestamp(data.date),
 		sollKonten: sollKonten.join(", "),
 		habenKonten: habenKonten.join(", "),
 		betrag: betrag,
