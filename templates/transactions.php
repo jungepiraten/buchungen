@@ -53,8 +53,11 @@ foreach ($accounts as $account) {
 		<tbody class="transactions">
 		</tbody>
 		<tfoot>
-			<tr class="transactions-loading">
+			<tr class="transactions-loading hide">
 				<td colspan="3"><img src="loading.gif" /> Bitte warten, weitere Transaktionen werden geladen ...</td>
+			</tr>
+			<tr class="transactions-empty">
+				<td colspan="3">Keine Transaktionen gefunden</td>
 			</tr>
 		</tfoot>
 	</table>
@@ -151,15 +154,19 @@ function chargeTransactions(force) {
 		chargingTransactions.abort();
 		chargingTransactions = null;
 	}
+	$(".transactions-empty").hide();
 	if (chargingTransactions == null) {
 		$(".transactions-loading").show();
 		chargingTransactions = $.post("transactions.json.php", {offset: nextOffset, filter: currentFilter}, function (data) {
 			for (var i in data.transactions) {
 				$(".transactions").append(generateTransactionLine(data.transactions[i]))
 			}
+			$()
+			// .transactions-empty und .transactions-loading befinden sich immer in .transactions
+			$(".transactions-loading").hide();
+			$(".transactions-empty").toggle($(".transactions").children().length <= 2);
 			nextOffset = data.nextOffset;
 			chargingTransactions = null;
-			$(".transactions-loading").hide();
 			chargeTransactionsIfNeeded();
 		});
 	}
@@ -276,6 +283,7 @@ function refreshFilters() {
 	currentFilter = {type: "and", conds: [ flagsFilter, belegFilter, kontenFilter, monthFilter ]};
 	nextOffset = 0;
 	$(".transactions").empty();
+	$(".transactions-empty").show();
 	chargeTransactions(true);
 }
 
