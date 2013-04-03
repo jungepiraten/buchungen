@@ -35,10 +35,14 @@ foreach ($accounts as $account) {
 			</ul>
 		</div>
 
-		<a class="btn btn-info filterButton" data-filter="num" data-toggle="button">Belegt</a>
-		<a class="btn btn-danger filterButton" data-filter="not-num" data-toggle="button">Nicht belegt</a>
-		<a class="btn filterButton" data-filter="verifiedAbove" data-options='{"count":1}' data-toggle="button">Verifiziert</a>
-		<a class="btn filterButton" data-filter="not-verifiedAbove" data-options='{"count":1}' data-toggle="button">Nicht verifiziert</a>
+		<div class="btn-group">
+			<a class="btn filterButton" data-filter="num" data-toggle="button">Belegt</a>
+			<a class="btn filterButton" data-filter="not-num" data-toggle="button">Nicht belegt</a>
+		</div>
+		<div class="btn-group">
+			<a class="btn filterButton" data-filter="verifiedAbove" data-options='{"count":1}' data-toggle="button">Verifiziert</a>
+			<a class="btn filterButton" data-filter="not-verifiedAbove" data-options='{"count":1}' data-toggle="button">Nicht verifiziert</a>
+		</div>
 
 		<input type="text" class="pull-right span1 belegFilter" placeholder="Beleg" />
 	</div>
@@ -81,22 +85,39 @@ foreach ($accounts as $account) {
 				</tbody>
 			</table>
 			<div class="verifyOptions">
-<!-- Verifikationsdialog mit Checkliste (Beleg vorhanden; Buchungsdatum, Betrag, Konten stimmen; Beschluss existiert und passt; Anlagen sind vorhanden und stimmen; Buchungskonten sinnvoll gewählt und dokumentiert; Bei Mitgliedsbeiträgen: Stimmen Beitrag, Mitgliedsname, Mitgliedsnummer, Bundesland) -->
+<!-- Beleg vorhanden; Buchungsdatum, Betrag, Konten stimmen; Beschluss existiert und passt; Anlagen sind vorhanden und stimmen; Buchungskonten sinnvoll gewählt und dokumentiert;
+     Bei Mitgliedsbeiträgen: Stimmen Beitrag, Mitgliedsname, Mitgliedsnummer, Bundesland -->
 				<label class="checkbox">
 					<input type="checkbox" />
 					Beleg vorhanden
 				</label>
 				<label class="checkbox">
 					<input type="checkbox" />
-					Buchungsdatum korrekt
+					Buchungsdatum stimmt mit Beleg überein
 				</label>
 				<label class="checkbox">
 					<input type="checkbox" />
-					Betrag korrekt
+					Betrag stimmt mit Beleg überein
 				</label>
 				<label class="checkbox">
 					<input type="checkbox" />
-					Buchungsdatum korrekt
+					Buchungskonten stimmen mit Beleg überein
+				</label>
+				<label class="checkbox">
+					<input type="checkbox" />
+					Beschluss nicht nötig oder korrekt eingetragen
+				</label>
+				<label class="checkbox">
+					<input type="checkbox" />
+					Angegebene Anlagen sind vorhanden und Angaben stimmen
+				</label>
+				<label class="checkbox">
+					<input type="checkbox" />
+					Buchungskonten sind sinnvoll gewählt und sofern nötig dokumentiert
+				</label>
+				<label class="checkbox">
+					<input type="checkbox" />
+					Entweder kein Mitgliedsbeitrag oder Beitrag, Mitgliedsname, -nummer und Bundesland sind mit der Mitgliederverwaltung abgeglichen
 				</label>
 			</div>
 		</div>
