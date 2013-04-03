@@ -37,6 +37,8 @@ foreach ($accounts as $account) {
 
 		<a class="btn btn-info filterButton" data-filter="num" data-toggle="button">Belegt</a>
 		<a class="btn btn-danger filterButton" data-filter="not-num" data-toggle="button">Nicht belegt</a>
+		<a class="btn filterButton" data-filter="verifiedAbove" data-options='{"count":1}' data-toggle="button">Verifiziert</a>
+		<a class="btn filterButton" data-filter="not-verifiedAbove" data-options='{"count":1}' data-toggle="button">Nicht verifiziert</a>
 
 		<input type="text" class="pull-right span1 belegFilter" placeholder="Beleg" />
 	</div>
@@ -125,6 +127,10 @@ function generateTransactionLine(transaction) {
 					.toggle(transaction.validValidations != transaction.validations.length)
 					.text("Fehler"))
 				.append($("<span>")
+					.addClass("label label-warning")
+					.toggle(transaction.validValidations < 2)
+					.text("Nicht verifiziert"))
+				.append($("<span>")
 					.addClass("badge validValidationCount")
 					.toggleClass("badge-success", transaction.validValidations >= 2)
 					.text(transaction.validValidations))
@@ -205,7 +211,7 @@ function showTransaction(data) {
 	}
 
 	$(".transactionDetailsModal").find(".createValidation").toggle(!validated).unbind("click").click(function () {
-		// TODO Verifikationsdialog mit Checkliste (Beleg vorhanden; Buchungsdatum, Betrag, Konten stimmen; Beschluss existiert und passt; Anlagen sind vorhanden und stimmen; Buchungskonten sinnvoll gewählt und dokumentiert)
+		// TODO Verifikationsdialog mit Checkliste (Beleg vorhanden; Buchungsdatum, Betrag, Konten stimmen; Beschluss existiert und passt; Anlagen sind vorhanden und stimmen; Buchungskonten sinnvoll gewählt und dokumentiert; Bei Mitgliedsbeiträgen: Stimmen Beitrag, Mitgliedsname, Mitgliedsnummer, Bundesland)
 		$.post("transaction.validate.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
 			$(".transactions").find(".transaction-" + $(".transactionDetailsModal").data("guid")).replaceWith(generateTransactionLine(data.transaction));
 			$(".transactionDetailsModal").modal("hide");
@@ -235,12 +241,13 @@ function refreshFilters() {
 	if ($(".filterButton.active").length > 0) {
 		var conds = [];
 		$(".filterButton.active").each(function (i, button) {
+			var options = $(button).data("options") || {};
 			if ($(button).data("filter").substring(0,4) == "not-")
-				conds.push({type: "not", cond: {type: $(button).data("filter").substring(4)}});
+				conds.push({type: "not", cond: $.extend({type: $(button).data("filter").substring(4)}, options)});
 			else
-				conds.push({type: $(button).data("filter")});
+				conds.push($.extend({type: $(button).data("filter")}, options));
 		});
-		flagsFilter = {type: "or", conds: conds};
+		flagsFilter = {type: "and", conds: conds};
 	}
 
 	var belegFilter = {type: "true"};

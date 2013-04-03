@@ -16,6 +16,8 @@ function matchFilter($transaction, $filter) {
 			return $transaction["num"] == formatNum($filter["num"]);
 		else
 			return !empty($transaction["num"]);
+	case "verifiedAbove":
+		return $transaction["validValidations"] > $filter["count"];
 	case "and":
 		return !in_array(false, array_map("matchFilter", array_fill(0, count($filter["conds"]), $transaction), $filter["conds"]));
 	case "or":
