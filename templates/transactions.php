@@ -20,18 +20,18 @@ foreach ($accounts as $account) {
 		<div class="btn-group">
 			<a href="#" class="dropdown-toggle btn" data-toggle="dropdown">Monat <b class="caret"></b></a>
 			<ul class="dropdown-menu monthSelect">
-				<li><a data-month="<?php print($year) ?>01">Januar</a></li>
-				<li><a data-month="<?php print($year) ?>02">Februar</a></li>
-				<li><a data-month="<?php print($year) ?>03">März</a></li>
-				<li><a data-month="<?php print($year) ?>04">April</a></li>
-				<li><a data-month="<?php print($year) ?>05">Mai</a></li>
-				<li><a data-month="<?php print($year) ?>06">Juni</a></li>
-				<li><a data-month="<?php print($year) ?>07">Juli</a></li>
-				<li><a data-month="<?php print($year) ?>08">August</a></li>
-				<li><a data-month="<?php print($year) ?>09">September</a></li>
-				<li><a data-month="<?php print($year) ?>10">Oktober</a></li>
-				<li><a data-month="<?php print($year) ?>11">November</a></li>
-				<li><a data-month="<?php print($year) ?>12">Dezember</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 1,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 2,1,$year)-1) ?>">Januar</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 2,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 3,1,$year)-1) ?>">Februar</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 3,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 4,1,$year)-1) ?>">März</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 4,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 5,1,$year)-1) ?>">April</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 5,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 6,1,$year)-1) ?>">Mai</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 6,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 7,1,$year)-1) ?>">Juni</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 7,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 8,1,$year)-1) ?>">Juli</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 8,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 9,1,$year)-1) ?>">August</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0, 9,1,$year)) ?>" data-end="<?php print(mktime(0,0,0,10,1,$year)-1) ?>">September</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0,10,1,$year)) ?>" data-end="<?php print(mktime(0,0,0,11,1,$year)-1) ?>">Oktober</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0,11,1,$year)) ?>" data-end="<?php print(mktime(0,0,0,12,1,$year)-1) ?>">November</a></li>
+				<li><a data-start="<?php print(mktime(0,0,0,12,1,$year)) ?>" data-end="<?php print(mktime(0,0,0,13,1,$year)-1) ?>">Dezember</a></li>
 			</ul>
 		</div>
 
@@ -238,14 +238,14 @@ function refreshFilters() {
 
 	var belegFilter = {type: "true"};
 	if ($(".belegFilter").val() != "") {
-		belegFilter = {type: "num", value: $(".belegFilter").val()};
+		belegFilter = {type: "num", num: $(".belegFilter").val()};
 	}
 
 	var kontenFilter = {type: "true"};
 	if ($(".kontenSelect li.active").length > 0) {
 		var conds = [];
 		$(".kontenSelect li.active").each(function(i, item) {
-			conds.push({type: "konten", konten: $(item).children("a").data("konto")});
+			conds.push({type: "account", guid: $(item).children("a").data("konto")});
 		});
 		kontenFilter = {type: "or", conds: conds};
 	}
@@ -254,7 +254,7 @@ function refreshFilters() {
 	if ($(".monthSelect li.active").length > 0) {
 		var conds = [];
 		$(".monthSelect li.active").each(function(i, item) {
-			conds.push({type: "month", month: $(item).children("a").data("month")});
+			conds.push({type: "daterange", start: $(item).children("a").data("start"), end: $(item).children("a").data("end")});
 		});
 		monthFilter = {type: "or", conds: conds};
 	}

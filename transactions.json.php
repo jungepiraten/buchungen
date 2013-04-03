@@ -7,9 +7,13 @@ loginRequire();
 
 function matchFilter($transaction, $filter) {
 	switch ($filter["type"]) {
+	case "daterange":
+		return ($filter["start"] <= $transaction["date"]) && ($filter["end"] >= $transaction["date"]);
+	case "account":
+		return in_array($filter["guid"], array_map(create_function('$a','return $a["account_guid"];'), $transaction["splits"]));
 	case "num":
 		if (isset($filter["num"]))
-			return $transaction["num"] == $filter["num"];
+			return $transaction["num"] == formatNum($filter["num"]);
 		else
 			return !empty($transaction["num"]);
 	case "and":
@@ -32,12 +36,14 @@ $transactions = array();
 $result = $sql->query("select guid as guid from transactions order by post_date limit " . $offset . ",100");
 while (($row = $result->fetch_assoc()) && count($transactions) < 20) {
 	$transaction = getTransaction($row["guid"]);
+
 	$allowed = false;
 	foreach ($transaction["splits"] as $split) {
 		if (isAllowedAccount($split["account_guid"])) {
 			$allowed = true;
 		}
 	}
+
 	if ($allowed) {
 		if (!isset($_REQUEST["filter"]) || matchFilter($transaction, $_REQUEST["filter"])) {
 			$transactions[] = $transaction;
