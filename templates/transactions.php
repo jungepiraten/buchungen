@@ -242,25 +242,30 @@ function showTransaction(data) {
 			var allChecked = ($(".transactionDetailsModal").find(".verifyOptions").find("input[type=checkbox]").filter(":not(:checked)").filter(":not(.disabled)").length == 0);
 			$(".transactionDetailsModal").find(".createValidation").toggleClass("disabled", !allChecked);
 		});
-	$(".transactionDetailsModal").find(".createValidation").toggle(!validated).unbind("click").click(function () {
-		if (! $(".transactionDetailsModal").find(".verifyOptions").is(":visible")) {
-			$(".transactionDetailsModal").find(".verifyOptions").fadeIn();
-			$(this).addClass("disabled");
-		} else {
-			if (!$(this).hasClass("disabled")) {
-				$.post("transaction.validate.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
-					$(".transactions").find(".transaction-" + $(".transactionDetailsModal").data("guid")).replaceWith(generateTransactionLine(data.transaction));
-					$(".transactionDetailsModal").modal("hide");
-				});
+	$(".transactionDetailsModal").find(".createValidation")
+		.toggle(!validated)
+		.removeClass("disabled")
+		.unbind("click").click(function () {
+			if (! $(".transactionDetailsModal").find(".verifyOptions").is(":visible")) {
+				$(".transactionDetailsModal").find(".verifyOptions").fadeIn();
+				$(this).addClass("disabled");
+			} else {
+				if (!$(this).hasClass("disabled")) {
+					$.post("transaction.validate.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
+						$(".transactions").find(".transaction-" + $(".transactionDetailsModal").data("guid")).replaceWith(generateTransactionLine(data.transaction));
+						$(".transactionDetailsModal").modal("hide");
+					});
+				}
 			}
-		}
-	});
-	$(".transactionDetailsModal").find(".revokeValidation").toggle(validated).unbind("click").click(function () {
-		$.post("transaction.revokeValidation.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
-			$(".transactions").find(".transaction-" + $(".transactionDetailsModal").data("guid")).replaceWith(generateTransactionLine(data.transaction));
-			$(".transactionDetailsModal").modal("hide");
 		});
-	});
+	$(".transactionDetailsModal").find(".revokeValidation")
+		.toggle(validated)
+		.unbind("click").click(function () {
+			$.post("transaction.revokeValidation.php", { guid: $(".transactionDetailsModal").data("guid") }, function (data) {
+				$(".transactions").find(".transaction-" + $(".transactionDetailsModal").data("guid")).replaceWith(generateTransactionLine(data.transaction));
+				$(".transactionDetailsModal").modal("hide");
+			});
+		});
 
 	// createNum-String
 	var belegData = {
