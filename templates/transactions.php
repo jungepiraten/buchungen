@@ -155,6 +155,8 @@ var currentFilter = {};
 function generateTransactionLine(transaction) {
 	return $("<tr>").addClass("transaction-" + transaction.guid)
 		.data("transaction", transaction)
+		.toggleClass("success", transaction.validValidations > 0 && transaction.validValidations == transaction.validations.length)
+		.toggleClass("error", transaction.validValidations != transaction.validations.length)
 		.click(function () {
 			showTransaction($(this).data("transaction"));
 		})
