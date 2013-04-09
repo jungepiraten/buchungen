@@ -40,8 +40,8 @@ foreach ($accounts as $account) {
 			<a class="btn filterButton" data-filter="not-num" data-toggle="button">Nicht belegt</a>
 		</div>
 		<div class="btn-group">
-			<a class="btn filterButton" data-filter="verifiedAbove" data-options='{"count":1}' data-toggle="button">Verifiziert</a>
-			<a class="btn filterButton" data-filter="not-verifiedAbove" data-options='{"count":1}' data-toggle="button">Nicht verifiziert</a>
+			<a class="btn filterButton" data-filter="verifiedAbove" data-options='{"count":0}' data-toggle="button">Verifiziert</a>
+			<a class="btn filterButton" data-filter="not-verifiedAbove" data-options='{"count":0}' data-toggle="button">Nicht verifiziert</a>
 		</div>
 
 		<input type="text" class="pull-right span1 belegFilter" placeholder="Beleg" />
@@ -171,11 +171,11 @@ function generateTransactionLine(transaction) {
 					.text("Fehler"))
 				.append($("<span>")
 					.addClass("label label-warning")
-					.toggle(transaction.validValidations < 2)
+					.toggle(transaction.validValidations <= 0)
 					.text("Nicht verifiziert"))
 				.append($("<span>")
 					.addClass("badge validValidationCount")
-					.toggleClass("badge-success", transaction.validValidations >= 2)
+					.toggleClass("badge-success", transaction.validValidations > 0)
 					.text(transaction.validValidations))
 				));
 }
