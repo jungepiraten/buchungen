@@ -46,11 +46,11 @@ foreach ($accounts as $account) {
 
 		<input type="text" class="pull-right span1 belegFilter" placeholder="Beleg" />
 	</div>
-	<table class="table table-striped">
+	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
-				<th>Datum</th>
-				<th>Beleg</th>
+				<th class="sorting-post_date"><i class="icon-arrow-down sortingIcon"></i> Datum</th>
+				<th class="sorting-num"><i class="icon-arrow-down sortingIcon"></i> Beleg</th>
 				<th>Vorgang</th>
 			</tr>
 		</thead>
@@ -151,6 +151,7 @@ $(function () {
 var nextOffset = 0;
 var chargingTransactions = null;
 var currentFilter = {};
+var currentSorting = {field: "post_date", order: "asc"};
 
 function generateTransactionLine(transaction) {
 	return $("<tr>").addClass("transaction-" + transaction.guid)
@@ -199,7 +200,7 @@ function chargeTransactions(force) {
 	$(".transactions-empty").hide();
 	if (chargingTransactions == null) {
 		$(".transactions-loading").show();
-		chargingTransactions = $.post("transactions.json.php", {offset: nextOffset, filter: currentFilter}, function (data) {
+		chargingTransactions = $.post("transactions.json.php", {offset: nextOffset, filter: currentFilter, sorting: currentSorting}, function (data) {
 			for (var i in data.transactions) {
 				$(".transactions").append(generateTransactionLine(data.transactions[i]))
 			}
@@ -340,11 +341,41 @@ function refreshFilters() {
 	}
 
 	currentFilter = {type: "and", conds: [ flagsFilter, belegFilter, kontenFilter, monthFilter ]};
+	refreshView();
+}
+
+function refreshSorting() {
+	if (currentSorting.order == "asc") {
+		currentSorting.order = "desc";
+	} else {
+		currentSorting.order = "asc";
+	}
+	$(".sortingIcon").hide();
+	$(".sorting-" + currentSorting.field + " i.sortingIcon")
+		.toggleClass("icon-arrow-down", currentSorting.order == "asc")
+		.toggleClass("icon-arrow-up",   currentSorting.order != "asc")
+		.show();
+	refreshView();
+}
+
+function refreshView() {
 	nextOffset = 0;
 	$(".transactions").empty();
 	$(".transactions-empty").show();
 	chargeTransactions(true);
 }
+
+refreshSorting();
+
+$(".sorting-post_date").click(function () {
+	currentSorting.field = "post_date";
+	refreshSorting();
+});
+
+$(".sorting-num").click(function () {
+	currentSorting.field = "num";
+	refreshSorting();
+});
 
 $(".filterButton").click(function(ev) {
 	// Toggle selbst, wird sonst erst nach diesem handler ausgefuehrt

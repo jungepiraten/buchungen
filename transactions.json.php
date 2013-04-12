@@ -33,9 +33,19 @@ function matchFilter($transaction, $filter) {
 }
 
 $i = $offset = (isset($_REQUEST["offset"]) ? intval($_REQUEST["offset"]) : 0);
+$sorting_field = "post_date";
+$sorting_order = "asc";
+if (isset($_REQUEST["sorting"])) {
+	if (in_array($_REQUEST["sorting"]["field"], array("post_date","num"))) {
+		$sorting_field = $_REQUEST["sorting"]["field"];
+	}
+	if (in_array($_REQUEST["sorting"]["order"], array("asc","desc"))) {
+		$sorting_order = $_REQUEST["sorting"]["order"];
+	}
+}
 
 $transactions = array();
-$result = $sql->query("select guid as guid from transactions order by post_date limit " . $offset . ",100");
+$result = $sql->query("select guid as guid from transactions order by " . $sorting_field . " " . $sorting_order . " limit " . $offset . ",100");
 while (($row = $result->fetch_assoc()) && count($transactions) < 20) {
 	$transaction = getTransaction($row["guid"]);
 
