@@ -42,6 +42,7 @@ foreach ($accounts as $account) {
 		<div class="btn-group">
 			<a class="btn filterButton" data-filter="verifiedAbove" data-options='{"count":0}' data-toggle="button">Verifiziert</a>
 			<a class="btn filterButton" data-filter="not-verifiedAbove" data-options='{"count":0}' data-toggle="button">Nicht verifiziert</a>
+			<a class="btn filterButton" data-filter="failedVerificationsAbove" data-options='{"count":0}' data-toggle="button">Fehlerhafte Verifikation</a>
 		</div>
 
 		<input type="text" class="pull-right span1 belegFilter" placeholder="Beleg" />

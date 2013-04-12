@@ -18,6 +18,8 @@ function matchFilter($transaction, $filter) {
 			return !empty($transaction["num"]);
 	case "verifiedAbove":
 		return $transaction["validValidations"] > $filter["count"];
+	case "failedVerificationsAbove":
+		return (count($transaction["validations"]) - $transaction["validValidations"]) > $filter["count"];
 	case "and":
 		return !in_array(false, array_map("matchFilter", array_fill(0, count($filter["conds"]), $transaction), $filter["conds"]));
 	case "or":
