@@ -205,9 +205,8 @@ function chargeTransactions(force) {
 			for (var i in data.transactions) {
 				$(".transactions").append(generateTransactionLine(data.transactions[i]))
 			}
-			// .transactions-empty und .transactions-loading befinden sich immer in .transactions
 			$(".transactions-loading").hide();
-			$(".transactions-empty").toggle($(".transactions").children().length <= 2);
+			$(".transactions-empty").toggle($(".transactions").children().length == 0);
 			nextOffset = data.nextOffset;
 			chargingTransactions = null;
 			chargeTransactionsIfNeeded();
