@@ -73,6 +73,7 @@ foreach ($accounts as $account) {
 			<h3>Details <span class="transactionId"></span></h3>
 		</div>
 		<div class="modal-body">
+			<p class="description"></p>
 			<table class="table table-striped">
 				<thead>
 					<tr>
@@ -86,8 +87,6 @@ foreach ($accounts as $account) {
 				</tbody>
 			</table>
 			<div class="verifyOptions">
-<!-- Beleg vorhanden; Buchungsdatum, Betrag, Konten stimmen; Beschluss existiert und passt; Anlagen sind vorhanden und stimmen; Buchungskonten sinnvoll gewählt und dokumentiert;
-     Bei Mitgliedsbeiträgen: Stimmen Beitrag, Mitgliedsname, Mitgliedsnummer, Bundesland -->
 				<label class="checkbox">
 					<input type="checkbox" />
 					Beleg vorhanden
@@ -217,6 +216,7 @@ function chargeTransactions(force) {
 function showTransaction(data) {
 	$(".transactionDetailsModal").data("guid", data.guid);
 	$(".transactionDetailsModal").find(".transactionId").text(data.guid.substring(0,6));
+	$(".transactionDetailsModal").find(".description").text(data.description);
 
 	$(".transactionDetailsModal").find(".splits").empty();
 	var habenKonten = [], sollKonten = [], betrag = 0;
