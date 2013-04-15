@@ -1,6 +1,4 @@
+config.inc.php
 beleg.txt
-belege.php
 lock/**
 temp/**
-sql.inc.php
-
