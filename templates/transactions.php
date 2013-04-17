@@ -164,7 +164,7 @@ function generateTransactionLine(transaction) {
 		.append($("<td>")
 			.text(formatTimestamp(transaction.date)) )
 		.append($("<td>")	
-			.append($("<a>").attr("href","/documents.php?dokumentsuche=BGS_F<?php print($year) ?>_" + transaction.num).text(transaction.num)))
+			.append($("<a>").attr("href","//mitglieder.intern.junge-piraten.de/documents.php?dokumentsuche=BGS_F<?php print($year) ?>_" + transaction.num).text(transaction.num)))
 		.append($("<td>")
 			.append($("<span>").html(formatVermerkHTML(transaction.description || "")))
 			.append($("<span>").addClass("pull-right")
