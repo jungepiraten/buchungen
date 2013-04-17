@@ -24,7 +24,7 @@ if (isset($_REQUEST["action"])) {
 if (!$locked && $action == "lock") {
 	list($sqluser, $password) = databaseLock($year, $auth["user"], $host);
 	$locked = true;
-	out(200, array("status" => "locked", "action" => "locked", "username" => $sqluser, "password" => $password, "host" => "verwaltung.junge-piraten.de", "userHost" => $host, "database" => $database, "timestamp" => time()));
+	out(200, array("status" => "locked", "action" => "locked", "username" => $sqluser, "password" => $password, "host" => "mysql.intern.junge-piraten.de", "userHost" => $host, "database" => $database, "timestamp" => time()));
 }
 
 if ($locked) {
@@ -38,7 +38,7 @@ if ($locked && $action == "unlock") {
 }
 
 if ($locked && databaseIsAuth($year, $auth["user"], $host)) {
-	out(200, array("status" => "locked", "username" => $lockedBy, "password" => $lockedPassword, "host" => "verwaltung.junge-piraten.de", "userHost" => $lockedHost, "database" => $database, "timestamp" => $lockedTimestamp));
+	out(200, array("status" => "locked", "username" => $lockedBy, "password" => $lockedPassword, "host" => "mysql.intern.junge-piraten.de", "userHost" => $lockedHost, "database" => $database, "timestamp" => $lockedTimestamp));
 } else if ($locked) {
 	out(200, array("status" => "locked", "username" => $lockedBy, "timestamp" => $lockedTimestamp));
 } else {

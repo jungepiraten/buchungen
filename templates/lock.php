@@ -9,7 +9,7 @@ include("header.php");
 <?php if ($locked && $isAuth) { ?>
 	<h2>Zugangsdaten</h2>
 	<pre>
-Server: verwaltung.junge-piraten.de
+Server: mysql.intern.junge-piraten.de
 Datenbank: <?php echo $database . "\n"; ?>
 User: <?php echo $lockedBy . "\n"; ?>
 Passwort: <?php echo $lockedPassword . "\n"; ?>

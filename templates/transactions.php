@@ -130,7 +130,7 @@ foreach ($accounts as $account) {
 <script type="text/javascript">
 
 function formatVermerkHTML(vermerk) {
-	vermerk = vermerk.replace(/(#)([1-9][0-9]{0,5})([^0-9]|$)/g, '<a href="http://verwaltung.junge-piraten.de/members.php?mitgliedersuche=$2">$1$2</a>$3');
+	vermerk = vermerk.replace(/(#)([1-9][0-9]{0,5})([^0-9]|$)/g, '<a href="http://mitglieder.intern.junge-piraten.de/members.php?mitgliedersuche=$2">$1$2</a>$3');
 	vermerk = vermerk.replace(/(#)([1-9][0-9]{6,})([^0-9]|$)/g, '<a href="http://helpdesk.junge-piraten.de/otrs/index.pl?Action=AgentTicketSearch&Subaction=Search&TicketNumber=$2">$1$2</a>$3');
 	return vermerk;
 }
