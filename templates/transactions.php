@@ -216,7 +216,7 @@ function chargeTransactions(force) {
 function showTransaction(data) {
 	$(".transactionDetailsModal").data("guid", data.guid);
 	$(".transactionDetailsModal").find(".transactionId").text(data.guid.substring(0,6));
-	$(".transactionDetailsModal").find(".description").text(data.description);
+	$(".transactionDetailsModal").find(".description").html(formatVermerkHTML(data.description || ""));
 
 	$(".transactionDetailsModal").find(".splits").empty();
 	var habenKonten = [], sollKonten = [], betrag = 0;
