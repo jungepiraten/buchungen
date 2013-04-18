@@ -41,7 +41,7 @@ while ($row = $result->fetch_assoc()) {
 	}
 }
 
-$tempfile = "temp/kassenbuch";
+$tempfile = "temp/kassenbuch_" . rand(10,99);
 
 ob_start();
 include("vorlagen/kassenbuch.tex.php");
@@ -63,6 +63,8 @@ unlink($tempfile . ".log");
 unlink($tempfile . ".aux");
 
 header("Content-Type: application/pdf");
-header("Content-Disposition: inline");
+header("Content-Disposition: inline; filename=kassenbuch.pdf");
 header("Content-Length: " . filesize($tempfile . ".pdf"));
 readfile($tempfile . ".pdf");
+
+unlink($tempfile . ".pdf");
