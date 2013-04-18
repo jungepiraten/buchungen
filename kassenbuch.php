@@ -57,7 +57,8 @@ if (!file_exists($tempfile . ".pdf")) {
 	die("Could not generate PDF");
 }
 unlink($tempfile . ".tex");
-#unlink($tempfile . ".toc");
+unlink($tempfile . ".out");
+unlink($tempfile . ".toc");
 unlink($tempfile . ".log");
 unlink($tempfile . ".aux");
 
