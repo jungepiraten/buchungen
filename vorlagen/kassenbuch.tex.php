@@ -72,7 +72,7 @@
 \clearpage
 \section{Kontobuch}
 
-\begin{longtable}{p{1cm}p{13cm}r}
+\begin{longtable}{p{1cm}|p{13cm}r}
  \hline
  \hline \textbf{\#} & \textbf{Konto} & \textbf{Buchungen} \\
  \hline
@@ -80,8 +80,8 @@
  \hline
  \hline
  \endfoot
-<?php foreach ($accounts as $account) {if (isset($account["transactions"]) || $account["code"] != "") { ?>
- \hline <?php print($account["code"]) ?> & <?php print(latexSpecialChars($account["label"])) ?> & <?php print(isset($account["transactions"]) ? count($account["transactions"]) : "-") ?> \\
+<?php $accountPrefixes = array(); foreach ($accounts as $account) {if (isset($account["transactions"]) || $account["code"] != "") { $accountPrefixes[$account["guid"]] = (isset($accountPrefixes[$account["parent_guid"]]) ? $accountPrefixes[$account["parent_guid"]] : "") . "\hspace{5mm}"; ?>
+ \hline <?php print($account["code"]) ?> & <?php print($accountPrefixes[$account["guid"]] . latexSpecialChars($account["label"])) ?> & <?php print(isset($account["transactions"]) ? count($account["transactions"]) : "-") ?> \\
 <?php } } ?>
  \hline
 \end{longtable}
