@@ -1,30 +1,12 @@
 <?php
 
 require_once("login.inc.php");
+require_once("latex.inc.php");
 loginRequire("belege");
 
 require_once("config.inc.php");
 require_once("vpanel.inc.php");
 require_once("Payment/DTA.php");
-
-function latexSpecialChars( $string )
-{
-    $map = array( 
-            "\\"=>"\\textbackslash{}",
-            "\r\n"=>"\n",
-            "#"=>"\\#",
-            "$"=>"\\$",
-            "%"=>"\\%",
-            "&"=>"\\&",
-            "~"=>"\\~{}",
-            "_"=>"\\_",
-            "^"=>"\\^{}",
-            "{"=>"\\{",
-            "}"=>"\\}",
-	    "\n"=>"\\newline\n",
-	);
-	return str_replace(array_keys($map), array_values($map), $string);
-}
 
 function fetchLaTeXInput($varname) {
 	if (isset($_REQUEST[$varname])) {
