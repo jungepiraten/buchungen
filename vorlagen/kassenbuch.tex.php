@@ -6,7 +6,7 @@
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[pdfpagelabels]{hyperref}
-\usepackage{totpages}
+\usepackage{lastpage}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \thispagestyle{empty}
@@ -39,7 +39,7 @@
 \setcounter{page}{1}
 \lfoot{}
 \cfoot{}
-\rfoot{\thepage{} / \ref{TotPages}}
+\rfoot{\thepage{} / \pageref{LastPage}}
 
 \def\numberline#1{}
 \tableofcontents
