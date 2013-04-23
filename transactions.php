@@ -7,6 +7,10 @@ loginRequire();
 
 $title = "";
 
+if (isset($_REQUEST["account_guid"])) {
+	$account = sqlGetAccount($_REQUEST["account_guid"]);
+}
+
 $accounts = array();
 $result = $sql->query("select parent_guid, guid, code, name, placeholder, hidden from accounts where hidden = 0 order by code");
 while ($acc = $result->fetch_assoc()) {

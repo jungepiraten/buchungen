@@ -25,7 +25,7 @@ function outputAccountHier($hier, $guid) {
 			<input type="checkbox" id="account-<?php print($account["guid"]) ?>" checked="checked" />
 			<label for="account-<?php print($account["guid"]) ?>">
 		<?php } ?>
-		<a class="account" data-account="<?php print(json_encode($account)) ?>">
+		<a class="account" data-account='<?php print(addcslashes(json_encode($account),"'")) ?>'>
 			<i class="icon-<?php print($account["placeholder"] == 0 ? "briefcase" : "book") ?>"></i> <?php print($account["code"]) ?> <?php print($account["label"]) ?>
 		</a>
 		<?php if(!empty($account["childs"])) { ?>
@@ -46,9 +46,28 @@ foreach ($rootAccounts as $guid) {
 ?>
 	</ul>
 </div>
+
+<div class="modal hide accountModal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Details <span class="accountLabel"></span> (<span class="accountCode"></span>)</h3>
+	</div>
+	<div class="modal-body">
+	</div>
+	<div class="modal-footer">
+		<a class="btn btn-info showTransactions">Bewegungen anzeigen</a>
+		<a class="btn btn-warning manageNotifications">Benachrichtigungen</a>
+	</div>
+</div>
 <script type="text/javascript">
 
 $(".account").click(function() {
+	var data = $(this).data("account");
+	$(".accountModal").find('.accountLabel').text(data.label);
+	$(".accountModal").find('.accountCode').text(data.code);
+
+	$(".accountModal").find('.showTransactions').attr("href", "transactions.php?account_guid=" + data.guid);
+
 	$(".accountModal").modal("show");
 	return false;
 });

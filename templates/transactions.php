@@ -1,21 +1,27 @@
 <?php
+if (isset($account)) {
+	$title = "Kontenansicht " . $account["code"] . " " . $account["label"];
+}
+
 include(dirname(__FILE__) . "/header.php");
 ?>
 	<div class="btn-toolbar">
+<?php if (!isset($account)) { ?>
 		<div class="btn-group">
 			<a href="#" class="dropdown-toggle btn" data-toggle="dropdown">Konten <b class="caret"></b></a>
 			<ul class="dropdown-menu kontenSelect">
 <?php
-$accountSpaces = array();
-foreach ($accounts as $account) {
-	$space = (isset($accountSpaces[$account["parent_guid"]]) ? $accountSpaces[$account["parent_guid"]] . "<i class=\"icon-empty\"></i>" : "");
-	$accountSpaces[$account["guid"]] = $space;
-	if (isAllowedAccount($account)) {
+	$accountSpaces = array();
+	foreach ($accounts as $_account) {
+		$space = (isset($accountSpaces[$_account["parent_guid"]]) ? $accountSpaces[$_account["parent_guid"]] . "<i class=\"icon-empty\"></i>" : "");
+		$accountSpaces[$_account["guid"]] = $space;
+		if (isAllowedAccount($_account)) {
 ?>
-				<li class="account-<?php print($account["guid"]) ?>"><a data-konto="<?php print($account["guid"]) ?>"><?php print($space) ?><i class="icon-<?php print($account["placeholder"] == 0 ? "briefcase" : "book") ?>"></i> <?php print($account["code"]) ?> <?php print($account["label"]) ?></a></li>
+				<li class="account-<?php print($_account["guid"]) ?>"><a data-konto="<?php print($_account["guid"]) ?>"><?php print($space) ?><i class="icon-<?php print($_account["placeholder"] == 0 ? "briefcase" : "book") ?>"></i> <?php print($_account["code"]) ?> <?php print($_account["label"]) ?></a></li>
 <?php } } ?>
 			</ul>
 		</div>
+<?php } ?>
 
 		<div class="btn-group">
 			<a href="#" class="dropdown-toggle btn" data-toggle="dropdown">Monat <b class="caret"></b></a>
@@ -142,7 +148,7 @@ function formatTimestamp(timestamp) {
 }
 
 $(function () {
-	chargeTransactions(true);
+	refreshFilters();
 	$(window).scroll(function() {
 		chargeTransactionsIfNeeded();
 	});
@@ -322,6 +328,9 @@ function refreshFilters() {
 		belegFilter = {type: "num", num: $(".belegFilter").val()};
 	}
 
+<?php if (isset($account)) { ?>
+	var kontenFilter = {type: "account", guid: "<?php print($account["guid"]) ?>"};
+<?php } else { ?>
 	var kontenFilter = {type: "true"};
 	if ($(".kontenSelect li.active").length > 0) {
 		var conds = [];
@@ -330,6 +339,7 @@ function refreshFilters() {
 		});
 		kontenFilter = {type: "or", conds: conds};
 	}
+<?php } ?>
 
 	var monthFilter = {type: "true"};
 	if ($(".monthSelect li.active").length > 0) {
