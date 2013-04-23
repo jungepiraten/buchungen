@@ -8,6 +8,7 @@
 \usepackage[pdfpagelabels]{hyperref}
 \usepackage{lastpage}
 \usepackage{fancyhdr}
+\usepackage[ngerman]{babel}
 \pagestyle{fancy}
 \thispagestyle{empty}
 \begin{document}
@@ -43,7 +44,6 @@
 
 \def\numberline#1{}
 \tableofcontents
-
 \clearpage
 
 \footnotesize
