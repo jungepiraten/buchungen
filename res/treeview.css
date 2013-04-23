@@ -14,37 +14,19 @@
 
 .css-treeview
 {
-	font: normal 11px "Segoe UI", Arial, Sans-serif;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	user-select: none;
 }
 
-.css-treeview a
-{
-	color: #00f;
-	text-decoration: none;
-}
-
-.css-treeview a:hover
-{
-	text-decoration: underline;
-}
-
 .css-treeview input + label + ul
 {
-	margin: 0 0 0 22px;
+	margin-left: 22px;
 }
 
 .css-treeview input ~ ul
 {
 	display: none;
-}
-
-.css-treeview label,
-.css-treeview label::before
-{
-	cursor: pointer;
 }
 
 .css-treeview input:disabled + label
@@ -58,33 +40,19 @@
 	display: block;
 }
 
+.css-treeview label
+{
+	margin-left: -4px;
+}
+
 .css-treeview label::before
 {
 	background: url("treeview-icons.png") no-repeat;
-}
-
-.css-treeview label,
-.css-treeview a,
-.css-treeview label::before
-{
+	cursor: pointer;
 	display: inline-block;
 	height: 16px;
-	line-height: 16px;,
-	vertical-align: middle;
-}
-
-/*
-.css-treeview label
-{
-	background-position: 18px 0;
-}
-*/
-
-.css-treeview label::before
-{
-	content: "";
 	width: 16px;
-	margin: 0 22px 0 0;
+	content: "";
 	vertical-align: middle;
 	background-position: 0 -32px;
 }
@@ -92,6 +60,15 @@
 .css-treeview input:checked + label::before
 {
 	background-position: 0 -16px;
+}
+
+.css-treeview li>*:first-child
+{
+	margin-left: 16px;
+}
+.css-treeview li>input:first-child
+{
+	margin-left: 0px;
 }
 
 /* webkit adjacent element selector bugfix */

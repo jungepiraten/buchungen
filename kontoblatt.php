@@ -6,12 +6,15 @@ require_once("login.inc.php");
 require_once("kassenbuch.inc.php");
 loginRequire();
 
-list($accounts, $journal) = getKassenbuch();
+$guid = $_REQUEST["guid"];
 
-$tempfile = "temp/kassenbuch_" . rand(10,99);
+list($accounts, $journal) = getKassenbuch();
+$account = $accounts[$guid];
+
+$tempfile = "temp/kontoblatt_" . rand(10,99);
 
 ob_start();
-include("vorlagen/kassenbuch.tex.php");
+include("vorlagen/kontoblatt.tex.php");
 $tex = ob_get_contents();
 ob_end_clean();
 
@@ -25,12 +28,11 @@ if (!file_exists($tempfile . ".pdf")) {
 }
 unlink($tempfile . ".tex");
 unlink($tempfile . ".out");
-unlink($tempfile . ".toc");
 unlink($tempfile . ".log");
 unlink($tempfile . ".aux");
 
 header("Content-Type: application/pdf");
-header("Content-Disposition: inline; filename=kassenbuch.pdf");
+header("Content-Disposition: inline; filename=kontoblatt.pdf");
 header("Content-Length: " . filesize($tempfile . ".pdf"));
 readfile($tempfile . ".pdf");
 
