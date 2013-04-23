@@ -352,6 +352,7 @@ function refreshFilters() {
 	currentAccountId = "<?php print($account["guid"]) ?>";
 	kontenFilter = {type: "account", guid: "<?php print($account["guid"]) ?>"};
 <?php } else { ?>
+	currentAccountId = null;
 	kontenFilter = {type: "true"};
 	if ($(".kontenSelect li.active").length > 0) {
 		var conds = [];
@@ -363,7 +364,6 @@ function refreshFilters() {
 			currentAccountId = kontenFilter.guid;
 		} else {
 			kontenFilter = {type: "or", conds: conds};
-			currentAccountId = null;
 		}
 	}
 <?php } ?>
