@@ -8,6 +8,7 @@ header("Content-Type: text/html; charset=UTF-8");
                 <link href="https://static.junge-piraten.de/bootstrap-2.1.1/css/bootstrap.css" rel="stylesheet" />
                 <link href="https://static.junge-piraten.de/bootstrap-2.1.1/css/bootstrap-responsive.css" rel="stylesheet" />
                 <link href="https://static.junge-piraten.de/bootstrap-jupis-2.css" rel="stylesheet" />
+                <link href="res/treeview.css" rel="stylesheet" />
 		<script src="https://haushalt.junge-piraten.de/d3.v3.min.js"></script>
                 <script src="https://static.junge-piraten.de/jquery-1.8.2.min.js"></script>
                 <script src="https://static.junge-piraten.de/bootstrap-2.1.1/js/bootstrap.min.js"></script>
