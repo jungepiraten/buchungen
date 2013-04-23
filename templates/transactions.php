@@ -59,16 +59,18 @@ include(dirname(__FILE__) . "/header.php");
 				<th class="sorting-post_date"><i class="icon-arrow-down sortingIcon"></i> Datum</th>
 				<th class="sorting-num"><i class="icon-arrow-down sortingIcon"></i> Beleg</th>
 				<th>Vorgang</th>
+				<th class="hide transactionSoll">Soll</th>
+				<th class="hide transactionHaben">Haben</th>
 			</tr>
 		</thead>
 		<tbody class="transactions">
 		</tbody>
 		<tfoot>
 			<tr class="transactions-loading hide">
-				<td colspan="3"><img src="loading.gif" /> Bitte warten, weitere Transaktionen werden geladen ...</td>
+				<td class="fullColspan"><img src="loading.gif" /> Bitte warten, weitere Transaktionen werden geladen ...</td>
 			</tr>
 			<tr class="transactions-empty">
-				<td colspan="3">Keine Transaktionen gefunden</td>
+				<td class="fullColspan">Keine Transaktionen gefunden</td>
 			</tr>
 		</tfoot>
 	</table>
@@ -156,10 +158,22 @@ $(function () {
 
 var nextOffset = 0;
 var chargingTransactions = null;
+var currentAccountId = null;
 var currentFilter = {};
 var currentSorting = {field: "post_date", order: "asc"};
 
 function generateTransactionLine(transaction) {
+	var value = null;
+	if (currentAccountId != null) {
+		value = 0.0;
+		for (var i=0; i < transaction.splits.length; i++) {
+			var split = transaction.splits[i];
+			if (split.account_guid == currentAccountId) {
+				value += parseFloat(split.value);
+			}
+		}
+	}
+
 	return $("<tr>").addClass("transaction-" + transaction.guid)
 		.data("transaction", transaction)
 		.toggleClass("success", transaction.validValidations > 0 && transaction.validValidations == transaction.validations.length)
@@ -186,7 +200,13 @@ function generateTransactionLine(transaction) {
 					.addClass("badge validValidationCount")
 					.toggleClass("badge-success", transaction.validValidations > 0)
 					.text(transaction.validValidations))
-				));
+				))
+		.append($("<td>")
+			.toggle(value != null)
+			.append(value > 0 ? value.toFixed(2) + " EUR" : "") )
+		.append($("<td>")
+			.toggle(value != null)
+			.append(value < 0 ? (value*(-1)).toFixed(2) + " EUR" : "") );
 }
 
 function chargeTransactionsIfNeeded() {
@@ -329,17 +349,27 @@ function refreshFilters() {
 	}
 
 <?php if (isset($account)) { ?>
-	var kontenFilter = {type: "account", guid: "<?php print($account["guid"]) ?>"};
+	currentAccountId = "<?php print($account["guid"]) ?>";
+	kontenFilter = {type: "account", guid: "<?php print($account["guid"]) ?>"};
 <?php } else { ?>
-	var kontenFilter = {type: "true"};
+	kontenFilter = {type: "true"};
 	if ($(".kontenSelect li.active").length > 0) {
 		var conds = [];
 		$(".kontenSelect li.active").each(function(i, item) {
 			conds.push({type: "account", guid: $(item).children("a").data("konto")});
 		});
-		kontenFilter = {type: "or", conds: conds};
+		if (conds.length == 1) {
+			kontenFilter = conds.pop();
+			currentAccountId = kontenFilter.guid;
+		} else {
+			kontenFilter = {type: "or", conds: conds};
+			currentAccountId = null;
+		}
 	}
 <?php } ?>
+
+	$(".transactionSoll,.transactionHaben").toggle(currentAccountId != null);
+	$(".fullColspan").attr("colspan", (currentAccountId != null ? "5" : "3"));
 
 	var monthFilter = {type: "true"};
 	if ($(".monthSelect li.active").length > 0) {
