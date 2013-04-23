@@ -53,6 +53,10 @@ foreach ($rootAccounts as $guid) {
 		<h3>Details <span class="accountLabel"></span> (<span class="accountCode"></span>)</h3>
 	</div>
 	<div class="modal-body">
+		<p class="description"></p>
+		<div class="notificationsPanel hide">
+			Muh
+		</div>
 	</div>
 	<div class="modal-footer">
 		<a class="btn btn-info showTransactions">Bewegungen anzeigen</a>
@@ -65,8 +69,22 @@ $(".account").click(function() {
 	var data = $(this).data("account");
 	$(".accountModal").find('.accountLabel').text(data.label);
 	$(".accountModal").find('.accountCode').text(data.code);
+	$(".accountModal").find('.description').text(data.description);
 
 	$(".accountModal").find('.showTransactions').attr("href", "transactions.php?account_guid=" + data.guid);
+
+	$(".accountModal").find('.notificationsPanel').hide();
+	$(".accountModal").find('.manageNotifications')
+		.addClass("btn-warning").removeClass("btn-success")
+		.text("Benachrichtigungen")
+		.unbind("click").click(function () {
+			if (! $(".accountModal").find('.notificationsPanel').is(":visible")) {
+				$(".accountModal").find('.notificationsPanel').fadeIn();
+				$(this).removeClass("btn-warning").addClass("btn-success").text("Speichern");
+			} else {
+				
+			}
+		});
 
 	$(".accountModal").modal("show");
 	return false;
