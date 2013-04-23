@@ -1,7 +1,11 @@
 <?php
 include(dirname(__FILE__) . "/header.php");
 ?>
-
+<div class="btn-toolbar">
+	<div class="btn-group">
+		<a href="kassenbuch.php" class="btn">Kassenbuch generieren</a>
+	</div>
+</div>
 <?php
 $accountsHier = array(); $rootAccounts = array();
 foreach ($accounts as $account) {
@@ -59,8 +63,11 @@ foreach ($rootAccounts as $guid) {
 		</div>
 	</div>
 	<div class="modal-footer">
-		<a class="btn btn-info showTransactions">Bewegungen anzeigen</a>
+		<a class="btn btn-info showKontoblatt">Kontoblatt</a>
+		<a class="btn btn-info showTransactions">Bewegungen</a>
 		<a class="btn btn-warning manageNotifications">Benachrichtigungen</a>
+		<a class="btn btn-success addNotifications hide notificationsButton">Neu anlegen</a>
+		<a class="btn btn-primary saveNotifications hide notificationsButton">Speichern</a>
 	</div>
 </div>
 <script type="text/javascript">
@@ -71,19 +78,33 @@ $(".account").click(function() {
 	$(".accountModal").find('.accountCode').text(data.code);
 	$(".accountModal").find('.description').text(data.description);
 
-	$(".accountModal").find('.showTransactions').attr("href", "transactions.php?account_guid=" + data.guid);
+	$(".accountModal").find(".modal-footer").children().show();
+	$(".accountModal").find(".modal-footer").children(".hide").hide();
+
+	$(".accountModal").find('.showKontoblatt')
+		.attr("href", "kontoblatt.php?guid=" + data.guid);
+
+	$(".accountModal").find('.showTransactions')
+		.attr("href", "transactions.php?account_guid=" + data.guid);
 
 	$(".accountModal").find('.notificationsPanel').hide();
 	$(".accountModal").find('.manageNotifications')
-		.addClass("btn-warning").removeClass("btn-success")
-		.text("Benachrichtigungen")
 		.unbind("click").click(function () {
-			if (! $(".accountModal").find('.notificationsPanel').is(":visible")) {
-				$(".accountModal").find('.notificationsPanel').fadeIn();
-				$(this).removeClass("btn-warning").addClass("btn-success").text("Speichern");
-			} else {
-				
-			}
+			$(".accountModal").find('.notificationsPanel').fadeIn();
+			$(".accountModal").find(".modal-footer").children().hide();
+			$(".accountModal").find(".modal-footer").children(".notificationsButton").show();
+		});
+	$(".accountModal").find('.addNotifications')
+		.unbind("click").click(function () {
+			// TODO Benachrichtigung einfügen
+		});
+	$(".accountModal").find('.saveNotifications')
+		.unbind("click").click(function () {
+			// TODO Benachrichtigungen speichern
+
+			$(".accountModal").find('.notificationsPanel').hide();
+			$(".accountModal").find(".modal-footer").children().show();
+			$(".accountModal").find(".modal-footer").children(".hide").hide();
 		});
 
 	$(".accountModal").modal("show");
