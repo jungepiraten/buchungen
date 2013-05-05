@@ -16,6 +16,8 @@ function matchFilter($transaction, $filter) {
 			return $transaction["num"] == formatNum($filter["num"]);
 		else
 			return !empty($transaction["num"]);
+	case "descStartsWith":
+		return (substr($transaction["description"],0,strlen($filter["prefix"])) == $filter["prefix"]);
 	case "verifiedAbove":
 		return $transaction["validValidations"] > $filter["count"];
 	case "failedVerificationsAbove":
