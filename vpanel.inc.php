@@ -12,12 +12,11 @@ class VPanel {
 	function startSession($user, $apikey) {
 		$req1 = json_decode(file_get_contents($this->apiurl . 'api/startsession.php?username=' . urlencode($user)));
 		$this->sessionid = $req1->sessionid;
-		$this->authhash = hash_hmac("md5", $req1->challenge, $apikey);
+		$this->apikey = $apikey;
+		$this->authhash = hash_hmac("md5", $req1->challenge, $this->apikey);
 	}
 
 	function uploadDocument($dokumenttemplateid, $filename, $data = array()) {
-		
-
 		$data["dokumenttemplateid"] = $dokumenttemplateid;
 		$data["sessionid"] = $this->sessionid;
 		$data["authhash"] = $this->authhash;
@@ -38,7 +37,17 @@ class VPanel {
 		if (isset($ret->result->failed)) {
 			throw new Exception('Verwaltungs-API liefert Fehlercode ' . $ret->result->failed);
 	       	}
+		$this->authhash = hash_hmac("md5", $ret->challenge, $this->apikey);
 		return true;
+	}
+
+	function getMitglied($mitgliedid) {
+		$data = json_decode(file_get_contents($this->apiurl . 'api/mitglied.php?' . http_build_query(array("sessionid" => $this->sessionid, "authhash" => $authhash, "mitgliedid" => $mitgliedid)));
+		if (isset($data->result->failed)) {
+			throw new Exception('Verwaltungs-API liefert Fehlercode ' . $ret->result->failed);
+		}
+		$this->authhash = hash_hmac("md5", $req1->challenge, $this->apikey);
+		return $this->result->mitglied;
 	}
 }
 
