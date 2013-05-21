@@ -42,7 +42,7 @@ class VPanel {
 	}
 
 	function getMitglied($mitgliedid) {
-		$data = json_decode(file_get_contents($this->apiurl . 'api/mitglied.php?' . http_build_query(array("sessionid" => $this->sessionid, "authhash" => $authhash, "mitgliedid" => $mitgliedid)));
+		$data = json_decode(file_get_contents($this->apiurl . 'api/mitglied.php?' . http_build_query(array("sessionid" => $this->sessionid, "authhash" => $this->authhash, "mitgliedid" => $mitgliedid))));
 		if (isset($data->result->failed)) {
 			throw new Exception('Verwaltungs-API liefert Fehlercode ' . $ret->result->failed);
 		}
