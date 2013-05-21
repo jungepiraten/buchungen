@@ -46,8 +46,8 @@ class VPanel {
 		if (isset($data->result->failed)) {
 			throw new Exception('Verwaltungs-API liefert Fehlercode ' . $ret->result->failed);
 		}
-		$this->authhash = hash_hmac("md5", $req1->challenge, $this->apikey);
-		return $this->result->mitglied;
+		$this->authhash = hash_hmac("md5", $data->challenge, $this->apikey);
+		return $data->result->mitglied;
 	}
 }
 
