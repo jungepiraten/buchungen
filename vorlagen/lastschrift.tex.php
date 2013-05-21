@@ -54,7 +54,7 @@
 \cfoot{}
 \rfoot{\thepage{} / \pageref{LastPage}}
 
-\begin{longtable}{p{2cm}|p{2.5cm}|p{3cm}|p{2cm}|p{4cm}}
+\begin{longtable}{p{2cm}|p{2.5cm}|p{3cm}|p{2.4cm}|p{4cm}}
  \hline
  \hline \textbf{Bank} & \textbf{Konto} & \textbf{Inhaber} & \textbf{Betrag} & \textbf{Verwendungszweck} \\
  \hline
@@ -63,10 +63,10 @@
  \hline
  \endfoot
 <?php foreach (fetchLaTeXDTA("DTAUS","BUCHUNGEN") as $buchung) { ?>
- \hline <?php print($buchung["BLZ"]) ?> & <?php print($buchung["KONTO"]) ?> & <?php print($buchung["INHABER"]) ?> & <?php print($buchung["BETRAG"]) ?> EUR & <?php print($buchung["VERWENDUNG"]) ?> \\
+ \hline <?php print($buchung["BLZ"]) ?> & <?php print($buchung["KONTO"]) ?> & <?php print($buchung["INHABER"]) ?> & <?php print(str_replace(" ", "\\ ", sprintf("%7.2f", $buchung["BETRAG"]))) ?> EUR & <?php print($buchung["VERWENDUNG"]) ?> \\
 <?php } ?>
  \hline
- \hline\multicolumn{3}{l|}{} & \textbf{<?php print(fetchLaTeXDTA("DTAUS","BETRAG")) ?> EUR} & \textbf{Summe <?php print(fetchLaTeXDTA("DTAUS","COUNT")) ?> Posten} \\
+ \hline\multicolumn{3}{l|}{} & \textbf{<?php print(str_replace(" ", "\\ ", sprintf("%7.2f", fetchLaTeXDTA("DTAUS","BETRAG")))) ?> EUR} & \textbf{Summe <?php print(fetchLaTeXDTA("DTAUS","COUNT")) ?> Posten} \\
  \hline
 \end{longtable}
 
