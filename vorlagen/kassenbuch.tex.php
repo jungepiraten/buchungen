@@ -38,7 +38,7 @@
 \renewcommand{\thesubsection}{}
 
 \setcounter{page}{1}
-\lfoot{}
+\lfoot{Stand: <?php print(date("d.m.Y")) ?>}
 \cfoot{}
 \rfoot{\thepage{} / \pageref{LastPage}}
 
