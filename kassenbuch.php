@@ -9,6 +9,7 @@ loginRequire();
 list($accounts, $journal) = getKassenbuch();
 
 sendPDF("kassenbuch.pdf", "vorlagen/kassenbuch.tex.php", array(
+	"year" => $year,
 	"accounts" => $accounts,
 	"journal" => $journal
 ));

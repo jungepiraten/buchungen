@@ -28,7 +28,7 @@
 
 \vspace*{1.5cm}
 
-{\fontfamily{pag}\selectfont\LARGE Kassenbuch}
+{\fontfamily{pag}\selectfont\LARGE <?php print($year) ?>}
 
 \vspace*{1cm}
 
