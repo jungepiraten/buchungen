@@ -6,7 +6,7 @@ function getKassenbuch() {
 	global $sql;
 
 	$accounts = array();
-	$result = $sql->query("select parent_guid, guid, code, name, placeholder, hidden from accounts where hidden = 0 order by code");
+	$result = $sql->query("select parent_guid, guid, code, name, placeholder, hidden, description from accounts where hidden = 0 order by code");
 	while ($acc = $result->fetch_assoc()) {
 		$acc = formatAccount($acc);
 		$accounts[$acc["guid"]] = $acc;

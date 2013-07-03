@@ -1,5 +1,7 @@
 \subsection{<?php print($account["code"]) ?> <?php print(latexSpecialChars($account["label"])) ?>}
 
+<?php print(latexSpecialChars($account["description"])) ?>
+
 \begin{longtable}{p{1cm}p{1.5cm}p{6cm}rrr}
  \hline
  \hline \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
