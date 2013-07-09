@@ -18,14 +18,14 @@ if ($auth["grant"] && isset($_POST["createUser"])) {
 	if (empty($_POST["username"])) {
 		die("Leerer Benutzername");
 	} else {
-		loginCreateUser(stripslashes($_POST["username"]), $_POST["password"], (empty($_POST["accountPrefixes"]) ? array() : explode(",", $_POST["accountPrefixes"])), isset($_POST["grant"]), isset($_POST["database"]), isset($_POST["belege"]), isset($_POST["verifyTransaction"]));
+		loginCreateUser(stripslashes($_POST["username"]), $_POST["password"], (empty($_POST["accountPrefixes"]) ? array() : explode(",", $_POST["accountPrefixes"])), isset($_POST["grant"]), isset($_POST["database"]), isset($_POST["belege"]), isset($_POST["verifyTransaction"]), isset($_POST["simpleTransactions"]));
 	}
 	header("Location: index.php");
 	exit;
 }
 
 if ($auth["grant"] && isset($_POST["modifyUser"])) {
-	loginModifyUser(stripslashes($_POST["username"]), (empty($_POST["accountPrefixes"]) ? array() : explode(",", $_POST["accountPrefixes"])), isset($_POST["grant"]), isset($_POST["database"]), isset($_POST["belege"]), isset($_POST["verifyTransaction"]));
+	loginModifyUser(stripslashes($_POST["username"]), (empty($_POST["accountPrefixes"]) ? array() : explode(",", $_POST["accountPrefixes"])), isset($_POST["grant"]), isset($_POST["database"]), isset($_POST["belege"]), isset($_POST["verifyTransaction"]), isset($_POST["simpleTransactions"]));
 	if ($_POST["password"] != "") {
 		loginChangePassword(stripslashes($_POST["username"]), stripslashes($_POST["password"]));
 	}
@@ -49,6 +49,7 @@ if ($auth["grant"]) {
 			"database" => isset($user->database) && $user->database,
 			"belege" => isset($user->belege) && $user->belege,
 			"verifyTransaction" => isset($user->verifyTransaction) && $user->verifyTransaction,
+			"simpleTransactions" => isset($user->simpleTransactions) && $user->simpleTransactions,
 		);
 	}
 }

@@ -2,9 +2,15 @@
 if (isset($account)) {
 	$title = "Kontenansicht " . $account["code"] . " " . $account["label"];
 }
-
 include(dirname(__FILE__) . "/header.php");
 ?>
+<?php if (loginHasFacility("simpleTransactions")) { ?>
+	<ul class="nav nav-tabs kontoPrefixSelect">
+		<li data-prefix="23" data-toggle="button"><a>Übertrag</a></li>
+		<li data-prefix="3" data-toggle="button"><a>Einnahmen</a></li>
+		<li data-prefix="4" data-toggle="button"><a>Ausgaben</a></li>
+	</ul>
+<?php } else { ?>
 	<div class="btn-toolbar">
 <?php if (!isset($account)) { ?>
 		<div class="btn-group">
@@ -17,7 +23,7 @@ include(dirname(__FILE__) . "/header.php");
 		$accountSpaces[$_account["guid"]] = $space;
 		if (isAllowedAccount($_account)) {
 ?>
-				<li class="account-<?php print($_account["guid"]) ?>"><a data-konto="<?php print($_account["guid"]) ?>"><?php print($space) ?><i class="icon-<?php print($_account["placeholder"] == 0 ? "briefcase" : "book") ?>"></i> <?php print($_account["code"]) ?> <?php print($_account["label"]) ?></a></li>
+				<li class="account-<?php print($_account["guid"]) ?>"><a data-konto="<?php print($_account["guid"]) ?>" data-kontocode="<?php print($_account["code"]) ?>"><?php print($space) ?><i class="icon-<?php print($_account["placeholder"] == 0 ? "briefcase" : "book") ?>"></i> <?php print($_account["code"]) ?> <?php print($_account["label"]) ?></a></li>
 <?php } } ?>
 			</ul>
 		</div>
@@ -56,6 +62,7 @@ include(dirname(__FILE__) . "/header.php");
 
 		<input type="text" class="pull-right span1 belegFilter" placeholder="Beleg" />
 	</div>
+<?php } ?>
 	<table class="table table-striped table-hover">
 		<thead>
 			<tr>
@@ -74,6 +81,14 @@ include(dirname(__FILE__) . "/header.php");
 			</tr>
 			<tr class="transactions-empty">
 				<td class="fullColspan">Keine Transaktionen gefunden</td>
+			</tr>
+			<tr class="hide habenSollSum">
+				<td colspan="3" rowspan="2">&nbsp;</td>
+				<th class="sumSoll">-</th>
+				<th class="sumHaben">-</th>
+			</tr>
+			<tr class="hide habenSollSum">
+				<th colspan="2" style="text-align:center;" class="sum">-</th>
 			</tr>
 		</tfoot>
 	</table>
@@ -161,20 +176,39 @@ $(function () {
 
 var nextOffset = 0;
 var chargingTransactions = null;
-var currentAccountId = null;
+var currentAccountCodePrefix = null;
 var currentFilter = {};
 var currentSorting = {field: "post_date", order: "asc"};
+var currentSoll = 0.0;
+var currentHaben = 0.0;
+
+function addValue(value) {
+	if (value == false) {
+		currentSoll = 0;
+		currentHaben = 0;
+	} else {
+		if (value > 0)
+			currentSoll += value;
+		else
+			currentHaben -= value;
+	}
+
+	$(".sumSoll").text(currentSoll.toFixed(2) + " EUR");
+	$(".sumHaben").text(currentHaben.toFixed(2) + " EUR");
+	$(".sum").text((currentHaben - currentSoll).toFixed(2) + " EUR");
+}
 
 function generateTransactionLine(transaction) {
 	var value = null;
-	if (currentAccountId != null) {
+	if (currentAccountCodePrefix != null) {
 		value = 0.0;
 		for (var i=0; i < transaction.splits.length; i++) {
 			var split = transaction.splits[i];
-			if (split.account_guid == currentAccountId) {
+			if (split.account_code.indexOf(currentAccountCodePrefix) == 0) {
 				value += parseFloat(split.value);
 			}
 		}
+		addValue(value);
 	}
 
 	return $("<tr>").addClass("transaction-" + transaction.guid)
@@ -187,7 +221,7 @@ function generateTransactionLine(transaction) {
 		.append($("<td>")
 			.text(formatTimestamp(transaction.date)) )
 		.append($("<td>")	
-			.append($("<a>").attr("href","//mitglieder.intern.junge-piraten.de/documents.php?dokumentsuche=BGS_F<?php print($year) ?>_" + transaction.num).text(transaction.num)))
+			.append($("<a>").attr("href","//vpanel.intern.junge-piraten.de/documents.php?dokumentsuche=BGS_F<?php print($year) ?>_" + transaction.num).text(transaction.num)))
 		.append($("<td>")
 			.append($("<span>").html(formatVermerkHTML(transaction.description || "")))
 			.append($("<span>").addClass("pull-right")
@@ -352,27 +386,33 @@ function refreshFilters() {
 	}
 
 <?php if (isset($account)) { ?>
-	currentAccountId = "<?php print($account["guid"]) ?>";
+	currentAccountCodePrefix = "<?php print($account["code"]) ?>";
 	kontenFilter = {type: "account", guid: "<?php print($account["guid"]) ?>"};
 <?php } else { ?>
-	currentAccountId = null;
-	kontenFilter = {type: "true"};
+	if ($(".kontoPrefixSelect li.active").length == 1) {
+		currentAccountCodePrefix = $(".kontoPrefixSelect li.active").data("prefix");
+		kontenFilter = {type: "accountCodeStartsWith", prefix: currentAccountCodePrefix};
+	} else {
+		currentAccountCodePrefix = null;
+		kontenFilter = {type: "true"};
+	}
+
 	if ($(".kontenSelect li.active").length > 0) {
 		var conds = [];
 		$(".kontenSelect li.active").each(function(i, item) {
-			conds.push({type: "account", guid: $(item).children("a").data("konto")});
+			conds.push({type: "account", guid: $(item).children("a").data("konto"), code: $(item).children("a").data("kontocode")});
 		});
 		if (conds.length == 1) {
 			kontenFilter = conds.pop();
-			currentAccountId = kontenFilter.guid;
+			currentAccountCodePrefix = kontenFilter.code;
 		} else {
 			kontenFilter = {type: "or", conds: conds};
 		}
 	}
 <?php } ?>
 
-	$(".transactionSoll,.transactionHaben").toggle(currentAccountId != null);
-	$(".fullColspan").attr("colspan", (currentAccountId != null ? "5" : "3"));
+	$(".transactionSoll,.transactionHaben, .habenSollSum").toggle(currentAccountCodePrefix != null);
+	$(".fullColspan").attr("colspan", (currentAccountCodePrefix != null ? "5" : "3"));
 
 	var monthFilter = {type: "true"};
 	if ($(".monthSelect li.active").length > 0) {
@@ -403,6 +443,7 @@ function refreshSorting() {
 
 function refreshView() {
 	nextOffset = 0;
+	addValue(false);
 	$(".transactions").empty();
 	$(".transactions-empty").show();
 	chargeTransactions(true);
@@ -424,6 +465,16 @@ $(".filterButton").click(function(ev) {
 	// Toggle selbst, wird sonst erst nach diesem handler ausgefuehrt
 	ev.stopPropagation();
 	$(this).button("toggle");
+	refreshFilters();
+});
+
+$(".kontoPrefixSelect li").click(function(ev) {
+	// Toggle selbst, wird sonst erst nach diesem handler ausgefuehrt
+	ev.stopPropagation();
+	if (! $(this).hasClass("active")) {
+		$(this).parent().children("li.active").removeClass("active");
+	}
+	$(this).toggleClass("active");
 	refreshFilters();
 });
 

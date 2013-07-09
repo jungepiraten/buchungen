@@ -27,6 +27,15 @@ if (isset($_SESSION["_finanzenlock"]) && isset($authDb->{$_SESSION["_finanzenloc
 	loginInitSession($username);
 }
 
+function loginHasFacility($facility) {
+	global $auth;
+
+	if ($auth == null) {
+		return false;
+	}
+	return $auth[$facility];
+}
+
 function loginRequire($facility = null) {
 	global $auth;
 
@@ -50,6 +59,7 @@ function loginInitSession($username) {
 		"database" => isset($authDb->$username->database) && $authDb->$username->database,
 		"belege" => isset($authDb->$username->belege) && $authDb->$username->belege,
 		"verifyTransaction" => isset($authDb->$username->verifyTransaction) && $authDb->$username->verifyTransaction,
+		"simpleTransactions" => isset($authDb->$username->simpleTransactions) && $authDb->$username->simpleTransactions,
 	);
 }
 
@@ -58,7 +68,7 @@ function loginMatchPassword($user, $pass) {
 	return $authDb->$user->password == sha1($pass);
 }
 
-function loginCreateUser($user, $pass, $accountPrefixes = array(), $grant = 0, $database = 0, $belege = 0, $verifyTransaction = 0) {
+function loginCreateUser($user, $pass, $accountPrefixes = array(), $grant = 0, $database = 0, $belege = 0, $verifyTransaction = 0, $simpleTransactions = 1) {
 	global $authDb;
 
 	$authDb->$user = (object) array(
@@ -68,6 +78,7 @@ function loginCreateUser($user, $pass, $accountPrefixes = array(), $grant = 0, $
 		"database" => $database,
 		"belege" => $belege,
 		"verifyTransaction" => $verifyTransaction,
+		"simpleTransactions" => $simpleTransactions,
 	);
 	file_put_contents("lock/authDb", json_encode($authDb));	
 }
@@ -86,7 +97,7 @@ function loginChangePassword($user, $pass) {
 	file_put_contents("lock/authDb", json_encode($authDb));
 }
 
-function loginModifyUser($user, $accountPrefixes, $grant, $database, $belege, $verifyTransaction) {
+function loginModifyUser($user, $accountPrefixes, $grant, $database, $belege, $verifyTransaction, $simpleTransactions) {
 	global $authDb;
 
 	$authDb->$user->accountPrefixes = $accountPrefixes;
@@ -94,5 +105,6 @@ function loginModifyUser($user, $accountPrefixes, $grant, $database, $belege, $v
 	$authDb->$user->database = $database;
 	$authDb->$user->belege = $belege;
 	$authDb->$user->verifyTransaction = $verifyTransaction;
+	$authDb->$user->simpleTransactions = $simpleTransactions;
 	file_put_contents("lock/authDb", json_encode($authDb));	
 }

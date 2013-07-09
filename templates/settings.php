@@ -57,6 +57,8 @@ foreach ($users as $user) {
 		$perms[] = "Belege";
 	if ($user["verifyTransaction"])
 		$perms[] = "Verifizieren";
+	if ($user["simpleTransactions"])
+		$perms[] = "Einfache Ansicht";
 ?>
 		<tr class="userRow" data-username="<?php print(htmlentities($user["username"])) ?>" data-accountprefixes="<?php print(implode(",", $user["accountPrefixes"])) ?>" data-grant="<?php print($user["grant"]) ?>" data-database="<?php print($user["database"]) ?>" data-belege="<?php print($user["belege"]) ?>" data-verifyTransaction="<?php print($user["verifyTransaction"]) ?>">
 			<td><?php print(htmlentities($user["username"])) ?></td>
@@ -111,10 +113,16 @@ foreach ($users as $user) {
 						<input type="checkbox" name="belege" value="1" />
 					</div>
 				</div>
-				<div class="verifyTransaction-group">
+				<div class="control-group">
 					<label for="verifyTransaction" class="control-label">Verifizieren</label>
 					<div class="controls">
 						<input type="checkbox" name="verifyTransaction" value="1" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="simpleTransactions" class="control-label">Einfache Ansicht</label>
+					<div class="controls">
+						<input type="checkbox" name="simpleTransactions" value="1" />
 					</div>
 				</div>
 			</div>
@@ -138,6 +146,7 @@ $(".addUser").click(function () {
 	$(".userModal").find("input[name=database]").prop("checked",false);
 	$(".userModal").find("input[name=belege]").prop("checked",false);
 	$(".userModal").find("input[name=verifyTransaction]").prop("checked",false);
+	$(".userModal").find("input[name=simpleTransactions]").prop("checked",true);
 	$(".userModal").find(".saveButton").attr("name","createUser");
 	$(".userModal").modal("show");
 });
@@ -153,6 +162,7 @@ $(".userRow").click(function () {
 	$(".userModal").find("input[name=database]").prop("checked",$(this).data("database")==1);
 	$(".userModal").find("input[name=belege]").prop("checked",$(this).data("belege")==1);
 	$(".userModal").find("input[name=verifyTransaction]").prop("checked",$(this).data("verifyTransaction")==1);
+	$(".userModal").find("input[name=simpleTransactions]").prop("checked",$(this).data("simpleTransactions")==1);
 	$(".userModal").find(".saveButton").attr("name","modifyUser");
 	$(".userModal").modal("show");
 });

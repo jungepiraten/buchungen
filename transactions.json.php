@@ -16,6 +16,8 @@ function matchFilter($transaction, $filter) {
 			return $transaction["num"] == formatNum($filter["num"]);
 		else
 			return !empty($transaction["num"]);
+	case "accountCodeStartsWith":
+		return array_reduce($transaction["splits"], create_function('$a,$b','return $a || substr($b["account_code"],0,'.strlen($filter["prefix"]).') == "'.intval($filter["prefix"]).'";'), false);
 	case "descStartsWith":
 		return (substr($transaction["description"],0,strlen($filter["prefix"])) == $filter["prefix"]);
 	case "verifiedAbove":
