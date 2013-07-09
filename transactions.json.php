@@ -56,13 +56,15 @@ while (($row = $result->fetch_assoc()) && count($transactions) < 20) {
 	$transaction = getTransaction($row["guid"]);
 
 	$allowed = false;
+	$splits = array();
 	foreach ($transaction["splits"] as $split) {
 		if (isAllowedAccount($split["account_guid"])) {
-			$allowed = true;
+			$splits[] = $split;
 		}
 	}
 
-	if ($allowed) {
+	if (count($splits) > 0) {
+		$transaction["splits"] = $splits;
 		if (!isset($_REQUEST["filter"]) || matchFilter($transaction, $_REQUEST["filter"])) {
 			$transactions[] = $transaction;
 		}

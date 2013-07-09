@@ -202,6 +202,7 @@ function generateTransactionLine(transaction) {
 	var value = null;
 	if (currentAccountCodePrefix != null) {
 		value = 0.0;
+console.log([transaction, currentAccountCodePrefix]);
 		for (var i=0; i < transaction.splits.length; i++) {
 			var split = transaction.splits[i];
 			if (split.account_code.indexOf(currentAccountCodePrefix) == 0) {
