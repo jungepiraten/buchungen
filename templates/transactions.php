@@ -50,6 +50,7 @@ include(dirname(__FILE__) . "/header.php");
 		<div class="btn-group">
 			<a class="btn filterButton" data-filter="num" data-toggle="button">Belegt</a>
 			<a class="btn filterButton" data-filter="not-num" data-toggle="button">Nicht belegt</a>
+			<a class="btn filterButton" data-filter="numStartsWith" data-options='{"prefix":"*"}' data-toggle="button">Beleg Unvollständig</a>
 		</div>
 		<div class="btn-group">
 			<a class="btn filterButton" data-filter="not-descStartsWith" data-options='{"prefix":"Mitgliedsbeitrag"}' data-toggle="button">Mitgliedsbeiträge verstecken</a>

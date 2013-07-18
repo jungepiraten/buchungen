@@ -75,7 +75,9 @@ function formatAccountName($name) {
 
 function formatNum($num) {
 	if (strlen($num) != 0) {
-		if (substr($num,0,2) == "BP")
+		if (substr($num,0,1) == "*")
+			$num = "*" . formatNum(substr($num,1));
+		else if (substr($num,0,2) == "BP")
 			$num = "BP" . str_pad(substr($num,2),2,"0",STR_PAD_LEFT);
 		else if (substr($num,0,2) == "BS")
 			$num = "BS" . str_pad(substr($num,2),2,"0",STR_PAD_LEFT);
