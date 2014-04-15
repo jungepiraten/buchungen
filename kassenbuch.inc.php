@@ -15,6 +15,7 @@ function getKassenbuch() {
 	$i = 0;
 
 	$transactions = array();
+	$journal = array();
 	$result = $sql->query("select guid as guid from transactions order by post_date asc");
 	while ($row = $result->fetch_assoc()) {
 		$transaction = getTransaction($row["guid"]);
