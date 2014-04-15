@@ -22,7 +22,7 @@ if (isset($_REQUEST["logout"])) {
 	exit;
 }
 
-if (isset($_SESSION["_finanzenlock"]) && isset($authDb->{$_SESSION["_finanzenlock"]})) {
+if (isset($_SESSION["_finanzenlock"])) {
 	$username = $_SESSION["_finanzenlock"];
 	loginInitSession($username);
 }
@@ -49,30 +49,54 @@ function loginRequire($facility = null) {
 	}
 }
 
+function http_do_post($url, $data) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_POST,count($data));
+	curl_setopt($ch,CURLOPT_POSTFIELDS, http_build_query($data));
+	return curl_exec($ch);
+}
+
 function loginInitSession($username) {
-	global $authDb, $auth;
+	global $auth, $authDb;
+	$groups = $_SESSION["_groups"][$username];
 
 	$auth = array(
 		"user" => $username,
-		"accountPrefixes" => $authDb->$username->accountPrefixes,
-		"grant" => isset($authDb->$username->grant) && $authDb->$username->grant,
-		"database" => isset($authDb->$username->database) && $authDb->$username->database,
-		"belege" => isset($authDb->$username->belege) && $authDb->$username->belege,
-		"verifyTransaction" => isset($authDb->$username->verifyTransaction) && $authDb->$username->verifyTransaction,
-		"simpleTransactions" => isset($authDb->$username->simpleTransactions) && $authDb->$username->simpleTransactions,
+		"accountPrefixes" => array(),
+		"grant" => false,
+		"database" => false,
+		"belege" => false,
+		"verifyTransaction" => false,
+		"simpleTransactions" => false,
 	);
+	foreach ($groups as $group) {
+		if (isset($authDb->{$group})) {
+			$auth["accountPrefixes"] = array_merge($auth["accountPrefixes"], $authDb->{$group}->accountPrefixes);
+			foreach (array("grant", "database", "belege", "verifyTransaction", "simpleTransactions") as $a) {
+				$auth[$a] = $auth[$a] || (isset($authDb->{$group}->{$a}) && $authDb->{$group}->{$a});
+			}
+		}
+	}
 }
 
 function loginMatchPassword($user, $pass) {
-	global $authDb;
-	return $authDb->$user->password == sha1($pass);
+	global $auth;
+
+	$reply = json_decode(http_do_post("https://ucp.junge-piraten.de/json/checkUser", array("user" => $user, "password" => $pass)));
+	if ($reply->status == "success") {
+		$_SESSION["_groups"][$user] = $reply->groups;
+		return true;
+	} else {
+		return false;
+	}
 }
 
-function loginCreateUser($user, $pass, $accountPrefixes = array(), $grant = 0, $database = 0, $belege = 0, $verifyTransaction = 0, $simpleTransactions = 1) {
+function loginCreateUser($user, $accountPrefixes = array(), $grant = 0, $database = 0, $belege = 0, $verifyTransaction = 0, $simpleTransactions = 1) {
 	global $authDb;
 
 	$authDb->$user = (object) array(
-		"password" => sha1($pass),
 		"accountPrefixes" => $accountPrefixes,
 		"grant" => $grant,
 		"database" => $database,
@@ -87,13 +111,6 @@ function loginRemoveUser($user) {
 	global $authDb;
 
 	unset($authDb->$user);
-	file_put_contents("lock/authDb", json_encode($authDb));
-}
-
-function loginChangePassword($user, $pass) {
-	global $authDb;
-
-	$authDb->$user->password = sha1($pass);
 	file_put_contents("lock/authDb", json_encode($authDb));
 }
 

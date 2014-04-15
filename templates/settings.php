@@ -1,35 +1,7 @@
 <?php
 $title = "Einstellungen";
 include("header.php");
-?>
-<h2>Passwort ändern</h2>
 
-<form action="" method="post" class="form-horizontal">
-	<fieldset>
-		<div class="control-group">
-			<label for="changePwOld" class="control-label">Altes Passwort</label>
-			<div class="controls">
-				<input type="password" name="changePwOld" required />
-			</div>
-		</div>
-		<div class="control-group">
-			<label for="changePwNew" class="control-label">Neues Passwort</label>
-			<div class="controls">
-				<input type="password" name="changePwNew" required />
-			</div>
-		</div>
-		<div class="control-group">
-			<label for="changePwConfirm" class="control-label">bestätigen</label>
-			<div class="controls">
-				<input type="password" name="changePwConfirm" required />
-			</div>
-		</div>
-		<div class="form-actions">
-			<button type="submit" class="btn btn-primary" name="changePw" value="1">Passwort ändern</button>
-		</div>
-	</fieldset>
-</form>
-<?php
 if ($auth["grant"]) {
 ?>
 <h2>Rechteverwaltung</h2>
