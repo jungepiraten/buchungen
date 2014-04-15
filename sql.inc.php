@@ -2,9 +2,6 @@
 
 require_once("config.inc.php");
 
-if (!isset($year)) {
-	$year = 2013;
-}
 $database = MYSQLPREFIX_GNUCASH . $year;
 $sql = new mysqli(MYSQLHOST, MYSQLUSER, MYSQLPASS, $database);
 $sql->set_charset("utf-8");

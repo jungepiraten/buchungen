@@ -1,10 +1,5 @@
 <?php
 
-$year = "2013";
-if (isset($_REQUEST["year"])) {
-	$year = intval($_REQUEST["year"]);
-}
-
 require_once("sql.inc.php");
 require_once("lock.inc.php");
 require_once("login.inc.php");

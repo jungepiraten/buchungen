@@ -1,10 +1,6 @@
 <?php
 
-$year = "2013";
-if (isset($_REQUEST["year"])) {
-	$year = intval($_REQUEST["year"]);
-}
-
+require_once("config.inc.php");
 require_once("sql.inc.php");
 
 function databaseIsLocked($year) {

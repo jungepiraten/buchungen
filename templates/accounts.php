@@ -3,7 +3,7 @@ include(dirname(__FILE__) . "/header.php");
 ?>
 <div class="btn-toolbar">
 	<div class="btn-group">
-		<a href="kassenbuch.php" class="btn">Kassenbuch generieren</a>
+		<a href="kassenbuch.php?year=<?php print($year) ?>" class="btn">Kassenbuch generieren</a>
 	</div>
 </div>
 <?php
@@ -82,10 +82,10 @@ $(".account").click(function() {
 	$(".accountModal").find(".modal-footer").children(".hide").hide();
 
 	$(".accountModal").find('.showKontoblatt')
-		.attr("href", "kontoblatt.php?guid=" + data.guid);
+		.attr("href", "kontoblatt.php?year=<?php print($year) ?>&guid=" + data.guid);
 
 	$(".accountModal").find('.showTransactions')
-		.attr("href", "transactions.php?account_guid=" + data.guid);
+		.attr("href", "transactions.php?year=<?php print($year) ?>&account_guid=" + data.guid);
 
 	$(".accountModal").find('.notificationsPanel').hide();
 	$(".accountModal").find('.manageNotifications')

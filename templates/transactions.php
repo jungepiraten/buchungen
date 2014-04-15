@@ -265,7 +265,7 @@ function chargeTransactions(force) {
 	$(".transactions-empty").hide();
 	if (chargingTransactions == null) {
 		$(".transactions-loading").show();
-		chargingTransactions = $.post("transactions.json.php", {offset: nextOffset, filter: currentFilter, sorting: currentSorting}, function (data) {
+		chargingTransactions = $.post("transactions.json.php", {year: "<?php print($year) ?>", offset: nextOffset, filter: currentFilter, sorting: currentSorting}, function (data) {
 			for (var i in data.transactions) {
 				$(".transactions").append(generateTransactionLine(data.transactions[i]))
 			}
