@@ -7,8 +7,8 @@ session_start();
 $auth = false;
 
 if (isset($_REQUEST["login"])) {
-	if (loginMatchPassword(stripslashes($_REQUEST["loginUser"]), stripslashes($_REQUEST["loginPass"]))) {
-		$_SESSION["_finanzenlock"] = stripslashes($_REQUEST["loginUser"]);
+	if (loginMatchPassword($_REQUEST["loginUser"], $_REQUEST["loginPass"])) {
+		$_SESSION["_finanzenlock"] = $_REQUEST["loginUser"];
 	}
 
 	header("Location: index.php");
