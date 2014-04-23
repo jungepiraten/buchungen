@@ -1,8 +1,12 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage{geometry}
-\geometry{a4paper,left=2cm,right=1cm,top=2cm,bottom=2cm}
+\geometry{a4paper,left=1.5cm,right=1.5cm,top=2cm,bottom=2cm}
 \usepackage{tabularx}
+\usepackage{textcomp}
 \usepackage{longtable}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}} % linksbündig mit Breitenangabe
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}} % zentriert mit Breitenangabe
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}} % rechtsbündig mit Breitenangabe
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[pdfpagelabels]{hyperref}
@@ -11,13 +15,13 @@
 \pagestyle{fancy}
 \begin{document}
 
-\centering
 \fontencoding{T1}
 \fontfamily{pag}\selectfont
 \large
 
 \renewcommand{\thesection}{}
 \renewcommand{\thesubsection}{}
+\renewcommand{\thesubsubsection}{}
 
 \setcounter{page}{1}
 \lfoot{Stand: <?php print(date("d.m.Y")) ?>}

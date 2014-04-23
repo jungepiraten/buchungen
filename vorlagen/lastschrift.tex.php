@@ -1,5 +1,5 @@
-\documentclass[12pt,a4paper]{article}
-\usepackage{fullpage}
+\documentclass[10pt]{article}
+\usepackage[a4paper,left=2cm,right=1cm,top=1cm,bottom=2cm]{geometry}
 \usepackage{tabularx}
 \usepackage{longtable}
 \usepackage{graphicx}

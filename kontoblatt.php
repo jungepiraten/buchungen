@@ -12,5 +12,7 @@ list($accounts, $journal) = getKassenbuch();
 $account = $accounts[$guid];
 
 sendPDF("konto-" . $account["guid"] . ".pdf", "vorlagen/kontoblatt.tex.php", array(
+	"year" => $year,
+	"accounts" => $accounts,
 	"account" => $account
 ));
