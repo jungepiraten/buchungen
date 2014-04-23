@@ -11,7 +11,7 @@ if (!function_exists("getHierarchyCount")) {
 }
 
 ?>
-\subsection{<?php print($account["code"]) ?> \hspace{<?php print(getHierarchyCount($account["guid"])) ?>cm} <?php print(latexSpecialChars($account["label"])) ?>}
+\subsection{\hspace{<?php print(getHierarchyCount($account["guid"])) ?>cm} <?php print($account["code"]) ?> <?php print(latexSpecialChars($account["label"])) ?>}
 <?php
 
 if (!function_exists("printFullPath")) {
