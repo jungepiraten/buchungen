@@ -60,6 +60,17 @@
 \section{Journal}
 
 \newcounter{buchungno}
+<?php
+function getZeitPeriode($timestamp) {
+	$ms = array("","Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember");
+	return $ms[date("n",$timestamp)] . " " . date("Y", $timestamp);
+}
+function printJournal($b = 0) {
+	global $journal, $year;
+	if (count($journal) > $b) {
+		$zeitPeriode = getZeitPeriode($journal[$b]["date"]);
+?>
+\subsection{<?php print(latexSpecialChars($zeitPeriode)) ?>}
 \begin{longtable}{>{\refstepcounter{buchungno}}R{1cm}L{1.3cm}L{6.7cm}L{1.7cm}R{2.2cm}R{2.2cm}}
  \hline
  \hline \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} \\
@@ -68,7 +79,7 @@
  \hline
  \hline
  \endfoot
-<?php foreach ($journal as $buchung) { ?>
+<?php for (; $b<count($journal) && $zeitPeriode == getZeitPeriode($journal[$b]["date"]); $b++) { $buchung=$journal[$b]; ?>
  \hline \label{buchung:<?php print($buchung["id"]) ?>} \textbf{<?php print($buchung["id"]) ?>} & \href{<?php print(getBelegUrl($year, $buchung["num"])) ?>}{<?php print(latexSpecialChars($buchung["num"])) ?>} & \multicolumn{4}{p{11cm}}{<?php print(latexSpecialChars($buchung["description"])) ?>} \\
 <?php $i=0; foreach ($buchung["splits"] as $split) { $i++; ?>
  \nopagebreak
@@ -77,6 +88,14 @@
 <?php } ?>
  \hline
 \end{longtable}
+\clearpage
+<?php
+		printJournal($b);
+	}
+}
+printJournal();
+
+?>
 
 \clearpage
 \section{Kontobuch}
