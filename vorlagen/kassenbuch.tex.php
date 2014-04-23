@@ -60,7 +60,7 @@
 \section{Journal}
 
 \newcounter{buchungno}
-\begin{longtable}{>{\refstepcounter{buchungno}}p{1cm}p{1.5cm}p{6.5cm}p{1.7cm}R{2.2cm}R{2.2cm}}
+\begin{longtable}{>{\refstepcounter{buchungno}}R{1cm}L{1.3cm}L{6.7cm}L{1.7cm}R{2.2cm}R{2.2cm}}
  \hline
  \hline \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} \\
  \hline
@@ -72,7 +72,7 @@
  \hline \label{buchung:<?php print($buchung["id"]) ?>} \textbf{<?php print($buchung["id"]) ?>} & \href{<?php print(getBelegUrl($year, $buchung["num"])) ?>}{<?php print(latexSpecialChars($buchung["num"])) ?>} & \multicolumn{4}{p{11cm}}{<?php print(latexSpecialChars($buchung["description"])) ?>} \\
 <?php $i=0; foreach ($buchung["splits"] as $split) { $i++; ?>
  \nopagebreak
- \multicolumn{2}{l}{\hspace{1cm}<?php print($i == 1 ? date("d.m.Y", $buchung["date"]) : "") ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{<?php print($split["account_code"]) ?>} & <?php if ($split["value"] < 0) printf("%.2f \\texteuro",(-1)*$split["value"]) ?> & <?php if ($split["value"] > 0) printf("%.2f \\texteuro",$split["value"]) ?> \\
+ \multicolumn{2}{l}{\hspace{2mm}<?php print($i == 1 ? date("d.m.Y", $buchung["date"]) : "") ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{<?php print($split["account_code"]) ?>} & <?php if ($split["value"] < 0) printf("%.2f \\texteuro",(-1)*$split["value"]) ?> & <?php if ($split["value"] > 0) printf("%.2f \\texteuro",$split["value"]) ?> \\
 <?php } ?>
 <?php } ?>
  \hline
@@ -81,7 +81,7 @@
 \clearpage
 \section{Kontobuch}
 
-\begin{longtable}{p{1.7cm}p{12.2cm}R{2.5cm}}
+\begin{longtable}{L{1.7cm}L{12.2cm}R{2.5cm}}
  \hline
  \hline \textbf{\#} & \textbf{Konto} & \textbf{Saldo} \\
  \hline
