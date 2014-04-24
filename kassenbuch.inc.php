@@ -43,8 +43,8 @@ function getKassenbuch() {
 				$saldoAccount = $split["account_guid"];
 				while ($saldoAccount) {
 					$accounts[$saldoAccount]["soll"]  += ($split["value"] > 0 ? $split["value"] : 0);
-					$accounts[$saldoAccount]["haben"] += ($split["value"] < 0 ? $split["value"] : 0);
-					$accounts[$saldoAccount]["saldo"] -=  $split["value"];
+					$accounts[$saldoAccount]["haben"] += ($split["value"] < 0 ? (-1)*$split["value"] : 0);
+					$accounts[$saldoAccount]["saldo"] +=  $split["value"];
 					$saldoAccount = $accounts[$saldoAccount]["parent_guid"];
 				}
 				if (!in_array($split["account_guid"], $account_guids)) {
