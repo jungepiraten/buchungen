@@ -56,10 +56,10 @@
 
 \footnotesize
 \fontfamily{pcr}\selectfont
+\newcounter{buchungno}
 
 \section{Journal}
 
-\newcounter{buchungno}
 <?php
 function getZeitPeriode($timestamp) {
 	$ms = array("","Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember");
@@ -75,10 +75,8 @@ function printJournal($b = 0) {
  \hline
  \hline \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} \\
  \hline
+ \hline
  \endhead
- \hline
- \hline
- \endfoot
 <?php for (; $b<count($journal) && $zeitPeriode == getZeitPeriode($journal[$b]["date"]); $b++) { $buchung=$journal[$b]; ?>
  \hline \label{buchung:<?php print($buchung["id"]) ?>} \textbf{<?php print($buchung["id"]) ?>} & \href{<?php print(getBelegUrl($year, $buchung["num"])) ?>}{<?php print(latexSpecialChars($buchung["num"])) ?>} & \multicolumn{4}{p{11cm}}{<?php print(latexSpecialChars($buchung["description"])) ?>} \\
 <?php $i=0; foreach ($buchung["splits"] as $split) { $i++; ?>
@@ -86,6 +84,7 @@ function printJournal($b = 0) {
  \multicolumn{2}{l}{\hspace{2mm}<?php print($i == 1 ? date("d.m.Y", $buchung["date"]) : "") ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{<?php print($split["account_code"]) ?>} & <?php if ($split["value"] < 0) printf("%.2f \\texteuro",(-1)*$split["value"]) ?> & <?php if ($split["value"] > 0) printf("%.2f \\texteuro",$split["value"]) ?> \\
 <?php } ?>
 <?php } ?>
+ \hline
  \hline
 \end{longtable}
 \clearpage
@@ -105,12 +104,10 @@ printJournal();
  \hline \textbf{\#} & \textbf{Konto} & \textbf{Saldo} \\
  \hline
  \endhead
- \hline
- \hline
- \endfoot
 <?php $accountPrefixes = array(); foreach ($accounts as $account) {if (isset($account["transactions"]) || $account["code"] != "") { $accountPrefixes[$account["guid"]] = (isset($accountPrefixes[$account["parent_guid"]]) ? $accountPrefixes[$account["parent_guid"]] : "") . "\hspace{5mm}"; ?>
  \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($accountPrefixes[$account["guid"]] . latexSpecialChars($account["label"])) ?>} & <?php printf("%.2f \\texteuro",$account["saldo"]) ?> \\
 <?php } } ?>
+ \hline
  \hline
 \end{longtable}
 
