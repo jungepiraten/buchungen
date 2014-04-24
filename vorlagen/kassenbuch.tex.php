@@ -98,14 +98,15 @@ printJournal();
 
 \clearpage
 \section{Kontobuch}
+\label{kontenbuch}
 
-\begin{longtable}{L{1.7cm}L{12.2cm}R{2.5cm}}
+\begin{longtable}{L{1.7cm}L{7cm}R{2.5cm}R{2.5cm}R{2.5cm}}
  \hline
- \hline \textbf{\#} & \textbf{Konto} & \textbf{Saldo} \\
+ \hline \textbf{\#} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
  \hline
  \endhead
 <?php $accountPrefixes = array(); foreach ($accounts as $account) {if (isset($account["transactions"]) || $account["code"] != "") { $accountPrefixes[$account["guid"]] = (isset($accountPrefixes[$account["parent_guid"]]) ? $accountPrefixes[$account["parent_guid"]] : "") . "\hspace{5mm}"; ?>
- \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($accountPrefixes[$account["guid"]] . latexSpecialChars($account["label"])) ?>} & <?php printf("%.2f \\texteuro",$account["saldo"]) ?> \\
+ \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($accountPrefixes[$account["guid"]] . latexSpecialChars($account["label"])) ?>} & <?php printf("%.2f \\texteuro",$account["soll"]) ?> & <?php printf("%.2f \\texteuro",$account["haben"]) ?> & <?php printf("%.2f \\texteuro",$account["saldo"]) ?> \\
 <?php } } ?>
  \hline
  \hline
@@ -114,7 +115,6 @@ printJournal();
 <?php foreach ($accounts as $account) { if (isset($account["transactions"]) || $account["code"] != "") { ?>
 \clearpage
 <?php include(dirname(__FILE__) . "/inline_kontoblatt.tex.php") ?>
-\label{konto:<?php print($account["guid"]) ?>}
 <?php } } ?>
 
 \end{document}

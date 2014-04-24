@@ -10,6 +10,8 @@ function getKassenbuch() {
 	while ($acc = $result->fetch_assoc()) {
 		$acc = formatAccount($acc);
 		$acc["subAccounts"] = array();
+		$acc["soll"] = 0;
+		$acc["haben"] = 0;
 		$acc["saldo"] = 0;
 		$accounts[$acc["guid"]] = $acc;
 		if ($acc["parent_guid"]) {
@@ -40,6 +42,8 @@ function getKassenbuch() {
 			foreach ($transaction["splits"] as $split) {
 				$saldoAccount = $split["account_guid"];
 				while ($saldoAccount) {
+					$accounts[$saldoAccount]["soll"]  += ($split["value"] > 0 ? $split["value"] : 0);
+					$accounts[$saldoAccount]["haben"] += ($split["value"] < 0 ? $split["value"] : 0);
 					$accounts[$saldoAccount]["saldo"] += $split["value"];
 					$saldoAccount = $accounts[$saldoAccount]["parent_guid"];
 				}

@@ -12,15 +12,18 @@ if (!function_exists("getHierarchyCount")) {
 
 ?>
 \subsection{\hspace{<?php print(getHierarchyCount($account["guid"])) ?>cm} <?php print($account["code"]) ?> <?php print(latexSpecialChars($account["label"])) ?>}
+\label{konto:<?php print($account["guid"]) ?>}
 <?php
 
 if (!function_exists("printFullPath")) {
 	function printFullPath($guid) {
 		global $accounts;
 		if ($accounts[$guid]["parent_guid"] && $accounts[$accounts[$guid]["parent_guid"]]["code"]) {
-			printFullPath($accounts[$guid]["parent_guid"]); ?> :: <?php
+			printFullPath($accounts[$guid]["parent_guid"]);
+		} else {
+?>\mbox{\hyperref[kontenbuch]{Kontenbuch}}<?php
 		}
-?>\mbox{\hyperref[konto:<?php print($guid) ?>]{<?php print($accounts[$guid]["code"]) ?> <?php print(latexSpecialChars($accounts[$guid]["label"])) ?>}}<?php
+?> :: \mbox{\hyperref[konto:<?php print($guid) ?>]{<?php print($accounts[$guid]["code"]) ?> <?php print(latexSpecialChars($accounts[$guid]["label"])) ?>}}<?php
 	}
 }
 
