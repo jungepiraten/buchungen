@@ -196,7 +196,7 @@ function addValue(value) {
 
 	$(".sumSoll").text(currentSoll.toFixed(2) + " EUR");
 	$(".sumHaben").text(currentHaben.toFixed(2) + " EUR");
-	$(".sum").text((currentHaben - currentSoll).toFixed(2) + " EUR");
+	$(".sum").text((currentSoll - currentHaben).toFixed(2) + " EUR");
 }
 
 function generateTransactionLine(transaction) {
