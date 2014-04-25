@@ -183,6 +183,10 @@ var currentSorting = {field: "post_date", order: "asc"};
 var currentSoll = 0.0;
 var currentHaben = 0.0;
 
+function formatCurrency(value) {
+	return (value/100).toFixed(2) + " EUR";
+}
+
 function addValue(value) {
 	if (value == false) {
 		currentSoll = 0;
@@ -194,19 +198,19 @@ function addValue(value) {
 			currentHaben -= value;
 	}
 
-	$(".sumSoll").text(currentSoll.toFixed(2) + " EUR");
-	$(".sumHaben").text(currentHaben.toFixed(2) + " EUR");
-	$(".sum").text((currentSoll - currentHaben).toFixed(2) + " EUR");
+	$(".sumSoll").text(formatCurrency(currentSoll));
+	$(".sumHaben").text(formatCurrency(currentHaben));
+	$(".sum").text(formatCurrency(currentSoll - currentHaben));
 }
 
 function generateTransactionLine(transaction) {
 	var value = null;
 	if (currentAccountCodePrefix != null) {
-		value = 0.0;
+		value = 0;
 		for (var i=0; i < transaction.splits.length; i++) {
 			var split = transaction.splits[i];
 			if (split.account_code.indexOf(currentAccountCodePrefix) == 0) {
-				value += parseFloat(split.value);
+				value += parseInt(split.value);
 			}
 		}
 		addValue(value);
@@ -241,10 +245,10 @@ function generateTransactionLine(transaction) {
 				))
 		.append($("<td>")
 			.toggle(value != null)
-			.append(value > 0 ? value.toFixed(2) + " EUR" : "") )
+			.append(value > 0 ? formatCurrency(value) : "") )
 		.append($("<td>")
 			.toggle(value != null)
-			.append(value < 0 ? (value*(-1)).toFixed(2) + " EUR" : "") );
+			.append(value < 0 ? formatCurrency(value*(-1)) : "") );
 }
 
 function chargeTransactionsIfNeeded() {
@@ -287,7 +291,7 @@ function showTransaction(data) {
 	for (var i in data.splits) {
 		if (data.splits[i].value > 0) {
 			sollKonten.push(data.splits[i].account_code);
-			betrag += parseFloat(data.splits[i].value);
+			betrag += parseInt(data.splits[i].value);
 		} else {
 			habenKonten.push(data.splits[i].account_code);
 		}
@@ -305,8 +309,8 @@ function showTransaction(data) {
 				.text(data.splits[i].account_code) )
 			.append($("<td>")
 				.append(" " + formatVermerkHTML(data.splits[i].memo)) )
-			.append($("<td>").text(data.splits[i].value > 0 ? parseFloat(data.splits[i].value).toFixed(2) + " EUR" : ""))
-			.append($("<td>").text(data.splits[i].value < 0 ? parseFloat((-1)*data.splits[i].value).toFixed(2) + " EUR" : "")) );
+			.append($("<td>").text(data.splits[i].value > 0 ? formatCurrency(data.splits[i].value) : ""))
+			.append($("<td>").text(data.splits[i].value < 0 ? formatCurrency((-1)*data.splits[i].value) : "")) );
 	}
 	$(".transactionDetailsModal").find(".validations").empty();
 	var validated = false;
@@ -360,7 +364,7 @@ function showTransaction(data) {
 		buchungsDatum: formatTimestamp(data.date),
 		sollKonten: sollKonten.join(", "),
 		habenKonten: habenKonten.join(", "),
-		betrag: betrag,
+		betrag: betrag/100,
 		anmerkungen: data.description
 	};
 	$(".transactionDetailsModal").find(".createNum").attr("href","belege.php?_=" + encodeURIComponent(JSON.stringify(belegData)));

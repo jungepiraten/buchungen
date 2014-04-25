@@ -41,9 +41,9 @@ printFullPath($account["guid"]);
  \hline
  \endhead
 <?php $saldo = 0; foreach ($account["subAccounts"] as $code => $child_guid) { $subAccount = $accounts[$child_guid]; $accSaldo = $subAccount["saldo"]; $saldo += $accSaldo; ?>
- \hline \textbf{\hyperref[konto:<?php print($subAccount["guid"]) ?>]{<?php print($subAccount["code"]) ?>}} & \hyperref[konto:<?php print($subAccount["guid"]) ?>]{<?php print(latexSpecialChars($subAccount["label"])) ?>} & <?php printf("%.2f \\texteuro",$accSaldo) ?> & <?php printf("%.2f \\texteuro",$saldo) ?> \\
-<?php } $ownSaldo = $account["saldo"] - $saldo; /** Gleitkommazahlen ergeben teilweise +/- 0,00 EUR **/ if (abs($ownSaldo) > 0.0001) { ?>
- \hline & Direkt gebucht & <?php printf("%.2f \\texteuro", $ownSaldo) ?> & <?php printf("%.2f \\texteuro", $account["saldo"]) ?> \\
+ \hline \textbf{\hyperref[konto:<?php print($subAccount["guid"]) ?>]{<?php print($subAccount["code"]) ?>}} & \hyperref[konto:<?php print($subAccount["guid"]) ?>]{<?php print(latexSpecialChars($subAccount["label"])) ?>} & <?php print(latexFormatCurrency($accSaldo)) ?> & <?php print(latexFormatCurrency($saldo)) ?> \\
+<?php } $ownSaldo = $account["saldo"] - $saldo; if ($ownSaldo != 0) { ?>
+ \hline & Direkt gebucht & <?php print(latexFormatCurrency($ownSaldo)) ?> & <?php print(latexFormatCurrency($account["saldo"])) ?> \\
 <?php } ?>
  \hline
  \hline
@@ -62,7 +62,7 @@ printFullPath($account["guid"]);
  \hline \textbf{\hyperref[buchung:<?php print($buchung["id"]) ?>]{<?php print($buchung["id"]) ?>}} & \href{<?php print(getBelegUrl($year, $buchung["num"])) ?>}{<?php print(latexSpecialChars($buchung["num"])) ?>} & \multicolumn{4}{p{11cm}}{<?php print(latexSpecialChars($buchung["description"])) ?>} \\
 <?php $firstline = true; foreach ($buchung["splits"] as $split) { if ($split["account_guid"] == $account["guid"]) { $saldo -= $split["value"]; ?>
  \nopagebreak
- \multicolumn{2}{l}{\hspace{2mm}<?php if ($firstline) {print(date("d.m.Y", $buchung["date"])); $firstline = false;} ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & <?php if ($split["value"] > 0) printf("%.2f \\texteuro",$split["value"]) ?> & <?php if ($split["value"] < 0) printf("%.2f \\texteuro",(-1)*$split["value"]) ?> & <?php printf("%.2f \\texteuro",$saldo) ?> \\
+ \multicolumn{2}{l}{\hspace{2mm}<?php if ($firstline) {print(date("d.m.Y", $buchung["date"])); $firstline = false;} ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php print(latexFormatCurrency($saldo)) ?> \\
 <?php } ?>
 <?php } } ?>
  \hline
