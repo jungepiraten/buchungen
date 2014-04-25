@@ -8,7 +8,7 @@ loginRequire();
 
 $guid = $_REQUEST["guid"];
 
-list($accounts, $journal) = getKassenbuch();
+list($accounts, $accounts_code2guid, $journal) = getKassenbuch();
 $account = $accounts[$guid];
 
 sendPDF("konto-" . $account["guid"] . ".pdf", "vorlagen/kontoblatt.tex.php", array(
