@@ -37,6 +37,59 @@ function sqlGetAccount($guid) {
 	return $cache_accounts[$guid];
 }
 
+function sqlGetAccountNotes($guid) {
+	global $sql;
+	$result = $sql->query("select string_val from slots where obj_guid = '".$sql->real_escape_string($guid)."' and name = 'notes'");
+	if ($result->num_rows > 0) {
+		return $result->fetch_object()->string_val;
+	}
+	return "";
+}
+
+function sqlMaybeAddTransaction($guid, $num, $timestamp, $description) {
+	global $sql;
+
+	if ($sql->query("select guid from transactions where guid = '" . $sql->real_escape_string($guid) . "'")->num_rows == 0) {
+		$currency = $sql->query("select guid from commodities where namespace = 'CURRENCY' and mnemonic = 'EUR'")->fetch_object()->guid;
+		$stmt = $sql->prepare("insert into transactions (guid, currency_guid, num, post_date, enter_date, description) VALUES (?, ?, ?, ?, NOW(), ?)");
+		$stmt->bind_param("s", $guid, $currency, $num, date("Y-m-d H:i:s", $timestamp), $description);
+		$stmt->execute();
+	}
+}
+
+function sqlAddSplits($guid, $splits) {
+	global $sql;
+
+	$sum_value = 0;
+	foreach ($splits as $split_options) {
+		$split = array(
+			"guid" => md5(uniqid()),
+			"tx_guid" => $guid,
+			"account_guid" => $split_options["account_guid"],
+			"memo" => $split_options["memo"],
+			"value_num" => $split_options["value"],
+			"value_denom" => 100,
+			"quantity_num" => $split_options["value"],
+			"quantity_denom" => 100,
+			"action" => "",
+			"reconcile_state" => "n",
+			);
+		$sum_value += $split["value_num"];
+
+		$cb1 = create_function('$v', 'global $sql;return "`" . $sql->real_escape_string($v) . "`";');
+		$cb2 = create_function('$v', 'global $sql;return "\'" . $sql->real_escape_string($v) . "\'";');
+		$sql->query("INSERT INTO splits (" . implode(",",array_map($cb1, array_keys($split))) . ") VALUES (" . implode(",",array_map($cb2, array_values($split))) . ")");
+	}
+	return $sum_value;
+}
+
+function sqlReplaceSplit($guid, $splits) {
+	global $sql;
+
+	sqlAddSplits($guid,$splits);
+	$sql->query("DELETE FROM splits WHERE guid = '".$guid."';");
+}
+
 function formatAccount($account) {
 	foreach ($account as &$value) {
 		$value = iconv("iso-8859-1","utf-8",$value);
