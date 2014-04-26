@@ -3,7 +3,7 @@
 function getTransaction($guid) {
 	global $sql;
 
-	$transaction = formatTransaction($sql->query("select guid, num, unix_timestamp(convert_tz(post_date,\"UTC\",\"Europe/Berlin\")) as date, description from transactions where guid = '".$sql->real_escape_string($guid)."'")->fetch_assoc());
+	$transaction = formatTransaction($sql->query("select guid, num, unix_timestamp(convert_tz(post_date,\"-12:00\",\"Europe/Berlin\")) as date, description from transactions where guid = '".$sql->real_escape_string($guid)."'")->fetch_assoc());
 	$transaction["splits"] = array();
 	$result = $sql->query("select s.guid as guid, s.memo as memo, s.reconcile_state as reconcile, a.guid as account_guid, a.code as account_code, a.name as account_name, s.value_num as value from splits s left join accounts a ON(a.guid = s.account_guid) where s.tx_guid = '".$sql->real_escape_string($guid)."' order by s.memo");
 	while ($split = $result->fetch_assoc()) {
