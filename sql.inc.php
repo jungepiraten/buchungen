@@ -52,8 +52,10 @@ function sqlMaybeAddTransaction($guid, $num, $timestamp, $description) {
 	if ($sql->query("select guid from transactions where guid = '" . $sql->real_escape_string($guid) . "'")->num_rows == 0) {
 		$currency = $sql->query("select guid from commodities where namespace = 'CURRENCY' and mnemonic = 'EUR'")->fetch_object()->guid;
 		$stmt = $sql->prepare("insert into transactions (guid, currency_guid, num, post_date, enter_date, description) VALUES (?, ?, ?, ?, NOW(), ?)");
-		$stmt->bind_param("s", $guid, $currency, $num, date("Y-m-d H:i:s", $timestamp), $description);
+		$stmt->bind_param("sssss", $guid, $currency, $num, date("Y-m-d H:i:s", $timestamp), $description);
 		$stmt->execute();
+		$stmt = $sql->prepare("insert into slots (obj_guid, name, gdate_val) values (?, 'date-posted', ?)");
+		$stmt->bind_param("ss", $guid, date("Y-m-d", $timestamp));
 	}
 }
 
