@@ -30,7 +30,7 @@ function isAllowedAccount($account) {
 function sqlGetTransaction($guid) {
 	global $sql;
 
-	$transaction = formatTransaction($sql->query("select guid, num, unix_timestamp(convert_tz(post_date,\"-12:00\",\"Europe/Berlin\")) as date, description from transactions where guid = '".$sql->real_escape_string($guid)."'")->fetch_assoc());
+	$transaction = formatTransaction($sql->query("select guid, num, unix_timestamp(convert_tz(post_date,\"UTC\",\"Europe/Berlin\")) as date, description from transactions where guid = '".$sql->real_escape_string($guid)."'")->fetch_assoc());
 	$transaction["splits"] = array();
 	$result = $sql->query("select s.guid as guid, s.memo as memo, s.reconcile_state as reconcile, a.guid as account_guid, a.code as account_code, a.name as account_name, s.value_num as value from splits s left join accounts a ON(a.guid = s.account_guid) where s.tx_guid = '".$sql->real_escape_string($guid)."' order by s.memo");
 	while ($split = $result->fetch_assoc()) {
@@ -79,7 +79,7 @@ function sqlMaybeAddTransaction($guid, $num, $timestamp, $description) {
 		$stmt = $sql->prepare("insert into transactions (guid, currency_guid, num, post_date, enter_date, description) VALUES (?, ?, ?, ?, NOW(), ?)");
 		$stmt->bind_param("sssss", $guid, $currency, $num, date("Y-m-d H:i:s", $timestamp), $description);
 		$stmt->execute();
-		$stmt = $sql->prepare("insert into slots (obj_guid, name, gdate_val) values (?, 'date-posted', ?)");
+		$stmt = $sql->prepare("insert into slots (obj_guid, name, slot_type, int64_val, string_val, double_val, timespec_val, guid_val, numeric_val_num, numeric_val_denom, gdate_val) values (?, 'date-posted', 10, 0, NULL, 0, NULL, NULL, 0, 1, ?)");
 		$stmt->bind_param("ss", $guid, date("Y-m-d", $timestamp));
 		$stmt->execute();
 	}
@@ -90,23 +90,10 @@ function sqlAddSplits($guid, $splits) {
 
 	$sum_value = 0;
 	foreach ($splits as $split_options) {
-		$split = array(
-			"guid" => md5(uniqid()),
-			"tx_guid" => $guid,
-			"account_guid" => $split_options["account_guid"],
-			"memo" => $split_options["memo"],
-			"value_num" => $split_options["value"],
-			"value_denom" => 100,
-			"quantity_num" => $split_options["value"],
-			"quantity_denom" => 100,
-			"action" => "",
-			"reconcile_state" => "n",
-			);
-		$sum_value += $split["value_num"];
-
-		$cb1 = create_function('$v', 'global $sql;return "`" . $sql->real_escape_string($v) . "`";');
-		$cb2 = create_function('$v', 'global $sql;return "\'" . $sql->real_escape_string($v) . "\'";');
-		$sql->query("INSERT INTO splits (" . implode(",",array_map($cb1, array_keys($split))) . ") VALUES (" . implode(",",array_map($cb2, array_values($split))) . ")");
+		$stmt = $sql->prepare("INSERT INTO splits (guid, tx_guid, account_guid, memo, value_num, value_denom, quantity_num, quantity_denom, action, reconcile_state, reconcile_date) VALUES (?, ?, ?, ?, ?, 100, ?, 100, '', 'n', NULL)");
+		$stmt->bind_param("ssssii", md5(uniqid()), $guid, $split_options["account_guid"], $split_options["memo"], $split_options["value"], $split_options["value"]);
+		$stmt->execute();
+		$sum_value += $split_options["value"];
 	}
 	return $sum_value;
 }
