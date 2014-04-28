@@ -2,7 +2,6 @@
 
 require_once("sql.inc.php");
 require_once("login.inc.php");
-require_once("transaction.inc.php");
 loginRequire();
 
 function matchFilter($transaction, $filter) {
@@ -55,7 +54,7 @@ if (isset($_REQUEST["sorting"])) {
 $transactions = array();
 $result = $sql->query("select guid as guid from transactions order by " . $sorting_field . " " . $sorting_order . " limit " . $offset . ",100");
 while (($row = $result->fetch_assoc()) && count($transactions) < 20) {
-	$transaction = getTransaction($row["guid"]);
+	$transaction = sqlGetTransaction($row["guid"]);
 
 	$allowed = false;
 	$splits = array();

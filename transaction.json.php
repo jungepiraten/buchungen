@@ -1,14 +1,13 @@
 <?php
 
 require_once("sql.inc.php");
-require_once("transaction.inc.php");
 require_once("login.inc.php");
 loginRequire();
 
 $guid = $_POST["guid"];
 $allowed = false;
 
-$transaction = getTransaction($guid);
+$transaction = sqlGetTransaction($guid);
 foreach ($transaction["splits"] as $split) {
 	if (isAllowedAccount($split["account_guid"])) {
 		$allowed = true;

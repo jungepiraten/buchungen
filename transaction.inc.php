@@ -1,30 +1,5 @@
 <?php
 
-function getTransaction($guid) {
-	global $sql;
-
-	$transaction = formatTransaction($sql->query("select guid, num, unix_timestamp(convert_tz(post_date,\"-12:00\",\"Europe/Berlin\")) as date, description from transactions where guid = '".$sql->real_escape_string($guid)."'")->fetch_assoc());
-	$transaction["splits"] = array();
-	$result = $sql->query("select s.guid as guid, s.memo as memo, s.reconcile_state as reconcile, a.guid as account_guid, a.code as account_code, a.name as account_name, s.value_num as value from splits s left join accounts a ON(a.guid = s.account_guid) where s.tx_guid = '".$sql->real_escape_string($guid)."' order by s.memo");
-	while ($split = $result->fetch_assoc()) {
-		$split = formatSplit($split);
-		$transaction["splits"][] = $split;
-	}
-	
-	$validations = array();
-	$validValidations = 0;
-	$result = $sql->query("select guid_tx, username, hash, timestamp from validations where guid_tx = '" . $sql->real_escape_string($guid) . "'");
-	while ($validation = $result->fetch_assoc()) {	
-		$validation["valid"] = isValidated($transaction, $validation);
-		$validations[] = $validation;
-		$validValidations += ($validation["valid"] ? 1 : 0);
-	}
-	$transaction["validValidations"] = $validValidations;
-	$transaction["validations"] = $validations;
-
-	return $transaction;
-}
-
 function verifyTransaction($username, $transaction) {
 	$splitHashes = array();
 	foreach ($transaction["splits"] as $split) {

@@ -1,6 +1,6 @@
 <?php
 
-require_once("transaction.inc.php");
+require_once("sql.inc.php");
 
 function getKassenbuch($ignorePermissions = false) {
 	global $sql;
@@ -30,7 +30,7 @@ function getKassenbuch($ignorePermissions = false) {
 	$journal = array();
 	$result = $sql->query("select guid as guid from transactions order by post_date asc");
 	while ($row = $result->fetch_assoc()) {
-		$transaction = getTransaction($row["guid"]);
+		$transaction = sqlGetTransaction($row["guid"]);
 
 		$allowed = $ignorePermissions;
 		if (!$allowed) {
