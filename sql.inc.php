@@ -56,6 +56,7 @@ function sqlMaybeAddTransaction($guid, $num, $timestamp, $description) {
 		$stmt->execute();
 		$stmt = $sql->prepare("insert into slots (obj_guid, name, gdate_val) values (?, 'date-posted', ?)");
 		$stmt->bind_param("ss", $guid, date("Y-m-d", $timestamp));
+		$stmt->execute();
 	}
 }
 
