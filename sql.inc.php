@@ -90,8 +90,9 @@ function sqlAddSplits($guid, $splits) {
 
 	$sum_value = 0;
 	foreach ($splits as $split_options) {
+		$split_guid = md5(uniqid());
 		$stmt = $sql->prepare("INSERT INTO splits (guid, tx_guid, account_guid, memo, value_num, value_denom, quantity_num, quantity_denom, action, reconcile_state, reconcile_date) VALUES (?, ?, ?, ?, ?, 100, ?, 100, '', 'n', NULL)");
-		$stmt->bind_param("ssssii", md5(uniqid()), $guid, $split_options["account_guid"], $split_options["memo"], $split_options["value"], $split_options["value"]);
+		$stmt->bind_param("ssssii", $split_guid, $guid, $split_options["account_guid"], $split_options["memo"], $split_options["value"], $split_options["value"]);
 		$stmt->execute();
 		$sum_value += $split_options["value"];
 	}
