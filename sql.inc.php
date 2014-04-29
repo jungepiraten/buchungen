@@ -102,7 +102,8 @@ function sqlAddSplits($guid, $splits) {
 function sqlReplaceSplit($guid, $splits) {
 	global $sql;
 
-	sqlAddSplits($guid,$splits);
+	$tx_guid = $sql->query("select tx_guid from splits where guid = '".$guid."'")->fetch_object()->tx_guid;
+	sqlAddSplits($tx_guid,$splits);
 	$sql->query("DELETE FROM splits WHERE guid = '".$guid."';");
 }
 
