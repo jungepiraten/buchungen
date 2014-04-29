@@ -80,7 +80,7 @@ function printJournal($b = 0) {
 <?php for (; $b<count($journal) && $zeitPeriode == getZeitPeriode($journal[$b]["date"]); $b++) { $buchung=$journal[$b]; ?>
  \hline \label{buchung:<?php print($buchung["id"]) ?>} \textbf{<?php print($buchung["id"]) ?>} & \href{<?php print(getBelegUrl($year, $buchung["num"])) ?>}{<?php print(latexSpecialChars($buchung["num"])) ?>} & \multicolumn{4}{p{11cm}}{<?php print(latexSpecialChars($buchung["description"])) ?>} \\
 <?php $i=0; foreach ($buchung["splits"] as $split) { $i++; ?>
- \nopagebreak
+<?php if ($i < 3 || count($buchung["splits"])-$i < 3) { ?> \nopagebreak <?php } ?>
  \multicolumn{2}{l}{\hspace{2mm}<?php print($i == 1 ? date("d.m.Y", $buchung["date"]) : "") ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{<?php print($split["account_code"]) ?>} & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> \\
 <?php } ?>
 <?php } ?>
