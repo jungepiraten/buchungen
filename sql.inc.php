@@ -107,6 +107,16 @@ function sqlReplaceSplit($guid, $splits) {
 	$sql->query("DELETE FROM splits WHERE guid = '".$guid."';");
 }
 
+function sqlSetAccountTimestamp($guid, $timestamp) {
+	global $sql;
+	$stmt = $sql->prepare("UPDATE transactions SET post_date = ? WHERE guid = ?");
+	$stmt->bind_param("ss", date("Y-m-d H:i:s", $timestamp), $guid);
+	$stmt->execute();
+	$stmt = $sql->prepare("UPDATE slots SET gdate_val = ? WHERE obj_guid = ? AND name = 'date-posted' AND slot_type = 10");
+	$stmt->bind_param("ss", date("Y-m-d", $timestamp), $guid);
+	$stmt->execute();
+}
+
 function formatAccount($account) {
 	foreach ($account as &$value) {
 		$value = iconv("iso-8859-1","utf-8",$value);
