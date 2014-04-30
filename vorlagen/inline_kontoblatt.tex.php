@@ -60,8 +60,8 @@ printFullPath($account["guid"]);
  \endhead
 <?php $saldo = 0; foreach ($account["transactions"] as $buchung) { ?>
  \hline \textbf{\hyperref[buchung:<?php print($buchung["id"]) ?>]{<?php print($buchung["id"]) ?>}} & \href{<?php print(getBelegUrl($year, $buchung["num"])) ?>}{<?php print(latexSpecialChars($buchung["num"])) ?>} & \multicolumn{4}{p{11cm}}{<?php print(latexSpecialChars($buchung["description"])) ?>} \\
-<?php $i = 0; foreach ($buchung["splits"] as $split) { $i++; if ($split["account_guid"] == $account["guid"]) { $saldo -= $split["value"]; ?>
-<?php if ($i < 3 || count($buchung["splits"])-$i < 3) { ?> \nopagebreak <?php } ?>
+<?php $i = 0; foreach ($buchung["splits"] as $split) { if ($split["account_guid"] == $account["guid"]) { $i++; $saldo -= $split["value"]; ?>
+<?php if ($i < 3) { ?> \nopagebreak <?php } ?>
  \multicolumn{2}{l}{\hspace{2mm}<?php if ($i == 1) {print(date("d.m.Y", $buchung["date"]));} ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php print(latexFormatCurrency($saldo)) ?> \\
 <?php } ?>
 <?php } } ?>
