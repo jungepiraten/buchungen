@@ -69,3 +69,7 @@ printFullPath($account["guid"]);
  \hline
 \end{longtable}
 <?php } ?>
+
+<?php if (empty($account["subAccounts"]) && empty($account["transactions"])) { ?>
+\subsubsection{Nicht bebucht}
+<?php } ?>
