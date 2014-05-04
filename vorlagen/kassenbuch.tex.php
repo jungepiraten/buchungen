@@ -117,4 +117,21 @@ printJournal();
 <?php include(dirname(__FILE__) . "/inline_kontoblatt.tex.php") ?>
 <?php } } ?>
 
+\clearpage
+\section{Belegverzeichnis}
+\label{nums}
+
+\begin{longtable}{L{1.3cm}L{16cm}}
+ \hline
+ \hline \textbf{Beleg} & \textbf{Transaktionen} \\
+ \hline
+ \endhead
+<?php $lastNum = null; foreach ($nums as $num => $n) { ?>
+ <?php if (preg_replace('/\d/','',$num) != preg_replace('/\d/','',$lastNum)) { ?>\hline <?php } ?>
+ \href{<?php print(getBelegUrl($year, $num)) ?>}{<?php print(latexSpecialChars($num)) ?>} & <?php foreach ($n["transactions"] as $tid) { ?> \hyperref[buchung:<?php print($tid) ?>]{<?php print(latexSpecialChars($tid)) ?>}<?php } ?> \\
+<?php $lastNum = $num;} ?>
+ \hline
+ \hline
+\end{longtable}
+
 \end{document}

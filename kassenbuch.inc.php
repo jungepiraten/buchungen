@@ -29,6 +29,7 @@ function getKassenbuch($ignorePermissions = false) {
 
 	$transactions = array();
 	$journal = array();
+	$nums = array();
 	$result = $sql->query("select guid as guid from transactions order by post_date asc");
 	while ($row = $result->fetch_assoc()) {
 		$transaction = sqlGetTransaction($row["guid"]);
@@ -46,6 +47,12 @@ function getKassenbuch($ignorePermissions = false) {
 			$transaction["id"] = ++$i;
 
 			$journal[] = $transaction;
+
+			if (!isset($nums[$transaction["num"]])) {
+				$nums[$transaction["num"]] = array("transactions" => array());
+			}
+			$nums[$transaction["num"]]["transactions"][] = $transaction["id"];
+
 			$account_guids = array();
 			foreach ($transaction["splits"] as $split) {
 				$saldoAccount = $split["account_guid"];
@@ -62,8 +69,9 @@ function getKassenbuch($ignorePermissions = false) {
 			}
 		}
 	}
+	ksort($nums);
 
-	return array($accounts, $accounts_code2guid, $journal);
+	return array($accounts, $accounts_code2guid, $journal, $nums);
 }
 
 ?>
