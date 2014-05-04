@@ -44,7 +44,7 @@
 \renewcommand{\thesubsection}{}
 \renewcommand{\thesubsubsection}{}
 
-\setcounter{page}{1}
+% \setcounter{page}{1}
 \lfoot{Stand: <?php print(date("d.m.Y")) ?>}
 \cfoot{}
 \rfoot{\thepage{} / \pageref{LastPage}}
@@ -106,7 +106,7 @@ printJournal();
  \hline
  \endhead
 <?php $accountPrefixes = array(); foreach ($accounts as $account) {if (!empty($account["transactions"]) || $account["code"] != "") { $accountPrefixes[$account["guid"]] = (isset($accountPrefixes[$account["parent_guid"]]) ? $accountPrefixes[$account["parent_guid"]] : "") . "\hspace{5mm}"; ?>
- \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($accountPrefixes[$account["guid"]] . latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["soll"])) ?> & <?php print(latexFormatCurrency($account["haben"])) ?> & <?php print(latexFormatCurrency($account["saldo"])) ?> \\
+ \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($accountPrefixes[$account["guid"]] . latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["soll"])) ?> & <?php print(latexFormatCurrency($account["haben"])) ?> & <?php print(latexFormatCurrency($account["saldo"]*$account["saldoSign"])) ?> \\
 <?php } } ?>
  \hline
  \hline

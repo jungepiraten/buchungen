@@ -69,10 +69,11 @@ if (isset($_REQUEST["beleg"])) {
 	if (isset($_REQUEST["upload_vpanel"])) {
 		$vpanel = new VPanel(VPANELBASE);
 		$vpanel->startSession(VPANELUSER, VPANELPASS);
-		if (!$vpanel->uploadDocument(4, $tempfile . ".pdf", array("label" => "Beleg 2013-" . $beleg, "kommentar" => "Erhalten von " . $_SERVER["REMOTE_ADDR"], "data" => array("request" => $_REQUEST, "dtaus" => $dtaus)))) {
+//		if (!$vpanel->uploadDocument(4, $tempfile . ".pdf", array("label" => "Beleg 2013-" . $beleg, "kommentar" => "Erhalten von " . $_SERVER["REMOTE_ADDR"], "data" => array("request" => $_REQUEST, "dtaus" => $dtaus)))) {
+		if (!$vpanel->uploadDocument(4, $tempfile . ".pdf", array("label" => "Lastschriftbericht", "kommentar" => "Erhalten von " . $_SERVER["REMOTE_ADDR"] . " (Quelle in Ticket #" . $_REQUEST["ticket"] . ")", "dtaus" => $dtaus))) {
 			die("Could not upload PDF");
 		}
-		file_put_contents("beleg.txt", ++$beleg);
+//		file_put_contents("beleg.txt", ++$beleg);
 	}
 	if (isset($_REQUEST["download"])) {
 		header("Content-Type: application/pdf");

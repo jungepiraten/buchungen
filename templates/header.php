@@ -1,4 +1,5 @@
 <?php
+require_once("login.inc.php");
 header("Content-Type: text/html; charset=UTF-8");
 ?>
 <!DOCTYPE html>
@@ -38,9 +39,6 @@ header("Content-Type: text/html; charset=UTF-8");
 					<ul class="nav">
 						<li><a href="accounts.php">Konten</a></li>
 						<li><a href="transactions.php">Transaktionen</a></li>
-<?php if ($auth != null && $auth["belege"]) { ?>
-						<li><a href="belege.php">Belege</a></li>
-<?php } ?>
 <?php if ($auth != null && $auth["database"]) { ?>
 						<li><a href="lock.php">Datenbank</a></li>
 <?php } ?>

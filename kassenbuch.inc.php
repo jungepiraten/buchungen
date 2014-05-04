@@ -7,7 +7,7 @@ function getKassenbuch($ignorePermissions = false) {
 
 	$accounts = array();
 	$accounts_code2guid = array();
-	$result = $sql->query("select parent_guid, guid, code, name, placeholder, hidden, description from accounts order by code");
+	$result = $sql->query("select parent_guid, account_type as type, guid, code, name, placeholder, hidden, description from accounts order by code");
 	while ($acc = $result->fetch_assoc()) {
 		$acc = formatAccount($acc);
 		$acc["subAccounts"] = array();
@@ -15,6 +15,7 @@ function getKassenbuch($ignorePermissions = false) {
 		$acc["soll"] = 0;
 		$acc["haben"] = 0;
 		$acc["saldo"] = 0;
+		$acc["saldoSign"] = in_array($acc["type"], array("EXPENSE","ASSET","BANK","RECEIVABLE")) ? 1 : -1;
 		$accounts[$acc["guid"]] = $acc;
 		if ($acc["parent_guid"]) {
 			$accounts[$acc["parent_guid"]]["subAccounts"][$acc["code"]] = $acc["guid"];

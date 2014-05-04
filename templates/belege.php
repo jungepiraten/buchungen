@@ -128,6 +128,13 @@ if (isset($_REQUEST["_"])) {
 		</div>
 
 		<div class="control-group toggleInput show-lastschrift">
+			<label for="ticket" class="control-label">Ticketnummer:</label>
+			<div class="controls">
+				<input type="text" name="ticket" />
+			</div>
+		</div>
+
+		<div class="control-group toggleInput show-lastschrift">
 			<label for="DTAUS" class="control-label">DTAUS-Datei:</label>
 			<div class="controls">
 				<input type="file" name="DTAUS" />
