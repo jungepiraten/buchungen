@@ -127,7 +127,7 @@ printJournal();
  \hline
  \endhead
 <?php $lastNum = null; foreach ($nums as $num => $n) { ?>
- <?php if (preg_replace('/\d/','',$num) != preg_replace('/\d/','',$lastNum)) { ?>\hline <?php } ?>
+ <?php if (preg_replace('/\d+$/','',$num) != preg_replace('/\d+$/','',$lastNum)) { ?>\hline <?php } ?>
  \href{<?php print(getBelegUrl($year, $num)) ?>}{<?php print(latexSpecialChars($num)) ?>} & <?php foreach ($n["transactions"] as $tid) { ?> \hyperref[buchung:<?php print($tid) ?>]{<?php print(latexSpecialChars($tid)) ?>}<?php } ?> \\
 <?php $lastNum = $num;} ?>
  \hline
