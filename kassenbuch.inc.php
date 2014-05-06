@@ -30,7 +30,7 @@ function getKassenbuch($ignorePermissions = false) {
 	$transactions = array();
 	$journal = array();
 	$nums = array();
-	$result = $sql->query("select guid as guid from transactions order by post_date asc");
+	$result = $sql->query("select guid as guid from transactions order by post_date asc, num desc");
 	while ($row = $result->fetch_assoc()) {
 		$transaction = sqlGetTransaction($row["guid"]);
 
