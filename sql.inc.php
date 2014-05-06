@@ -151,7 +151,8 @@ function formatAccountName($name) {
 }
 
 function formatNum($num) {
-	if (strlen($num) != 0) {
+	global $year;
+	if ($year == "2013" && strlen($num) != 0) {
 		if (substr($num,0,1) == "*")
 			$num = "*" . formatNum(substr($num,1));
 		else if (substr($num,0,2) == "BP")
