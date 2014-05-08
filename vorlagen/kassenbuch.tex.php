@@ -127,6 +127,7 @@ printJournal();
  <?php if ($lastNum === null || preg_replace('/\d+$/','',$num) != preg_replace('/\d+$/','',$lastNum)) { ?>
 <?php if ($lastNum !== null) { ?>\end{description}<?php } ?>
 \subsubsection{<?php print(latexSpecialChars(trim(preg_replace('/\d+$/','',$num),"_"))) ?>}
+<?php print(latexSpecialChars(getBelegkreisDescription(trim(preg_replace('/\d+$/','',$num),"_")))) ?>
 \begin{description}
 <?php } ?>
  \item [\href{<?php print(getBelegUrl($year, $num)) ?>}{<?php print(latexSpecialChars($num)) ?>}] {<?php foreach ($n["transactions"] as $tid) { ?> \hyperref[buchung:<?php print($tid) ?>]{<?php print(latexSpecialChars($tid)) ?>}<?php } ?>}

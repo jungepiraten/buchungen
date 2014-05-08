@@ -74,4 +74,24 @@ function getKassenbuch($ignorePermissions = false) {
 	return array($accounts, $accounts_code2guid, $journal, $nums);
 }
 
+function getBelegkreisDescription($a) {
+	global $accounts, $accounts_code2guid;
+
+	if ($a == "B")
+		return "Jahresanfangs und -abschlussbilanz";
+	if ($a == "BEIO")
+		return "Beitragsordnungen des Jahres";
+	if (substr($a,0,2) == "BK")
+		return "Barkassenabrechnung " . $accounts[$accounts_code2guid["13100-".substr($a,2)]]["label"];
+	if (substr($a,0,2) == "GH")
+		return "Kontoauszug " . $accounts[$accounts_code2guid["13200-".substr($a,2)]]["label"];
+	if (substr($a,0,2) == "KK")
+		return "Kreditkartenabrechnung " . $accounts[$accounts_code2guid["23100-".substr($a,2)]]["label"];
+	if (substr($a,0,2) == "LB")
+		return "Lastschriftenberichte " . $accounts[$accounts_code2guid["13200-".substr($a,2)]]["label"];
+	if (substr($a,0,2) == "RE")
+		return "Eingehende Rechnungen " . $accounts[$accounts_code2guid["23200-".substr($a,2)]]["label"];
+	return "";
+}
+
 ?>
