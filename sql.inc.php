@@ -1,6 +1,7 @@
 <?php
 
 require_once("config.inc.php");
+require_once("transaction.inc.php");
 
 $database = MYSQLPREFIX_GNUCASH . $year;
 $sql = new mysqli(MYSQLHOST, MYSQLUSER, MYSQLPASS, $database);
