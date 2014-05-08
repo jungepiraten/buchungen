@@ -37,7 +37,7 @@ function getKassenbuch($ignorePermissions = false) {
 		$allowed = $ignorePermissions;
 		if (!$allowed) {
 			foreach ($transaction["splits"] as $split) {
-				if (isAllowedAccount($split["account_guid"])) {
+				if (isAllowedAccount($accounts[$split["account_guid"]])) {
 					$allowed = true;
 				}
 			}
