@@ -9,6 +9,7 @@
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}} % zentriert mit Breitenangabe
 \newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}} % rechtsbündig mit Breitenangabe
 \usepackage{graphicx}
+\usepackage{multicol}
 \usepackage[utf8]{inputenc}
 \usepackage[pdfpagelabels]{hyperref}
 \usepackage{lastpage}
@@ -121,17 +122,16 @@ printJournal();
 \section{Belegverzeichnis}
 \label{nums}
 
-\begin{longtable}{L{1.3cm}L{16cm}}
- \hline
- \hline \textbf{Beleg} & \textbf{Transaktionen} \\
- \hline
- \endhead
+\begin{multicols}{3}
 <?php $lastNum = null; foreach ($nums as $num => $n) { ?>
- <?php if (preg_replace('/\d+$/','',$num) != preg_replace('/\d+$/','',$lastNum)) { ?>\hline <?php } ?>
- \href{<?php print(getBelegUrl($year, $num)) ?>}{<?php print(latexSpecialChars($num)) ?>} & <?php foreach ($n["transactions"] as $tid) { ?> \hyperref[buchung:<?php print($tid) ?>]{<?php print(latexSpecialChars($tid)) ?>}<?php } ?> \\
+ <?php if ($lastNum === null || preg_replace('/\d+$/','',$num) != preg_replace('/\d+$/','',$lastNum)) { ?>
+<?php if ($lastNum !== null) { ?>\end{description}<?php } ?>
+\subsubsection{<?php print(latexSpecialChars(trim(preg_replace('/\d+$/','',$num),"_"))) ?>}
+\begin{description}
+<?php } ?>
+ \item [\href{<?php print(getBelegUrl($year, $num)) ?>}{<?php print(latexSpecialChars($num)) ?>}] {<?php foreach ($n["transactions"] as $tid) { ?> \hyperref[buchung:<?php print($tid) ?>]{<?php print(latexSpecialChars($tid)) ?>}<?php } ?>}
 <?php $lastNum = $num;} ?>
- \hline
- \hline
-\end{longtable}
+<?php if ($lastNum !== null) { ?>\end{description}<?php } ?>
+\end{multicols}
 
 \end{document}
