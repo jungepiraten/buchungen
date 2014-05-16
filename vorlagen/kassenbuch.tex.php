@@ -106,14 +106,14 @@ printJournal();
  \hline \textbf{\#} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
  \hline
  \endhead
-<?php $accountPrefixes = array(); foreach ($accounts as $account) {if (!empty($account["transactions"]) || $account["code"] != "") { $accountPrefixes[$account["guid"]] = (isset($accountPrefixes[$account["parent_guid"]]) ? $accountPrefixes[$account["parent_guid"]] : "") . "\hspace{5mm}"; ?>
+<?php $accountPrefixes = array(); foreach ($accounts as $account) {if (!$account["hide"] && $account["code"] != "" && (!empty($account["transactions"]) || !empty($account["subAccounts"]))) { $accountPrefixes[$account["guid"]] = (isset($accountPrefixes[$account["parent_guid"]]) ? $accountPrefixes[$account["parent_guid"]] : "") . "\hspace{5mm}"; ?>
  \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($accountPrefixes[$account["guid"]] . latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["soll"])) ?> & <?php print(latexFormatCurrency($account["haben"])) ?> & <?php print(latexFormatCurrency($account["saldo"]*$account["saldoSign"])) ?> \\
 <?php } } ?>
  \hline
  \hline
 \end{longtable}
 
-<?php foreach ($accounts as $account) { if (!empty($account["transactions"]) || $account["code"] != "") { ?>
+<?php foreach ($accounts as $account) { if (!$account["hide"] && $account["code"] != "" && (!empty($account["transactions"]) || !empty($account["subAccounts"]))) { ?>
 \clearpage
 <?php include(dirname(__FILE__) . "/inline_kontoblatt.tex.php") ?>
 <?php } } ?>

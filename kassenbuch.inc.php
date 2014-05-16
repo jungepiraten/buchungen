@@ -2,7 +2,7 @@
 
 require_once("sql.inc.php");
 
-function getKassenbuch($ignorePermissions = false) {
+function getKassenbuch($respectOnlyPrefixes = array(), $ignorePermissions = false) {
 	global $sql;
 
 	$accounts = array();
@@ -10,6 +10,12 @@ function getKassenbuch($ignorePermissions = false) {
 	$result = $sql->query("select parent_guid, account_type as type, guid, code, name, placeholder, hidden, description from accounts order by code");
 	while ($acc = $result->fetch_assoc()) {
 		$acc = formatAccount($acc);
+		$acc["hide"] = !empty($respectOnlyPrefixes);
+		foreach ($respectOnlyPrefixes as $prefix) {
+			if (substr($acc["code"],0,strlen($prefix)) == $prefix && strlen($acc["code"]) >= 2) {
+				$acc["hide"] = false;
+			}
+		}
 		$acc["subAccounts"] = array();
 		$acc["transactions"] = array();
 		$acc["soll"] = 0;
@@ -46,26 +52,32 @@ function getKassenbuch($ignorePermissions = false) {
 		if ($allowed) {
 			$transaction["id"] = ++$i;
 
-			$journal[] = $transaction;
-
 			if (!isset($nums[$transaction["num"]])) {
 				$nums[$transaction["num"]] = array("transactions" => array());
 			}
 			$nums[$transaction["num"]]["transactions"][] = $transaction["id"];
 
 			$account_guids = array();
+			$splits = array();
 			foreach ($transaction["splits"] as $split) {
-				$saldoAccount = $split["account_guid"];
-				while ($saldoAccount) {
-					$accounts[$saldoAccount]["soll"]  += ($split["value"] > 0 ? $split["value"] : 0);
-					$accounts[$saldoAccount]["haben"] += ($split["value"] < 0 ? (-1)*$split["value"] : 0);
-					$accounts[$saldoAccount]["saldo"] +=  $split["value"];
-					$saldoAccount = $accounts[$saldoAccount]["parent_guid"];
+				if (! $accounts[$split["account_guid"]]["hide"]) {
+					$saldoAccount = $split["account_guid"];
+					while ($saldoAccount) {
+						$accounts[$saldoAccount]["soll"]  += ($split["value"] > 0 ? $split["value"] : 0);
+						$accounts[$saldoAccount]["haben"] += ($split["value"] < 0 ? (-1)*$split["value"] : 0);
+						$accounts[$saldoAccount]["saldo"] +=  $split["value"];
+						$saldoAccount = $accounts[$saldoAccount]["parent_guid"];
+					}
+					if (!in_array($split["account_guid"], $account_guids)) {
+						$accounts[$split["account_guid"]]["transactions"][] = $transaction;
+						$account_guids[] = $split["account_guid"];
+					}
+					$splits[] = $split;
 				}
-				if (!in_array($split["account_guid"], $account_guids)) {
-					$accounts[$split["account_guid"]]["transactions"][] = $transaction;
-					$account_guids[] = $split["account_guid"];
-				}
+			}
+			if (!empty($splits)) {
+				$transaction["splits"] = $splits;
+				$journal[] = $transaction;
 			}
 		}
 	}

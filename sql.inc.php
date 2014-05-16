@@ -122,7 +122,7 @@ function formatAccount($account) {
 	foreach ($account as &$value) {
 		$value = iconv("iso-8859-1","utf-8",$value);
 	}
-	$account["label"] = formatAccountName($account["name"]);
+	$account["label"] = formatAccountName($account["name"], $account["code"]);
 	return $account;
 }
 
@@ -133,7 +133,7 @@ function formatTransaction($transaction) {
 		}
 	}
 	if (isset($transaction["account_name"])) {
-		$transaction["account_label"] = formatAccountName($transaction["account_name"]);
+		$transaction["account_label"] = formatAccountName($transaction["account_name"], $transaction["account_code"]);
 	}
 	$transaction["num"] = formatNum($transaction["num"]);
 	return $transaction;
@@ -143,12 +143,17 @@ function formatSplit($split) {
 	foreach ($split as &$value) {
 		$value = iconv("iso-8859-1","utf-8",$value);
 	}
-	$split["account_label"] = formatAccountName($split["account_name"]);
+	$split["account_label"] = formatAccountName($split["account_name"], $split["account_code"]);
 	return $split;
 }
 
-function formatAccountName($name) {
-	return intval(trim(substr($name,0,2))) == 0 ? $name : trim(substr($name,2));
+function formatAccountName($name, $code) {
+	$a = explode(" ", $name, 2);
+	if (count($a) > 1) {
+		list($c,$d) = $a;
+		return substr($code,(-1)*strlen($c)) == $c ? $d : $name;
+	}
+	return array_shift($a);
 }
 
 function formatNum($num) {
