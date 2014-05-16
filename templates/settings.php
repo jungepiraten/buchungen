@@ -29,6 +29,8 @@ foreach ($users as $user) {
 		$perms[] = "Belege";
 	if ($user["verifyTransaction"])
 		$perms[] = "Verifizieren";
+	if ($user["buchen"])
+		$perms[] = "Buchen";
 	if ($user["simpleTransactions"])
 		$perms[] = "Einfache Ansicht";
 ?>
@@ -80,6 +82,12 @@ foreach ($users as $user) {
 					</div>
 				</div>
 				<div class="control-group">
+					<label for="buchen" class="control-label">Buchen</label>
+					<div class="controls">
+						<input type="checkbox" name="buchen" value="1" />
+					</div>
+				</div>
+				<div class="control-group">
 					<label for="belege" class="control-label">Belege</label>
 					<div class="controls">
 						<input type="checkbox" name="belege" value="1" />
@@ -116,6 +124,7 @@ $(".addUser").click(function () {
 	$(".userModal").find("input[name=accountPrefixes]").val("");
 	$(".userModal").find("input[name=grant]").prop("checked",false);
 	$(".userModal").find("input[name=database]").prop("checked",false);
+	$(".userModal").find("input[name=buchen]").prop("checked",false);
 	$(".userModal").find("input[name=belege]").prop("checked",false);
 	$(".userModal").find("input[name=verifyTransaction]").prop("checked",false);
 	$(".userModal").find("input[name=simpleTransactions]").prop("checked",true);
@@ -132,6 +141,7 @@ $(".userRow").click(function () {
 	$(".userModal").find("input[name=accountPrefixes]").val($(this).data("accountprefixes"));
 	$(".userModal").find("input[name=grant]").prop("checked",$(this).data("grant")==1);
 	$(".userModal").find("input[name=database]").prop("checked",$(this).data("database")==1);
+	$(".userModal").find("input[name=buchen]").prop("checked",$(this).data("buchen")==1);
 	$(".userModal").find("input[name=belege]").prop("checked",$(this).data("belege")==1);
 	$(".userModal").find("input[name=verifyTransaction]").prop("checked",$(this).data("verifyTransaction")==1);
 	$(".userModal").find("input[name=simpleTransactions]").prop("checked",$(this).data("simpleTransactions")==1);

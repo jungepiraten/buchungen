@@ -14,7 +14,7 @@ include(dirname(__FILE__) . "/header.php");
 	<div class="btn-toolbar">
 <?php if (!isset($account)) { ?>
 		<div class="btn-group">
-			<a href="#" class="dropdown-toggle btn" data-toggle="dropdown">Konten <b class="caret"></b></a>
+			<a href="#" class="dropdown-toggle btn btn-default" data-toggle="dropdown">Konten <b class="caret"></b></a>
 			<ul class="dropdown-menu kontenSelect">
 <?php
 	$accountSpaces = array();
@@ -30,7 +30,7 @@ include(dirname(__FILE__) . "/header.php");
 <?php } ?>
 
 		<div class="btn-group">
-			<a href="#" class="dropdown-toggle btn" data-toggle="dropdown">Monat <b class="caret"></b></a>
+			<a href="#" class="dropdown-toggle btn btn-default" data-toggle="dropdown">Monat <b class="caret"></b></a>
 			<ul class="dropdown-menu monthSelect">
 				<li><a data-start="<?php print(mktime(0,0,0, 1,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 2,1,$year)-1) ?>">Januar</a></li>
 				<li><a data-start="<?php print(mktime(0,0,0, 2,1,$year)) ?>" data-end="<?php print(mktime(0,0,0, 3,1,$year)-1) ?>">Februar</a></li>
@@ -48,17 +48,17 @@ include(dirname(__FILE__) . "/header.php");
 		</div>
 
 		<div class="btn-group">
-			<a class="btn filterButton" data-filter="num" data-toggle="button">Belegt</a>
-			<a class="btn filterButton" data-filter="not-num" data-toggle="button">Nicht belegt</a>
-			<a class="btn filterButton" data-filter="numStartsWith" data-options='{"prefix":"*"}' data-toggle="button">Beleg Unvollständig</a>
+			<a class="btn btn-default filterButton" data-filter="num" data-toggle="button">Belegt</a>
+			<a class="btn btn-default filterButton" data-filter="not-num" data-toggle="button">Nicht belegt</a>
+			<a class="btn btn-default filterButton" data-filter="numStartsWith" data-options='{"prefix":"*"}' data-toggle="button">Beleg Unvollständig</a>
 		</div>
 		<div class="btn-group">
-			<a class="btn filterButton" data-filter="not-descStartsWith" data-options='{"prefix":"Mitgliedsbeitrag"}' data-toggle="button">Mitgliedsbeiträge verstecken</a>
+			<a class="btn btn-default filterButton" data-filter="not-descStartsWith" data-options='{"prefix":"Mitgliedsbeitrag"}' data-toggle="button">Mitgliedsbeiträge verstecken</a>
 		</div>
 		<div class="btn-group">
-			<a class="btn filterButton" data-filter="verifiedAbove" data-options='{"count":0}' data-toggle="button">Verifiziert</a>
-			<a class="btn filterButton" data-filter="not-verifiedAbove" data-options='{"count":0}' data-toggle="button">Nicht verifiziert</a>
-			<a class="btn filterButton" data-filter="failedVerificationsAbove" data-options='{"count":0}' data-toggle="button">Fehlerhafte Verifikation</a>
+			<a class="btn btn-default filterButton" data-filter="verifiedAbove" data-options='{"count":0}' data-toggle="button">Verifiziert</a>
+			<a class="btn btn-default filterButton" data-filter="not-verifiedAbove" data-options='{"count":0}' data-toggle="button">Nicht verifiziert</a>
+			<a class="btn btn-default filterButton" data-filter="failedVerificationsAbove" data-options='{"count":0}' data-toggle="button">Fehlerhafte Verifikation</a>
 		</div>
 
 		<input type="text" class="pull-right span1 belegFilter" placeholder="Beleg" />

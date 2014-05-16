@@ -16,6 +16,7 @@ function getKassenbuch($respectOnlyPrefixes = array(), $ignorePermissions = fals
 				$acc["hide"] = false;
 			}
 		}
+//		$acc["hide"] = false;
 		$acc["subAccounts"] = array();
 		$acc["transactions"] = array();
 		$acc["soll"] = 0;

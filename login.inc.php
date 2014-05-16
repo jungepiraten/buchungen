@@ -67,6 +67,7 @@ function loginInitSession($username) {
 		"accountPrefixes" => array(),
 		"grant" => false,
 		"database" => false,
+		"buchen" => false,
 		"belege" => false,
 		"verifyTransaction" => false,
 		"simpleTransactions" => false,
@@ -74,7 +75,7 @@ function loginInitSession($username) {
 	foreach ($groups as $group) {
 		if (isset($authDb->{$group})) {
 			$auth["accountPrefixes"] = array_merge($auth["accountPrefixes"], $authDb->{$group}->accountPrefixes);
-			foreach (array("grant", "database", "belege", "verifyTransaction", "simpleTransactions") as $a) {
+			foreach (array("grant", "database", "buchen", "belege", "verifyTransaction", "simpleTransactions") as $a) {
 				$auth[$a] = $auth[$a] || (isset($authDb->{$group}->{$a}) && $authDb->{$group}->{$a});
 			}
 		}
@@ -93,13 +94,14 @@ function loginMatchPassword($user, $pass) {
 	}
 }
 
-function loginCreateUser($user, $accountPrefixes = array(), $grant = 0, $database = 0, $belege = 0, $verifyTransaction = 0, $simpleTransactions = 1) {
+function loginCreateUser($user, $accountPrefixes = array(), $grant = 0, $database = 0, $buchen = 0, $belege = 0, $verifyTransaction = 0, $simpleTransactions = 1) {
 	global $authDb;
 
 	$authDb->$user = (object) array(
 		"accountPrefixes" => $accountPrefixes,
 		"grant" => $grant,
 		"database" => $database,
+		"buchen" => $buchen,
 		"belege" => $belege,
 		"verifyTransaction" => $verifyTransaction,
 		"simpleTransactions" => $simpleTransactions,
@@ -114,12 +116,13 @@ function loginRemoveUser($user) {
 	file_put_contents("lock/authDb", json_encode($authDb));
 }
 
-function loginModifyUser($user, $accountPrefixes, $grant, $database, $belege, $verifyTransaction, $simpleTransactions) {
+function loginModifyUser($user, $accountPrefixes, $grant, $database, $buchen, $belege, $verifyTransaction, $simpleTransactions) {
 	global $authDb;
 
 	$authDb->$user->accountPrefixes = $accountPrefixes;
 	$authDb->$user->grant = $grant;
 	$authDb->$user->database = $database;
+	$authDb->$user->buchen = $buchen;
 	$authDb->$user->belege = $belege;
 	$authDb->$user->verifyTransaction = $verifyTransaction;
 	$authDb->$user->simpleTransactions = $simpleTransactions;

@@ -3,7 +3,7 @@ include(dirname(__FILE__) . "/header.php");
 ?>
 <div class="btn-toolbar">
 	<div class="btn-group">
-		<a href="kassenbuch.php?year=<?php print($year) ?>" class="btn">Kassenbuch generieren</a>
+		<a href="kassenbuch.php?year=<?php print($year) ?>" class="btn btn-default">Kassenbuch generieren</a>
 	</div>
 </div>
 <?php
