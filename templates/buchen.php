@@ -26,6 +26,8 @@ function TemplateBuchen() {
 	this.getPanel = function() {
 		return this._panel;
 	}
+	this.load = function () {
+	}
 	this.clean = function() {
 	}
 	this.evaluate = function() {
@@ -37,34 +39,49 @@ function TemplateBuchen() {
 	}
 }
 
+var panels = {};
 var currentPanel = null;
 
-function selectPanel(buchen) {
-	currentPanel = buchen;
+function selectPanel(id) {
+	currentPanel = panels[id];
+
+	$("#txTemplateTabs").children().removeClass("active");
+	$("#txTemplateTabs").find(".txtemplate-" + id).addClass("active");
+
 	$("#buchungPanel").empty().append(currentPanel.getPanel());
 	cleanForm();
 }
 
-function addTxTemplate(name, buchen) {
-	$("#txTemplateTabs").append($("<li>")
+function addTxTemplate(id, name, buchen) {
+	$("#txTemplateTabs").append($("<li>").addClass("txtemplate-" + id)
 		.append($("<a>")
 			.click(function () {
-				selectPanel(buchen);
-				$(this).parents("ul").children().removeClass("active");
-				$(this).parents("li").addClass("active");
+				selectPanel(id);
 			})
-			.attr("href","#")
+			.attr("href","#" + id + "#")
 			.text(name) ));
+	panels[id] = buchen;
 }
 
-addTxTemplate("Dialogbuchen", new DialogBuchen("F", {
+addTxTemplate("dialog", "Dialogbuchen", new DialogBuchen("F", {
 	"kosten":	{"kontoprefix":"R", "konto":"", "ausloeser":["2","3","4","6","8"], "label":"Kostenrechnung"},
 	"debitoren":	{"kontoprefix":"D", "konto":"", "ausloeser":["0650", "0655"], "label":"Debitoren"},
 	"kreditoren":	{"kontoprefix":"K", "konto":"", "ausloeser":["1340"], "label":"Kreditoren"},
 }));
-addTxTemplate("Test", new TemplateBuchen());
+addTxTemplate("test", "Test", new TemplateBuchen());
 
-$("#txTemplateTabs").children(":first").find("a").click();
+$(function() {
+	cleanForm();
+	if (location.hash.substring(1).indexOf("#") > 0) {
+		var parameters = location.hash.substring(1).split("#");
+		selectPanel(parameters[0]);
+		if (parameters[1].length > 0) {
+			currentPanel.load(JSON.parse(parameters[1]));
+		}
+	} else {
+		$("#txTemplateTabs").children(":first").find("a").click();
+	}
+});
 
 function cleanForm() {
 	$(".buchen-success").hide();
@@ -117,10 +134,6 @@ $("form").submit(function (event) {
 			}
 		}, "json");
 	}
-});
-
-$(function () {
-	cleanForm();
 });
 
 //-->

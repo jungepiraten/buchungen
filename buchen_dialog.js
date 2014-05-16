@@ -20,7 +20,7 @@ function DialogBuchen(mainKontoPrefix, settings) {
 				'</div>' +
 			'</fieldset>')
 		.append($('<fieldset>')
-			.append('<legend>Splits</legend>')
+			.append($('<legend>').text("Splits"))
 			.append($('<div class="row">')
 				.append('<div class="col-xs-8"></div>')
 				.append('<div class="col-xs-2"><strong>Soll</strong></div>')
@@ -36,6 +36,14 @@ function DialogBuchen(mainKontoPrefix, settings) {
 
 	this.getPanel = function() {
 		return this._panel;
+	}
+	this.load = function(data) {
+		this._panel.find("input[name=beleg]").val(data["num"]);
+		this._panel.find("input[name=postdate]").val(data["postdate"]);
+		for (i in data["splits"]) {
+			this._addBalanceLine(data["splits"][i]["bal"], data["splits"][i]["value"], data["splits"][i]["konto"]);
+			this._checkBalance(data["splits"][i]["bal"]);
+		}
 	}
 	this.clean = function() {
 		this._panel.find("input").val("");
@@ -114,10 +122,9 @@ function DialogBuchen(mainKontoPrefix, settings) {
 				return;
 			}
 			if (this._panel.find(".splits-"+bal).find(".row").length == 0) {
-				this._addBalanceLine(bal, this._initValue[bal]);
+				this._addBalanceLine(bal, this._initValue[bal], this._settings[bal]["konto"]);
 				this._panel.find(".splits-"+bal).find(".row:first").find("input").prop("disabled",true);
 				this._panel.find(".splits-"+bal).find(".row:first").find(".konto")
-					.val(this._settings[bal]["konto"])
 					.hide()
 					.after($("<strong>").text(this._settings[bal]["label"]));
 			}
@@ -153,7 +160,7 @@ function DialogBuchen(mainKontoPrefix, settings) {
 			this._addBalanceLine(bal, remaining);
 		}
 	}
-	this._addBalanceLine = function(bal, remaining) {
+	this._addBalanceLine = function(bal, remaining, konto) {
 		function _update() {
 			var row = $(this).parents(".row");
 			if (row.data("new") == "1") {
@@ -172,9 +179,9 @@ function DialogBuchen(mainKontoPrefix, settings) {
 		}
 
 		var splitId = get32bitRandom();
-		$(".splits-" + bal).append($("<div>").addClass("row").data("new","1")
+		$(".splits-" + bal).append($("<div>").addClass("row").data("new",konto ? "0" : "1")
 			.append($("<div>").addClass("col-xs-8")
-				.append($("<input>").on("input",_update).addClass("konto").attr("name","splits["+splitId+"][konto]").addClass("form-control")) )
+				.append($("<input>").on("input",_update).addClass("konto").attr("name","splits["+splitId+"][konto]").addClass("form-control").val(konto ? konto : "")) )
 			.append($("<div>").addClass("col-xs-2")
 				.append($("<div>").addClass("input-group")
 					.append($("<input>").change(formatCurrencyField).on("input",_update).addClass("soll").attr("name","splits["+splitId+"][soll]").css("text-align","right").addClass("form-control").val(remaining < 0 ? formatCurrency((-1)*remaining) : ""))
