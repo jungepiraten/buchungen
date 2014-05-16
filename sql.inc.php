@@ -53,14 +53,26 @@ function sqlGetTransaction($guid) {
 	return $transaction;
 }
 
-$cache_accounts = array();
+$cache_accounts = array("code" => array(), "accs" => array());
 function sqlGetAccount($guid) {
 	global $sql, $cache_accounts;
 
-	if (! isset($cache_accounts[$guid])) {
-		$cache_accounts[$guid] = formatAccount($sql->query("select guid, code, name, parent_guid, description, placeholder, hidden from accounts where guid = '".$sql->real_escape_string($guid)."'")->fetch_assoc());
+	if (! isset($cache_accounts["guid"][$guid])) {
+		$account = formatAccount($sql->query("select guid, code, name, parent_guid, description, placeholder, hidden from accounts where guid = '".$sql->real_escape_string($guid)."'")->fetch_assoc());
+		$cache_accounts["accs"][$account["guid"]] = $account;
+		$cache_accounts["code"][$account["code"]] = $account["guid"];
 	}
-	return $cache_accounts[$guid];
+	return $cache_accounts["accs"][$guid];
+}
+function sqlGetAccountByCode($code) {
+	global $sql, $cache_accounts;
+
+	if (! isset($cache_accounts["code"][$code])) {
+		$account = formatAccount($sql->query("select guid, code, name, parent_guid, description, placeholder, hidden from accounts where code = '".$sql->real_escape_string($code)."'")->fetch_assoc());
+		$cache_accounts["accs"][$account["guid"]] = $account;
+		$cache_accounts["code"][$account["code"]] = $account["guid"];
+	}
+	return $cache_accounts["accs"][$cache_accounts["code"][$code]];
 }
 
 function sqlGetAccountNotes($guid) {
@@ -73,17 +85,24 @@ function sqlGetAccountNotes($guid) {
 }
 
 function sqlMaybeAddTransaction($guid, $num, $timestamp, $description) {
+	try {
+		sqlAddTransaction($guid, $num, $timestamp, $description);
+	} catch (Exception $e) {}
+}
+
+function sqlAddTransaction($guid, $num, $timestamp, $description) {
 	global $sql;
 
-	if ($sql->query("select guid from transactions where guid = '" . $sql->real_escape_string($guid) . "'")->num_rows == 0) {
-		$currency = $sql->query("select guid from commodities where namespace = 'CURRENCY' and mnemonic = 'EUR'")->fetch_object()->guid;
-		$stmt = $sql->prepare("insert into transactions (guid, currency_guid, num, post_date, enter_date, description) VALUES (?, ?, ?, ?, NOW(), ?)");
-		$stmt->bind_param("sssss", $guid, $currency, $num, date("Y-m-d H:i:s", $timestamp), $description);
-		$stmt->execute();
-		$stmt = $sql->prepare("insert into slots (obj_guid, name, slot_type, int64_val, string_val, double_val, timespec_val, guid_val, numeric_val_num, numeric_val_denom, gdate_val) values (?, 'date-posted', 10, 0, NULL, 0, NULL, NULL, 0, 1, ?)");
-		$stmt->bind_param("ss", $guid, date("Y-m-d", $timestamp));
-		$stmt->execute();
+	if ($sql->query("select guid from transactions where guid = '" . $sql->real_escape_string($guid) . "'")->num_rows > 0) {
+		throw new Exception("Transaction exists");
 	}
+	$currency = $sql->query("select guid from commodities where namespace = 'CURRENCY' and mnemonic = 'EUR'")->fetch_object()->guid;
+	$stmt = $sql->prepare("insert into transactions (guid, currency_guid, num, post_date, enter_date, description) VALUES (?, ?, ?, ?, NOW(), ?)");
+	$stmt->bind_param("sssss", $guid, $currency, $num, date("Y-m-d H:i:s", $timestamp), $description);
+	$stmt->execute();
+	$stmt = $sql->prepare("insert into slots (obj_guid, name, slot_type, int64_val, string_val, double_val, timespec_val, guid_val, numeric_val_num, numeric_val_denom, gdate_val) values (?, 'date-posted', 10, 0, NULL, 0, NULL, NULL, 0, 1, ?)");
+	$stmt->bind_param("ss", $guid, date("Y-m-d", $timestamp));
+	$stmt->execute();
 }
 
 function sqlAddSplits($guid, $splits) {
