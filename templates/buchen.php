@@ -98,6 +98,18 @@ function get128bitRandom() {
 	return get32bitRandom()+get32bitRandom()+get32bitRandom()+get32bitRandom();
 }
 
+function getInputField(s) {
+	var name = s["name"];
+	var size = "size" in s ? s["size"] : 10;
+	var type = "type" in s ? s["type"] : "text";
+	var label = s["label"];
+
+	return $('<div class="form-group">')
+		.append($('<label class="col-sm-2 control-label">').attr("for",name).text(label))
+		.append($('<div>').addClass("col-sm-"+size)
+			.append($('<input class="form-control">').attr("type",type).attr("name",name)) );
+}
+
 function formatCurrency(value) {
 	if (value == 0)
 		return "";

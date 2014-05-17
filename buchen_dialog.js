@@ -14,6 +14,7 @@ function DialogBuchen(mainKontoPrefix, settings) {
 		for (i in data["splits"]) {
 			this._kontenViews[0]["kw"]._addLine(data["splits"][i]["value"], data["splits"][i]["konto"]);
 		}
+		this._panel.find("input[name=vorgang]").focus();
 	}
 	this.clean = function() {
 		this._panel.find("input").val("");
@@ -104,20 +105,11 @@ function DialogBuchen(mainKontoPrefix, settings) {
 	}
 
 	this._panel = $('<div>')
-		.append('<fieldset>' +
-				'<div class="form-group">' +
-					'<label class="col-sm-2 control-label" for="beleg">Beleg</label>' +
-					'<div class="col-sm-2"><input type="text" class="form-control" name="beleg" /></div>' +
-				'</div>' +
-				'<div class="form-group">' +
-					'<label class="col-sm-2 control-label" for="postdate">Datum</label>' +
-					'<div class="col-sm-2"><input type="date" class="form-control" name="postdate" /></div>' +
-				'</div>' +
-				'<div class="form-group">' +
-					'<label class="col-sm-2 control-label" for="vorgang">Vorgang</label>' +
-					'<div class="col-sm-10"><input type="text" class="form-control" name="vorgang" /></div>' +
-				'</div>' +
-			'</fieldset>')
+		.append($('<fieldset>')
+			.append(getInputField({"name":"beleg", "size":2, "label":"Beleg"}))
+			.append(getInputField({"name":"postdate", "size":2, "label":"Datum", "type":"date"}))
+			.append(getInputField({"name":"vorgang", "label":"Vorgang"}))
+		)
 		.append($('<fieldset>')
 			.append($('<legend>').text("Splits"))
 			.append($('<div class="row">')
