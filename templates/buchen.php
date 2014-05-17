@@ -58,7 +58,7 @@ function addTxTemplate(id, name, buchen) {
 			.click(function () {
 				selectPanel(id);
 			})
-			.attr("href","#" + id + "#")
+			.attr("href","#" + btoa(id + "#"))
 			.text(name) ));
 	panels[id] = buchen;
 }
