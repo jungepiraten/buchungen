@@ -72,8 +72,8 @@ addTxTemplate("test", "Test", new TemplateBuchen());
 
 $(function() {
 	cleanForm();
-	if (location.hash.substring(1).indexOf("#") > 0) {
-		var parameters = location.hash.substring(1).split("#");
+	if (location.hash.substring(1).length > 5) {
+		var parameters = atob(location.hash.substring(1)).split("#",2);
 		selectPanel(parameters[0]);
 		if (parameters[1].length > 0) {
 			currentPanel.load(JSON.parse(parameters[1]));
