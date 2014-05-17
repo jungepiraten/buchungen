@@ -3,6 +3,105 @@ function DialogBuchen(mainKontoPrefix, settings) {
 	this._initValue;
 	this._mainKontoPrefix = mainKontoPrefix;
 	this._settings = settings;
+	this._kontenViews = [];
+
+	this.getPanel = function() {
+		return this._panel;
+	}
+	this.load = function(data) {
+		this._panel.find("input[name=beleg]").val(data["num"]);
+		this._panel.find("input[name=postdate]").val(data["postdate"]);
+		for (i in data["splits"]) {
+			this._kontenViews[0]["kw"]._addLine(data["splits"][i]["value"], data["splits"][i]["konto"]);
+		}
+	}
+	this.clean = function() {
+		this._panel.find("input").val("");
+		this._panel.find(".splits .row").remove();
+		this._kontenViews[0]["kw"].updateView();
+		this._panel.find("input[name=beleg]").focus();
+	}
+	this.evaluate = function() {
+		var errors = [];
+
+		var txid = get128bitRandom();
+		var beleg = this._panel.find("input[name=beleg]").val();
+		var postdate = this._panel.find("input[name=postdate]").val();
+		var vorgang = this._panel.find("input[name=vorgang]").val();
+		var splits = [];
+
+		if (beleg == "") {
+			errors.push({"field":"beleg", "description":"Kein Beleg angegeben"});
+		}
+		if (postdate == "") {
+			errors.push({"field":"postdate", "description":"Kein Buchungsdatum angegeben"});
+		}
+		if (vorgang == "") {
+			errors.push({"field":"vorgang", "description":"Keinen Vorgang definiert"});
+		}
+
+		for (i in this._kontenViews) {
+			Array.prototype.push.apply(splits, this._kontenViews[i]["kw"].getSplits({
+				"kontoprefix": this._kontenViews[i]["prefix"],
+				"errorHandler": function(error) {
+					errors.push(error);
+				}
+			}) );
+		}
+
+		if (splits.length == 0) {
+			errors.push({"field":$(".splits .row:first").find(".konto").attr("name"), "description":"Leere Buchung"});
+		}
+
+		return {
+			"errors" : errors,
+			"buchung": {"guid": txid, "beleg": beleg, "postdate": postdate, "description": vorgang, "splits": splits, "buchen": true}
+		};
+	}
+
+	this._getKontoKategorie = function(kontoCode) {
+		for (var i in this._kontenViews) {
+			for (k in this._kontenViews[i]["ausloeser"]) {
+				var ausloeser = this._kontenViews[i]["ausloeser"][k];
+				if (kontoCode.substring(0,ausloeser.length) == ausloeser) {
+					return i;
+				}
+			}
+		}
+		return null;
+	}
+
+	this._kontenViews.push({"prefix":this._mainKontoPrefix, "kw":new KontenView({
+		"updateCallback": function(entries) {
+			var values = {};
+			this.eachEntry(function (konto, value) {
+				var kategorie = _buchen._getKontoKategorie(konto);
+				if (kategorie != null) {
+					if (!(kategorie in values)) {
+						values[kategorie] = 0;
+					}
+					values[kategorie] -= value;
+				}
+			});
+			for (i in _buchen._kontenViews) {
+				if (i != 0) {
+					_buchen._kontenViews[i]["kw"].updateView(i in values ? values[i] : 0);
+				}
+			}
+		}
+	}) });
+	for (i in this._settings) {
+		this._kontenViews.push({
+			"ausloeser": this._settings[i]["ausloeser"],
+			"prefix": this._settings[i]["kontoprefix"],
+			"kw": new KontenView({
+				"forceLine": {
+					"label": this._settings[i]["label"],
+					"konto": this._settings[i]["konto"],
+				}
+			})
+		});
+	}
 
 	this._panel = $('<div>')
 		.append('<fieldset>' +
@@ -25,171 +124,14 @@ function DialogBuchen(mainKontoPrefix, settings) {
 				.append('<div class="col-xs-8"></div>')
 				.append('<div class="col-xs-2"><strong>Soll</strong></div>')
 				.append('<div class="col-xs-2"><strong>Haben</strong></div>') )
-			.append($('<div class="splits splits-main">').data("kontoprefix", this._mainKontoPrefix))
 			.append(function (){
 				var a=[];
-				for (b in _buchen._settings) {
-					a.push($('<div class="splits">').addClass("splits-" + b).data("kontoprefix", _buchen._settings[b]["kontoprefix"]).html("&nbsp;"));
+				for (b in _buchen._kontenViews) {
+					if (b != 0) {
+						a.push("&nbsp;");
+					}
+					a.push(_buchen._kontenViews[b]["kw"].getPanel());
 				}
 				return a;
 			}()) );
-
-	this.getPanel = function() {
-		return this._panel;
-	}
-	this.load = function(data) {
-		this._panel.find("input[name=beleg]").val(data["num"]);
-		this._panel.find("input[name=postdate]").val(data["postdate"]);
-		for (i in data["splits"]) {
-			this._addBalanceLine(data["splits"][i]["bal"], data["splits"][i]["value"], data["splits"][i]["konto"]);
-			this._checkBalance(data["splits"][i]["bal"]);
-		}
-	}
-	this.clean = function() {
-		this._panel.find("input").val("");
-		this._panel.find(".splits .row").remove();
-		this._checkBalance("main");
-		this._panel.find("input[name=beleg]").focus();
-	}
-	this.evaluate = function() {
-		var errors = [];
-
-		var txid = get128bitRandom();
-		var beleg = this._panel.find("input[name=beleg]").val();
-		var postdate = this._panel.find("input[name=postdate]").val();
-		var vorgang = this._panel.find("input[name=vorgang]").val();
-		var splits = [];
-
-		if (beleg == "") {
-			errors.push({"field":"beleg", "description":"Kein Beleg angegeben"});
-		}
-		if (postdate == "") {
-			errors.push({"field":"postdate", "description":"Kein Buchungsdatum angegeben"});
-		}
-		if (vorgang == "") {
-			errors.push({"field":"vorgang", "description":"Keinen Vorgang definiert"});
-		}
-
-		this._panel.find(".splits .row").each(function (i,row) {
-			var kontoprefix = $(row).parents(".splits").data("kontoprefix");
-			var konto = $(row).find(".konto").val();
-			var soll = $(row).find(".soll").val() * 100;
-			var haben = $(row).find(".haben").val() * 100;
-
-			var value = soll-haben;
-			if (value == 0 && konto != "") {
-				errors.push({"field":$(row).find(".konto").attr("name"), "description":"Nullbuchung"});
-			} else if (value != 0 && konto == "" && ! $(row).find(".konto").is(":hidden")) {
-				errors.push({"field":$(row).find(".konto").attr("name"), "description":"Buchung ohne Konto"});
-			} else if (value != 0) {
-				splits.push({"konto": kontoprefix + konto, "value": value});
-			}
-		});
-
-		if (splits.length == 0) {
-			errors.push({"field":$(".splits .row:first").find(".konto").attr("name"), "description":"Leere Buchung"});
-		}
-
-		return {
-			"errors" : errors,
-			"buchung": {"guid": txid, "beleg": beleg, "postdate": postdate, "description": vorgang, "splits": splits, "buchen": true}
-		};
-	}
-
-	this._getKontoKategorie = function(kontoCode) {
-		for (i in this._settings) {
-			for (k in this._settings[i]["ausloeser"]) {
-				var ausloeser = this._settings[i]["ausloeser"][k];
-				if (kontoCode.substring(0,ausloeser.length) == ausloeser) {
-					return i;
-				}
-			}
-		}
-		return null;
-	}
-	this._checkBalance = function(bal) {
-		var remaining = 0;
-		var remainingRow = null;
-		if (bal == "main") {
-			this._initValue = {}
-			for (i in this._settings) {
-				this._initValue[i] = 0;
-			}
-		} else {
-			if (this._initValue[bal] == 0) {
-				this._panel.find(".splits-"+bal).find(".row").remove();
-				this._panel.find(".splits-"+bal).hide();
-				return;
-			}
-			if (this._panel.find(".splits-"+bal).find(".row").length == 0) {
-				this._addBalanceLine(bal, this._initValue[bal], this._settings[bal]["konto"]);
-				this._panel.find(".splits-"+bal).find(".row:first").find("input").prop("disabled",true);
-				this._panel.find(".splits-"+bal).find(".row:first").find(".konto")
-					.hide()
-					.after($("<strong>").text(this._settings[bal]["label"]));
-			}
-			this._panel.find(".splits-"+bal).find(".row:first").data("new",0);
-			this._panel.find(".splits-"+bal).find(".row:first").find(".soll").val(this._initValue[bal] < 0 ? formatCurrency((-1) * this._initValue[bal]) : "");
-			this._panel.find(".splits-"+bal).find(".row:first").find(".haben").val(this._initValue[bal] > 0 ? formatCurrency(this._initValue[bal]) : "");
-			this._panel.find(".splits-"+bal).show();
-		}
-		this._panel.find(".splits-"+bal+" .row").each(function (i, elem) {
-			if ($(elem).data("new") == "1") {
-				remainingRow = $(elem);
-			} else {
-				if (bal == "main") {
-					var kategorie = _buchen._getKontoKategorie($(elem).find(".konto").val());
-					if (kategorie != null) {
-						_buchen._initValue[kategorie] -= ($(elem).find(".haben").val() - $(elem).find(".soll").val()) * 100;
-					}
-				}
-				remaining -= ($(elem).find(".haben").val() - $(elem).find(".soll").val()) * 100;
-			}
-		});
-
-		if (bal == "main") {
-			for (i in this._initValue) {
-				this._checkBalance(i);
-			}
-		}
-
-		if (remainingRow != null) {
-			remainingRow.find(".soll").val(remaining < 0 ? formatCurrency((-1)*remaining) : "");
-			remainingRow.find(".haben").val(remaining > 0 ? formatCurrency(remaining) : "");
-		} else {
-			this._addBalanceLine(bal, remaining);
-		}
-	}
-	this._addBalanceLine = function(bal, remaining, konto) {
-		function _update() {
-			var row = $(this).parents(".row");
-			if (row.data("new") == "1") {
-				row.data("new", "0");
-			}
-			_buchen._checkBalance(bal);
-		}
-		function formatCurrencyField() {
-			if ($(this).parents(".row").find(".soll").is(":focus") || $(this).parents(".row").find(".haben").is(":focus")) {
-				var value = $(this).parents(".row").find(".haben") - $(this).parents(".row").find(".soll");
-				$(this).parents(".row").find(".soll").val(value < 0 ? formatCurrency((-1)*value) : "")
-				$(this).parents(".row").find(".haben").val(value > 0 ? formatCurrency(value) : "");
-			} else {
-				$(this).val(formatCurrency($(this).val()*100));
-			}
-		}
-
-		var splitId = get32bitRandom();
-		$(".splits-" + bal).append($("<div>").addClass("row").data("new",konto ? "0" : "1")
-			.append($("<div>").addClass("col-xs-8")
-				.append($("<input>").on("input",_update).addClass("konto").attr("name","splits["+splitId+"][konto]").addClass("form-control").val(konto ? konto : "")) )
-			.append($("<div>").addClass("col-xs-2")
-				.append($("<div>").addClass("input-group")
-					.append($("<input>").change(formatCurrencyField).on("input",_update).addClass("soll").attr("name","splits["+splitId+"][soll]").css("text-align","right").addClass("form-control").val(remaining < 0 ? formatCurrency((-1)*remaining) : ""))
-					.append($("<span>").addClass("input-group-addon").text("€")) ))
-			.append($("<div>").addClass("col-xs-2")
-				.append($("<div>").addClass("input-group")
-					.append($("<input>").change(formatCurrencyField).on("input",_update).addClass("haben").attr("name","splits["+splitId+"][haben]").css("text-align","right").addClass("form-control").val(remaining > 0 ? formatCurrency(remaining) : ""))
-					.append($("<span>").addClass("input-group-addon").text("€")) ))
-		);
-	}
 }

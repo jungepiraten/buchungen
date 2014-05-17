@@ -25,7 +25,7 @@ if (isset($_POST["buchen"])) {
 			$splits[] = array(
 				"account_guid" => $account["guid"],
 				"memo" => "",
-				"value" => $split["value"]
+				"value" => $split["value"] * (-1)
 			);
 		}
 
