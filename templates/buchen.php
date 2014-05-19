@@ -68,6 +68,41 @@ addTxTemplate("dialog", "Dialogbuchen", new DialogBuchen("F", {
 	"debitoren":	{"kontoprefix":"D", "konto":"", "ausloeser":["0650", "0655"], "label":"Debitoren"},
 	"kreditoren":	{"kontoprefix":"K", "konto":"", "ausloeser":["1340"], "label":"Kreditoren"},
 }));
+
+var vorlagen=[];
+var _bls = {"BB":null,"BE":"11","BW":null,"BY":"16","HB":null,"HE":null,"HH":"12","MV":null,"NI":"17","NW":-1,"RP":null,"SH":"14","SL":null,"SN":"15","ST":null,"TH":"13"}
+for (var bl in _bls) {
+	var target = _bls[bl];
+	var tts = {"O":"01","F":"02"};
+	for (var t in tts) {
+		var tt = tts[t];
+		if (target < 0) {
+			vorlagen.push({
+				"label": bl+"-"+t,
+				"anteile": [{"konto":"F0951","anteil":-1}, {"konto":"K20002","anteil":0.7}, {"konto":"R","anteil":-0.3}, {"konto":"F2110","anteil":0.3}, {"konto":"R0101"+tt, "anteil":0.3}],
+				"vorgang": function() {
+					return "Mitgliedsbeitrag "+bl+"-"+t+"#"+prompt("Mitgliedsnummer");
+				}
+			});
+		} else {
+			var anteile = [{"konto":"F0951","anteil":-1}, {"konto":"R","anteil":-1}, {"konto":"F2110","anteil":1}];
+			if (target == null)
+				anteile.push({"konto":"R0101"+tt, "anteil":1});
+			else
+				anteile.push({"konto":"R0101"+tt, "anteil":0.5}, {"konto":"R"+target+"01"+tt, "anteil":0.5});
+			vorlagen.push({
+				"label": bl+"-"+t,
+				"anteile": anteile,
+				"vorgang": function() {
+					return "Mitgliedsbeitrag "+this.label+"#"+$("input[name=mitglied]").val();
+				}
+			});
+		}
+	}
+}
+addTxTemplate("mb", "Mitgliedsbeiträge", new VorlageBuchung(vorlagen, [
+	getInputField({"name":"mitglied","size":2, "label":"Mitgliedsnummer"})
+]));
 addTxTemplate("test", "Test", new TemplateBuchen());
 
 $(function() {
@@ -104,10 +139,31 @@ function getInputField(s) {
 	var type = "type" in s ? s["type"] : "text";
 	var label = s["label"];
 
+	var input;
+	switch(type) {
+	case "currency":
+		input = $("<div>").addClass("input-group")
+			.append($('<input class="form-control">').attr("type","text").attr("name",name).css("text-align","right"))
+			.append($("<span>").addClass("input-group-addon").text("€"));
+		break;
+	case "custom":
+		input = s["input"];
+		break;
+	case "select":
+		input = $('<select class="form-control">').attr("name",name);
+		for (i in s["data"]) {
+			input.append($("<option>").attr("value",i).text(s["data"][i]));
+		}
+		break;
+	default:
+		input = $('<input class="form-control">').attr("type",type).attr("name",name);
+		break;
+	}
+
 	return $('<div class="form-group">')
 		.append($('<label class="col-sm-2 control-label">').attr("for",name).text(label))
 		.append($('<div>').addClass("col-sm-"+size)
-			.append($('<input class="form-control">').attr("type",type).attr("name",name)) );
+			.append(input) );
 }
 
 function formatCurrency(value) {
@@ -120,9 +176,10 @@ $("form").submit(function (event) {
 	event.preventDefault();
 	$(".buchen-error").hide();
 
-	var retval = currentPanel.evaluate();
-	var errors = retval.errors;
-	var buchung = retval.buchung;
+	var errors = [];
+	var buchung = currentPanel.evaluate(function (error) {
+		errors.push(error);
+	});
 
 	if (errors.length > 0) {
 		errors.forEach(function (error) {

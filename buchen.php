@@ -33,7 +33,7 @@ if (isset($_POST["buchen"])) {
 		sqlAddSplits($guid, $splits);
 
 		databaseUnlock($year);
-		$result = array("status" => "ok", "splits" => $splits);
+		$result = array("status" => "ok", "guid" => $guid);
 	} catch (Exception $e) {
 		$result = array("status" => "fail", "message" => $e->getMessage());
 	}

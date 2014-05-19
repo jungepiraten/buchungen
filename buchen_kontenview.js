@@ -1,5 +1,6 @@
 function KontenView(settings) {
 	var _view = this;
+	settings = settings || {};
 	this._forceLine = ("forceLine" in settings) ? settings["forceLine"] : null;
 	this._updateCallback = ("updateCallback" in settings) ? settings["updateCallback"] : function() {};
 	this._panel = $('<div class="splits">');

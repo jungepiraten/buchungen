@@ -1,6 +1,5 @@
 function DialogBuchen(mainKontoPrefix, settings) {
 	var _buchen = this;
-	this._initValue;
 	this._mainKontoPrefix = mainKontoPrefix;
 	this._settings = settings;
 	this._kontenViews = [];
@@ -22,9 +21,7 @@ function DialogBuchen(mainKontoPrefix, settings) {
 		this._kontenViews[0]["kw"].updateView();
 		this._panel.find("input[name=beleg]").focus();
 	}
-	this.evaluate = function() {
-		var errors = [];
-
+	this.evaluate = function(errorHandler) {
 		var txid = get128bitRandom();
 		var beleg = this._panel.find("input[name=beleg]").val();
 		var postdate = this._panel.find("input[name=postdate]").val();
@@ -32,32 +29,27 @@ function DialogBuchen(mainKontoPrefix, settings) {
 		var splits = [];
 
 		if (beleg == "") {
-			errors.push({"field":"beleg", "description":"Kein Beleg angegeben"});
+			errorHandler({"field":"beleg", "description":"Kein Beleg angegeben"});
 		}
 		if (postdate == "") {
-			errors.push({"field":"postdate", "description":"Kein Buchungsdatum angegeben"});
+			errorHandler({"field":"postdate", "description":"Kein Buchungsdatum angegeben"});
 		}
 		if (vorgang == "") {
-			errors.push({"field":"vorgang", "description":"Keinen Vorgang definiert"});
+			errorHandler({"field":"vorgang", "description":"Keinen Vorgang definiert"});
 		}
 
 		for (i in this._kontenViews) {
 			Array.prototype.push.apply(splits, this._kontenViews[i]["kw"].getSplits({
 				"kontoprefix": this._kontenViews[i]["prefix"],
-				"errorHandler": function(error) {
-					errors.push(error);
-				}
+				"errorHandler": errorHandler
 			}) );
 		}
 
 		if (splits.length == 0) {
-			errors.push({"field":$(".splits .row:first").find(".konto").attr("name"), "description":"Leere Buchung"});
+			errorHandler({"field":$(".splits .row:first").find(".konto").attr("name"), "description":"Leere Buchung"});
 		}
 
-		return {
-			"errors" : errors,
-			"buchung": {"guid": txid, "beleg": beleg, "postdate": postdate, "description": vorgang, "splits": splits, "buchen": true}
-		};
+		return {"guid": txid, "beleg": beleg, "postdate": postdate, "description": vorgang, "splits": splits, "buchen": true};
 	}
 
 	this._getKontoKategorie = function(kontoCode) {
