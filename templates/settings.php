@@ -44,79 +44,90 @@ foreach ($users as $user) {
 <?php } ?>
 	</tbody>
 </table>
-<form action="" method="post" class="form-horizontal">
+<form action="" method="post" class="form-horizontal" role="form">
 	<fieldset>
-		<div class="modal hide userModal">
+		<div class="modal userModal">
+			<div class="modal-dialog">
+			<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h3>Benutzer</h3>
+				<h4 class="modal-title">Benutzer</h4>
 			</div>
 			<div class="modal-body">
 				<input type="hidden" name="username" value="" />
-				<div class="control-group">
-					<label for="username" class="control-label">Benutzername</label>
-					<div class="controls">
-						<input type="text" name="username" value="" />
+				<div class="form-group">
+					<label for="username" class="col-sm-4 control-label">Benutzername</label>
+					<div class="col-sm-8">
+						<input type="text" name="username" value="" class="form-control" />
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="username" class="control-label">Passwort</label>
-					<div class="controls">
-						<input type="password" name="password" value="" />
+				<div class="form-group">
+					<label for="username" class="col-sm-4 control-label">Passwort</label>
+					<div class="col-sm-8">
+						<input type="password" name="password" value="" class="form-control" />
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="accountPrefixes" class="control-label">Konten</label>
-					<div class="controls">
-						<input type="text" name="accountPrefixes" value="" />
+				<div class="form-group">
+					<label for="accountPrefixes" class="col-sm-4 control-label">Konten</label>
+					<div class="col-sm-8">
+						<input type="text" name="accountPrefixes" value="" class="form-control" />
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="grant" class="control-label">Grant</label>
-					<div class="controls">
-						<input type="checkbox" name="grant" value="1" />
+				<div class="form-group">
+					<div class="checkbox col-sm-offset-4 col-sm-8">
+						<label>
+							<input type="checkbox" name="grant" value="1" /> Grant
+						</label>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="database" class="control-label">Datenbank</label>
-					<div class="controls">
-						<input type="checkbox" name="database" value="1" />
+				<div class="form-group">
+					<div class="checkbox col-sm-offset-4 col-sm-8">
+						<label>
+							<input type="checkbox" name="database" value="1" /> Datenbank
+						</label>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="buchen" class="control-label">Buchen</label>
-					<div class="controls">
-						<input type="checkbox" name="buchen" value="1" />
+				<div class="form-group">
+					<div class="checkbox col-sm-offset-4 col-sm-8">
+						<label>
+							<input type="checkbox" name="buchen" value="1" /> Buchen
+						</label>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="kostenstellen" class="control-label">Kostenstellen</label>
-					<div class="controls">
-						<input type="checkbox" name="kostenstellen" value="1" />
+				<div class="form-group">
+					<div class="checkbox col-sm-offset-4 col-sm-8">
+						<label>
+							<input type="checkbox" name="kostenstellen" value="1" /> Kostenstellen
+						</label>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="belege" class="control-label">Belege</label>
-					<div class="controls">
-						<input type="checkbox" name="belege" value="1" />
+				<div class="form-group">
+					<div class="checkbox col-sm-offset-4 col-sm-8">
+						<label>
+							<input type="checkbox" name="belege" value="1" /> Belege
+						</label>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="verifyTransaction" class="control-label">Verifizieren</label>
-					<div class="controls">
-						<input type="checkbox" name="verifyTransaction" value="1" />
+				<div class="form-group">
+					<div class="checkbox col-sm-offset-4 col-sm-8">
+						<label>
+							<input type="checkbox" name="verifyTransaction" value="1" /> Verifizieren
+						</label>
 					</div>
 				</div>
-				<div class="control-group">
-					<label for="simpleTransactions" class="control-label">Einfache Ansicht</label>
-					<div class="controls">
-						<input type="checkbox" name="simpleTransactions" value="1" />
+				<div class="form-group">
+					<div class="checkbox col-sm-offset-4 col-sm-8">
+						<label>
+							<input type="checkbox" name="simpleTransactions" value="1" /> Einfache Ansicht
+						</label>
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="submit" class="btn btn-primary saveButton" value="1">Speichern</button>
 				<button type="submit" class="btn btn-danger" name="removeUser" value="1">Löschen</button>
+			</div>
+			</div>
 			</div>
 		</fieldset>
 	</form>
