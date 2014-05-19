@@ -68,6 +68,7 @@ function loginInitSession($username) {
 		"grant" => false,
 		"database" => false,
 		"buchen" => false,
+		"kostenstellen" => false,
 		"belege" => false,
 		"verifyTransaction" => false,
 		"simpleTransactions" => false,
@@ -75,7 +76,7 @@ function loginInitSession($username) {
 	foreach ($groups as $group) {
 		if (isset($authDb->{$group})) {
 			$auth["accountPrefixes"] = array_merge($auth["accountPrefixes"], $authDb->{$group}->accountPrefixes);
-			foreach (array("grant", "database", "buchen", "belege", "verifyTransaction", "simpleTransactions") as $a) {
+			foreach (array("grant", "database", "buchen", "kostenstellen", "belege", "verifyTransaction", "simpleTransactions") as $a) {
 				$auth[$a] = $auth[$a] || (isset($authDb->{$group}->{$a}) && $authDb->{$group}->{$a});
 			}
 		}
@@ -94,7 +95,7 @@ function loginMatchPassword($user, $pass) {
 	}
 }
 
-function loginCreateUser($user, $accountPrefixes = array(), $grant = 0, $database = 0, $buchen = 0, $belege = 0, $verifyTransaction = 0, $simpleTransactions = 1) {
+function loginCreateUser($user, $accountPrefixes = array(), $grant = 0, $database = 0, $buchen = 0, $kostenstellen = 0, $belege = 0, $verifyTransaction = 0, $simpleTransactions = 1) {
 	global $authDb;
 
 	$authDb->$user = (object) array(
@@ -102,6 +103,7 @@ function loginCreateUser($user, $accountPrefixes = array(), $grant = 0, $databas
 		"grant" => $grant,
 		"database" => $database,
 		"buchen" => $buchen,
+		"kostenstellen" => $kostenstellen,
 		"belege" => $belege,
 		"verifyTransaction" => $verifyTransaction,
 		"simpleTransactions" => $simpleTransactions,
@@ -116,13 +118,14 @@ function loginRemoveUser($user) {
 	file_put_contents("lock/authDb", json_encode($authDb));
 }
 
-function loginModifyUser($user, $accountPrefixes, $grant, $database, $buchen, $belege, $verifyTransaction, $simpleTransactions) {
+function loginModifyUser($user, $accountPrefixes, $grant, $database, $buchen, $kostenstellen, $belege, $verifyTransaction, $simpleTransactions) {
 	global $authDb;
 
 	$authDb->$user->accountPrefixes = $accountPrefixes;
 	$authDb->$user->grant = $grant;
 	$authDb->$user->database = $database;
 	$authDb->$user->buchen = $buchen;
+	$authDb->$user->kostenstellen = $kostenstellen;
 	$authDb->$user->belege = $belege;
 	$authDb->$user->verifyTransaction = $verifyTransaction;
 	$authDb->$user->simpleTransactions = $simpleTransactions;

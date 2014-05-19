@@ -31,6 +31,8 @@ foreach ($users as $user) {
 		$perms[] = "Verifizieren";
 	if ($user["buchen"])
 		$perms[] = "Buchen";
+	if ($user["kostenstellen"])
+		$perms[] = "Kostenstellen";
 	if ($user["simpleTransactions"])
 		$perms[] = "Einfache Ansicht";
 ?>
@@ -85,6 +87,12 @@ foreach ($users as $user) {
 					<label for="buchen" class="control-label">Buchen</label>
 					<div class="controls">
 						<input type="checkbox" name="buchen" value="1" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label for="kostenstellen" class="control-label">Kostenstellen</label>
+					<div class="controls">
+						<input type="checkbox" name="kostenstellen" value="1" />
 					</div>
 				</div>
 				<div class="control-group">
