@@ -94,14 +94,15 @@ for (var bl in _bls) {
 				"label": bl+"-"+t,
 				"anteile": anteile,
 				"vorgang": function() {
-					return "Mitgliedsbeitrag "+this.label+"#"+$("input[name=mitglied]").val();
+					return "Mitgliedsbeitrag "+$("input[name=jahr]").val()+" "+this.label+"#"+$("input[name=mitglied]").val();
 				}
 			});
 		}
 	}
 }
 addTxTemplate("mb", "Mitgliedsbeiträge", new VorlageBuchung(vorlagen, [
-	getInputField({"name":"mitglied","size":2, "label":"Mitgliedsnummer"})
+	getInputField({"name":"jahr","size":2, "label":"Jahr", "value":new Date().getFullYear()}),
+	getInputField({"name":"mitglied","size":2, "label":"Mitgliedsnummer"}),
 ]));
 addTxTemplate("test", "Test", new TemplateBuchen());
 
@@ -138,25 +139,26 @@ function getInputField(s) {
 	var size = "size" in s ? s["size"] : 10;
 	var type = "type" in s ? s["type"] : "text";
 	var label = s["label"];
+	var value = "value" in s ? s["value"] : "";
 
 	var input;
 	switch(type) {
 	case "currency":
 		input = $("<div>").addClass("input-group")
-			.append($('<input class="form-control">').attr("type","text").attr("name",name).css("text-align","right"))
+			.append($('<input class="form-control">').attr("type","text").attr("name",name).css("text-align","right").val(value).data("init-value",value))
 			.append($("<span>").addClass("input-group-addon").text("€"));
 		break;
 	case "custom":
 		input = s["input"];
 		break;
 	case "select":
-		input = $('<select class="form-control">').attr("name",name);
+		input = $('<select class="form-control">').attr("name",name).data("init-value",value);
 		for (i in s["data"]) {
-			input.append($("<option>").attr("value",i).text(s["data"][i]));
+			input.append($("<option>").attr("value",i).prop("selected",i == value).text(s["data"][i]));
 		}
 		break;
 	default:
-		input = $('<input class="form-control">').attr("type",type).attr("name",name);
+		input = $('<input class="form-control">').attr("type",type).attr("name",name).val(value).data("init-value",value);
 		break;
 	}
 

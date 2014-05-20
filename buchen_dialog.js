@@ -16,7 +16,7 @@ function DialogBuchen(mainKontoPrefix, settings) {
 		this._panel.find("input[name=vorgang]").focus();
 	}
 	this.clean = function() {
-		this._panel.find("input").val("");
+		this._panel.find("input").val(function () {return $(this).data("init-value");});
 		this._panel.find(".splits .row").remove();
 		this._kontenViews[0]["kw"].updateView();
 		this._panel.find("input[name=beleg]").focus();
