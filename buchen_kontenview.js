@@ -1,6 +1,7 @@
 function KontenView(settings) {
 	var _view = this;
 	settings = settings || {};
+	this._kontoprefix = ("kontoprefix" in settings) ? settings["kontoprefix"] : "";
 	this._forceLine = ("forceLine" in settings) ? settings["forceLine"] : null;
 	this._updateCallback = ("updateCallback" in settings) ? settings["updateCallback"] : function() {};
 	this._panel = $('<div class="splits">');
@@ -12,15 +13,13 @@ function KontenView(settings) {
 	this.eachEntry = function(callback) {
 		this._panel.find(".row").each(function (i,elem) {
 			callback(
-				$(elem).find(".konto").val(),
+				$(elem).find(".konto").val() !== undefined ? $(elem).find(".konto").val().split(" ")[0] : "",
 				($(elem).find(".haben").val() - $(elem).find(".soll").val()) * 100,
 				$(elem).find(".konto")
 			);
 		});
 	}
-	this.getSplits = function(settings) {
-		var kontoprefix = "kontoprefix" in settings ? settings["kontoprefix"] : "";
-		var errorHandler = settings["errorHandler"];
+	this.getSplits = function(errorHandler) {
 		var splits = [];
 		this.eachEntry(function (konto, value, kontoField) {
 			if (value == 0 && konto != "") {
@@ -28,9 +27,9 @@ function KontenView(settings) {
 			} else if (value != 0 && konto == "" && ! kontoField.is(":hidden")) {
 				errorHandler({"field":kontoField.attr("name"), "description":"Buchung ohne Konto"});
 			} else if (value != 0) {
-				splits.push({"konto": kontoprefix + konto, "value": value});
+				splits.push({"konto": this._kontoprefix + konto, "value": value});
 			}
-		});
+		}.bind(this));
 		return splits;
 	}
 	this.updateView = function(value) {
@@ -89,17 +88,20 @@ function KontenView(settings) {
 			}
 		}
 
-		var splitId = get32bitRandom();
 		this._panel.append($("<div>").addClass("row").data("new",konto != undefined ? "0" : "1")
 			.append($("<div>").addClass("col-xs-8")
-				.append($("<input>").on("input",_update).addClass("konto").attr("name","splits["+splitId+"][konto]").addClass("form-control").val(konto ? konto : "")) )
+				.append(getKontoInput(this._kontoprefix)
+					.attr("name", "konten["+get32bitRandom()+"]")
+					.on("input", _update)
+					.addClass("konto")
+					.val(konto ? konto : "") ))
 			.append($("<div>").addClass("col-xs-2")
 				.append($("<div>").addClass("input-group")
-					.append($("<input>").change(formatCurrencyField).on("input",_update).addClass("soll").attr("name","splits["+splitId+"][soll]").css("text-align","right").addClass("form-control").val(remaining < 0 ? formatCurrency((-1)*remaining) : ""))
+					.append($("<input>").change(formatCurrencyField).on("input",_update).addClass("soll").css("text-align","right").addClass("form-control").val(remaining < 0 ? formatCurrency((-1)*remaining) : ""))
 					.append($("<span>").addClass("input-group-addon").text("€")) ))
 			.append($("<div>").addClass("col-xs-2")
 				.append($("<div>").addClass("input-group")
-					.append($("<input>").change(formatCurrencyField).on("input",_update).addClass("haben").attr("name","splits["+splitId+"][haben]").css("text-align","right").addClass("form-control").val(remaining > 0 ? formatCurrency(remaining) : ""))
+					.append($("<input>").change(formatCurrencyField).on("input",_update).addClass("haben").css("text-align","right").addClass("form-control").val(remaining > 0 ? formatCurrency(remaining) : ""))
 					.append($("<span>").addClass("input-group-addon").text("€")) ))
 		);
 	}

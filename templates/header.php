@@ -18,6 +18,7 @@ header("Content-Type: text/html; charset=UTF-8");
                 <script src="https://static.junge-piraten.de/jquery-1.8.2.min.js"></script>
 -->
                 <link href="res/treeview.css" rel="stylesheet" />
+		<script src="/typeahead.jquery.js"></script>
 		<script src="https://haushalt.junge-piraten.de/d3.v3.min.js"></script>
                 <link rel="icon" type="image/png" href="https://static.junge-piraten.de/favicon.png" />
 
@@ -29,6 +30,9 @@ header("Content-Type: text/html; charset=UTF-8");
 
 <style type="text/css">
 .strike-trough {text-decoration:line-through;}
+.tt-hint {display:none;}
+.tt-dropdown-menu {background:white; padding:0.5em 2em;}
+.tt-cursor {background:lightgray;}
 </style>
 
                 <title><?php print($title) ?> &bull; Junge Piraten Kassenbuch</title>
@@ -53,6 +57,9 @@ header("Content-Type: text/html; charset=UTF-8");
 <?php } ?>
 <?php if ($auth != null && $auth["kostenstellen"]) { ?>
 						<li><a href="kostenstellen.php">Kostenstellen</a></li>
+<?php } ?>
+<?php if ($auth != null && $auth["kreditoren"]) { ?>
+						<li><a href="kreditoren.php">Kreditoren</a></li>
 <?php } ?>
 					</ul>
 				</div>

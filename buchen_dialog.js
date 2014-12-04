@@ -10,10 +10,20 @@ function DialogBuchen(mainKontoPrefix, settings) {
 	this.load = function(data) {
 		this._panel.find("input[name=beleg]").val(data["num"]);
 		this._panel.find("input[name=postdate]").val(data["postdate"]);
+
+		// Main-KontenView-Splits have to be done before dealing with minors (to activate minors)
+		data["splits"].sort(function (a,b) {
+			return b["konto"].charCodeAt(0) + a["konto"].charCodeAt(0) - 2 * this._kontenViews[0]["prefix"].charCodeAt(0);
+		}.bind(this));
 		for (i in data["splits"]) {
-			this._kontenViews[0]["kw"]._addLine(data["splits"][i]["value"], data["splits"][i]["konto"]);
+			var _kontenView = this._kontenViews.filter(function (_kw) {return data["splits"][i]["konto"].indexOf(_kw["prefix"]) === 0; })[0];
+			if (data["splits"][i]["konto"] !== _kontenView["prefix"]) {
+				_kontenView["kw"]._addLine(data["splits"][i]["value"], data["splits"][i]["konto"].substring(_kontenView["prefix"].length));
+				_kontenView["kw"].updateView();
+			}
 		}
-		this._panel.find("input[name=vorgang]").focus();
+		this._kontenViews[0]["kw"].updateView();
+		this._panel.find("input[name=vorgang]").val(data["vorgang"]).focus();
 	}
 	this.clean = function() {
 		this._panel.find("input").val(function () {return $(this).data("init-value");});
@@ -39,10 +49,7 @@ function DialogBuchen(mainKontoPrefix, settings) {
 		}
 
 		for (i in this._kontenViews) {
-			Array.prototype.push.apply(splits, this._kontenViews[i]["kw"].getSplits({
-				"kontoprefix": this._kontenViews[i]["prefix"],
-				"errorHandler": errorHandler
-			}) );
+			Array.prototype.push.apply(splits, this._kontenViews[i].kw.getSplits(errorHandler));
 		}
 
 		if (splits.length == 0) {
@@ -65,6 +72,7 @@ function DialogBuchen(mainKontoPrefix, settings) {
 	}
 
 	this._kontenViews.push({"prefix":this._mainKontoPrefix, "kw":new KontenView({
+		"kontoprefix": this._mainKontoPrefix,
 		"updateCallback": function(entries) {
 			var values = {};
 			this.eachEntry(function (konto, value) {
@@ -88,6 +96,7 @@ function DialogBuchen(mainKontoPrefix, settings) {
 			"ausloeser": this._settings[i]["ausloeser"],
 			"prefix": this._settings[i]["kontoprefix"],
 			"kw": new KontenView({
+				"kontoprefix": this._settings[i]["kontoprefix"],
 				"forceLine": {
 					"label": this._settings[i]["label"],
 					"konto": this._settings[i]["konto"],

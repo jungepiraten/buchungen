@@ -7,10 +7,11 @@ loginRequire("buchen");
 
 if (isset($_POST["buchen"])) {
 	try {
-		if (databaseIsLocked($year)) {
-			throw new Exception("Datenbank gesperrt");
+		foreach (array("guid","beleg","postdate","description","splits") as $param) {
+			if (!isset($_POST[$param])) {
+				throw new Exception("Missing parameter ".$param);
+			}
 		}
-		databaseLock($year, basename(__FILE__), "localhost");
 
 		$guid = $_POST["guid"];
 		$num = $_POST["beleg"];
@@ -29,10 +30,14 @@ if (isset($_POST["buchen"])) {
 			);
 		}
 
+		if (databaseIsLocked($year)) {
+			throw new Exception("Datenbank gesperrt");
+		}
+		databaseLock($year, basename(__FILE__), "localhost");
 		sqlAddTransaction($guid, $num, $postdate, $description);
 		sqlAddSplits($guid, $splits);
-
 		databaseUnlock($year);
+
 		$result = array("status" => "ok", "guid" => $guid);
 	} catch (Exception $e) {
 		$result = array("status" => "fail", "message" => $e->getMessage());

@@ -93,65 +93,70 @@ include(dirname(__FILE__) . "/header.php");
 			</tr>
 		</tfoot>
 	</table>
-	<div class="modal hide transactionDetailsModal">
-		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<div class="validations pull-right"></div>
-			<h3>Details <span class="transactionId"></span></h3>
-		</div>
-		<div class="modal-body">
-			<p class="description"></p>
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th>Konto</th>
-						<th>Vermerk</th>
-						<th>Soll</th>
-						<th>Haben</th>
-					</tr>
-				</thead>
-				<tbody class="splits">
-				</tbody>
-			</table>
-			<div class="verifyOptions">
-				<label class="checkbox">
-					<input type="checkbox" />
-					Beleg vorhanden
-				</label>
-				<label class="checkbox">
-					<input type="checkbox" />
-					Buchungsdatum stimmt mit Beleg überein
-				</label>
-				<label class="checkbox">
-					<input type="checkbox" />
-					Betrag stimmt mit Beleg überein
-				</label>
-				<label class="checkbox">
-					<input type="checkbox" />
-					Buchungskonten stimmen mit Beleg überein
-				</label>
-				<label class="checkbox">
-					<input type="checkbox" />
-					Beschluss nicht nötig oder korrekt eingetragen
-				</label>
-				<label class="checkbox">
-					<input type="checkbox" />
-					Angegebene Anlagen sind vorhanden und Angaben stimmen
-				</label>
-				<label class="checkbox">
-					<input type="checkbox" />
-					Buchungskonten sind sinnvoll gewählt und sofern nötig dokumentiert
-				</label>
-				<label class="checkbox">
-					<input type="checkbox" />
-					Entweder kein Mitgliedsbeitrag oder Beitrag, Mitgliedsname, -nummer und Bundesland sind mit der Mitgliederverwaltung abgeglichen
-				</label>
+	<div class="modal transactionDetailsModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<div class="validations pull-right"></div>
+					<h3>Details <span class="transactionId"></span></h3>
+				</div>
+				<div class="modal-body">
+					<p class="description"></p>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Konto</th>
+								<th>Vermerk</th>
+								<th>Soll</th>
+								<th>Haben</th>
+							</tr>
+						</thead>
+						<tbody class="splits">
+						</tbody>
+					</table>
+					<div class="verifyOptions">
+						<label class="checkbox">
+							<input type="checkbox" />
+							Beleg vorhanden
+						</label>
+						<label class="checkbox">
+							<input type="checkbox" />
+							Buchungsdatum stimmt mit Beleg überein
+						</label>
+						<label class="checkbox">
+							<input type="checkbox" />
+							Betrag stimmt mit Beleg überein
+						</label>
+						<label class="checkbox">
+							<input type="checkbox" />
+							Buchungskonten stimmen mit Beleg überein
+						</label>
+						<label class="checkbox">
+							<input type="checkbox" />
+							Beschluss nicht nötig oder korrekt eingetragen
+						</label>
+						<label class="checkbox">
+							<input type="checkbox" />
+							Angegebene Anlagen sind vorhanden und Angaben stimmen
+						</label>
+						<label class="checkbox">
+							<input type="checkbox" />
+							Buchungskonten sind sinnvoll gewählt und sofern nötig dokumentiert
+						</label>
+						<label class="checkbox">
+							<input type="checkbox" />
+							Entweder kein Mitgliedsbeitrag oder Beitrag, Mitgliedsname, -nummer und Bundesland sind mit der Mitgliederverwaltung abgeglichen
+						</label>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<a class="btn btn-danger revokeValidation">Freigeben</a>
+					<a class="btn btn-success createValidation">Validieren</a>
+					<a class="btn btn-info createNum">Beleg erstellen</a>
+					<a class="btn btn-danger revokeTransaction">Stornieren</a>
+				</div>
 			</div>
-		</div>
-		<div class="modal-footer">
-			<a class="btn btn-danger revokeValidation">Freigeben</a>
-			<a class="btn btn-success createValidation">Validieren</a>
-			<a class="btn btn-info createNum">Beleg erstellen</a>
 		</div>
 	</div>
 <script type="text/javascript">
@@ -368,6 +373,15 @@ function showTransaction(data) {
 		anmerkungen: data.description
 	};
 	$(".transactionDetailsModal").find(".createNum").attr("href","belege.php?_=" + encodeURIComponent(JSON.stringify(belegData)));
+
+	var revokeTransactionData = {
+		vorgang: "Storno " + data.description,
+		splits: data.splits.map(function (split) {
+			return {"value": split["value"]*(-1)*(-1), "konto": split["account_code"]};
+		}),
+	};
+	$(".transactionDetailsModal").find(".revokeTransaction").attr("href","buchen.php#"+btoa("dialog#" + JSON.stringify(revokeTransactionData)));
+
 	$(".transactionDetailsModal").modal('show');
 }
 

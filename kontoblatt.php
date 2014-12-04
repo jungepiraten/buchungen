@@ -8,11 +8,15 @@ loginRequire();
 
 $guid = $_REQUEST["guid"];
 
-list($accounts, $accounts_code2guid, $journal, $nums) = getKassenbuch();
+list($accounts, $accounts_code2guid, $journal, $nums, $partners) = getKassenbuch();
 $account = $accounts[$guid];
 
-sendPDF("konto-" . $account["guid"] . ".pdf", "vorlagen/kontoblatt.tex.php", array(
-	"year" => $year,
-	"accounts" => $accounts,
-	"account" => $account
-));
+if (isset($_REQUEST["format"]) && $_REQUEST["format"] == "csv") {
+	include("vorlagen/kontoblatt.csv.php");
+} else {
+	sendPDF("konto-" . $account["guid"] . ".pdf", "vorlagen/kontoblatt.tex.php", array(
+		"year" => $year,
+		"accounts" => $accounts,
+		"account" => $account
+	));
+}

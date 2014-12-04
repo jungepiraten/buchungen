@@ -1,6 +1,6 @@
 <?php
 
-$year = "2013";
+$year = date("Y");
 if (isset($_REQUEST["year"])) {
 	$year = intval($_REQUEST["year"]);
 }

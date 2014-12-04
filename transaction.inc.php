@@ -9,7 +9,7 @@ function verifyTransaction($username, $transaction) {
 	}
 	sort($splitHashes);
 	return md5(serialize(array(
-		$username, $transaction["guid"], $transaction["num"], $transaction["date"], $transaction["description"], $splitHashes
+		$username, $transaction["guid"], $transaction["num"], $transaction["date"], $transaction["enter_date"], $transaction["description"], $splitHashes
 	)));
 }
 

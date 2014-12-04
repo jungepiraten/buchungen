@@ -49,6 +49,15 @@ class VPanel {
 		$this->authhash = hash_hmac("md5", $data->challenge, $this->apikey);
 		return $data->result->mitglied;
 	}
+
+	function addMitgliedBeitragBuchung($mitgliedid, $beitragid, $timestamp, $gliederungid, $vermerk, $hoehe) {
+		$data = json_decode(file_get_contents($this->apiurl . 'api/mitgliedbeitragbuchen.php?' . http_build_query(array("sessionid" => $this->sessionid, "authhash" => $this->authhash, "mitgliedid" => $mitgliedid, "beitragid" => $beitragid, "timestamp" => $timestamp, "gliederungid" => $gliederungid, "vermerk" => $vermerk, "hoehe" => $hoehe))));
+		if (isset($data->result->failed)) {
+			throw new Exception('Verwaltungs-API liefert Fehlercode ' . $ret->result->failed);
+		}
+		$this->authhash = hash_hmac("md5", $data->challenge, $this->apikey);
+		return $data->result->success;
+	}
 }
 
 function build_curl_array($arr, $prefix = "", &$inarray = array()) {

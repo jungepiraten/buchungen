@@ -51,23 +51,27 @@ foreach ($rootAccounts as $guid) {
 	</ul>
 </div>
 
-<div class="modal hide accountModal">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Details <span class="accountLabel"></span> (<span class="accountCode"></span>)</h3>
-	</div>
-	<div class="modal-body">
-		<p class="description"></p>
-		<div class="notificationsPanel hide">
-			Muh
+<div class="modal accountModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Details <span class="accountLabel"></span> (<span class="accountCode"></span>)</h4>
+			</div>
+			<div class="modal-body">
+				<p class="description"></p>
+				<div class="notificationsPanel hide">
+					Muh
+				</div>
+			</div>
+			<div class="modal-footer">
+				<a class="btn btn-info showKontoblatt">Kontoblatt</a>
+				<a class="btn btn-info showTransactions">Bewegungen</a>
+				<a class="btn btn-warning manageNotifications">Benachrichtigungen</a>
+				<a class="btn btn-success addNotifications hide notificationsButton">Neu anlegen</a>
+				<a class="btn btn-primary saveNotifications hide notificationsButton">Speichern</a>
+			</div>
 		</div>
-	</div>
-	<div class="modal-footer">
-		<a class="btn btn-info showKontoblatt">Kontoblatt</a>
-		<a class="btn btn-info showTransactions">Bewegungen</a>
-		<a class="btn btn-warning manageNotifications">Benachrichtigungen</a>
-		<a class="btn btn-success addNotifications hide notificationsButton">Neu anlegen</a>
-		<a class="btn btn-primary saveNotifications hide notificationsButton">Speichern</a>
 	</div>
 </div>
 <script type="text/javascript">

@@ -10,8 +10,10 @@ if (!function_exists("getHierarchyCount")) {
 	}
 }
 
+/** \hspace{<?php print(getHierarchyCount($account["guid"])) ?>cm} **/
+
 ?>
-\subsection{\hspace{<?php print(getHierarchyCount($account["guid"])) ?>cm} <?php print($account["code"]) ?> <?php print(latexSpecialChars($account["label"])) ?>}
+\section{<?php print(substr($account["code"],1)) ?> <?php print(latexSpecialChars($account["label"])) ?>}
 \label{konto:<?php print($account["guid"]) ?>}
 <?php
 
@@ -23,7 +25,7 @@ if (!function_exists("printFullPath")) {
 		} else {
 ?>\mbox{\hyperref[kontenbuch]{Kontenbuch}}<?php
 		}
-?> :: \mbox{\hyperref[konto:<?php print($guid) ?>]{<?php print($accounts[$guid]["code"]) ?> <?php print(latexSpecialChars($accounts[$guid]["label"])) ?>}}<?php
+?> :: \mbox{\hyperref[konto:<?php print($guid) ?>]{<?php print(substr($accounts[$guid]["code"],1)) ?> <?php print(latexSpecialChars($accounts[$guid]["label"])) ?>}}<?php
 	}
 }
 
@@ -33,7 +35,7 @@ printFullPath($account["guid"]);
 <?php print(latexSpecialChars($account["description"])) ?>
 
 <?php if (!empty($account["subAccounts"])) { ?>
-\subsubsection{Unterkonten}
+\subsection*{Unterkonten}
 \begin{longtable}{L{1.5cm}L{9.5cm}R{2.5cm}R{2.5cm}}
  \hline
  \hline \textbf{\#} & \textbf{Konto} & \textbf{Teilsaldo} & \textbf{Saldo} \\
@@ -41,8 +43,8 @@ printFullPath($account["guid"]);
  \hline
  \endhead
 <?php $saldo = 0; foreach ($account["subAccounts"] as $code => $child_guid) { $subAccount = $accounts[$child_guid]; $accSaldo = $subAccount["saldo"]*$subAccount["saldoSign"]; $saldo += $accSaldo; ?>
- \hline \textbf{\hyperref[konto:<?php print($subAccount["guid"]) ?>]{<?php print($subAccount["code"]) ?>}} & \hyperref[konto:<?php print($subAccount["guid"]) ?>]{<?php print(latexSpecialChars($subAccount["label"])) ?>} & <?php print(latexFormatCurrency($accSaldo)) ?> & <?php print(latexFormatCurrency($saldo)) ?> \\
-<?php } $ownSaldo = $account["saldo"]*$account["saldoSign"] - $saldo; if ($ownSaldo != 0) { ?>
+ \hline \textbf{\hyperref[konto:<?php print($subAccount["guid"]) ?>]{<?php print(substr($subAccount["code"],1)) ?>}} & \hyperref[konto:<?php print($subAccount["guid"]) ?>]{<?php print(latexSpecialChars($subAccount["label"])) ?>} & <?php print(latexFormatCurrency($accSaldo)) ?> & <?php print(latexFormatCurrency($saldo)) ?> \\
+<?php } $ownSaldo = $account["saldo"]*$account["saldoSign"] - $saldo; if ($ownSaldo != 0 && strlen($account["code"]) > 1) { ?>
  \hline & Direkt gebucht & <?php print(latexFormatCurrency($ownSaldo)) ?> & <?php print(latexFormatCurrency($account["saldo"]*$account["saldoSign"])) ?> \\
 <?php } ?>
  \hline
@@ -50,8 +52,8 @@ printFullPath($account["guid"]);
 \end{longtable}
 <?php } ?>
 
-<?php if (!empty($account["transactions"])) { ?>
-\subsubsection{Buchungen}
+<?php if (!empty($account["transactions"]) && strlen($account["code"]) > 1) { ?>
+\subsection*{Buchungen}
 \begin{longtable}{R{1cm}L{1.3cm}L{6.2cm}R{2.2cm}R{2.2cm}R{2.5cm}}
  \hline
  \hline \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
@@ -71,5 +73,5 @@ printFullPath($account["guid"]);
 <?php } ?>
 
 <?php if (empty($account["subAccounts"]) && empty($account["transactions"])) { ?>
-\subsubsection{Nicht bebucht}
+\subsection*{Nicht bebucht}
 <?php } ?>

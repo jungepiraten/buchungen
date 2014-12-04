@@ -8,7 +8,7 @@ loginRequire();
 
 list($accounts, $accounts_code2guid, $journal, $nums, $partners) = getKassenbuch();
 
-sendPDF("kassenbuch.pdf", "vorlagen/kassenbuch.tex.php", array(
+sendPDF("labels.pdf", "vorlagen/labels.tex.php", array(
 	"year" => $year,
 	"accounts" => $accounts,
 	"accounts_code2guid" => $accounts_code2guid,

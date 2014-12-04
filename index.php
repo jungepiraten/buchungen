@@ -8,14 +8,14 @@ if ($auth["grant"] && isset($_POST["createUser"])) {
 	if (empty($_POST["username"])) {
 		die("Leerer Benutzername");
 	} else {
-		loginCreateUser(stripslashes($_POST["username"]), (empty($_POST["accountPrefixes"]) ? array() : explode(",", $_POST["accountPrefixes"])), isset($_POST["grant"]), isset($_POST["database"]), isset($_POST["buchen"]), isset($_POST["kostenstellen"]), isset($_POST["belege"]), isset($_POST["verifyTransaction"]), isset($_POST["simpleTransactions"]));
+		loginCreateUser(stripslashes($_POST["username"]), (empty($_POST["accountPrefixes"]) ? array() : explode(",", $_POST["accountPrefixes"])), isset($_POST["grant"]), isset($_POST["database"]), isset($_POST["buchen"]), isset($_POST["kostenstellen"]), isset($_POST["kreditoren"]), isset($_POST["belege"]), isset($_POST["verifyTransaction"]), isset($_POST["simpleTransactions"]));
 	}
 	header("Location: index.php");
 	exit;
 }
 
 if ($auth["grant"] && isset($_POST["modifyUser"])) {
-	loginModifyUser(stripslashes($_POST["username"]), (empty($_POST["accountPrefixes"]) ? array() : explode(",", $_POST["accountPrefixes"])), isset($_POST["grant"]), isset($_POST["database"]), isset($_POST["buchen"]), isset($_POST["kostenstellen"]), isset($_POST["belege"]), isset($_POST["verifyTransaction"]), isset($_POST["simpleTransactions"]));
+	loginModifyUser(stripslashes($_POST["username"]), (empty($_POST["accountPrefixes"]) ? array() : explode(",", $_POST["accountPrefixes"])), isset($_POST["grant"]), isset($_POST["database"]), isset($_POST["buchen"]), isset($_POST["kostenstellen"]), isset($_POST["kreditoren"]), isset($_POST["belege"]), isset($_POST["verifyTransaction"]), isset($_POST["simpleTransactions"]));
 	header("Location: index.php");
 	exit;
 }
@@ -36,6 +36,7 @@ if ($auth["grant"]) {
 			"database" => isset($user->database) && $user->database,
 			"buchen" => isset($user->buchen) && $user->buchen,
 			"kostenstellen" => isset($user->kostenstellen) && $user->kostenstellen,
+			"kreditoren" => isset($user->kreditoren) && $user->kreditoren,
 			"belege" => isset($user->belege) && $user->belege,
 			"verifyTransaction" => isset($user->verifyTransaction) && $user->verifyTransaction,
 			"simpleTransactions" => isset($user->simpleTransactions) && $user->simpleTransactions,

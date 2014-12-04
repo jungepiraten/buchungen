@@ -5,6 +5,7 @@ function latexSpecialChars( $string )
     $map = array( 
             "\\"=>"\\textbackslash{}",
             "\r\n"=>"\n",
+            "\""=>"\grqq ",
             "#"=>"\\#",
             "$"=>"\\$",
             "%"=>"\\%",
