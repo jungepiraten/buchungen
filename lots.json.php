@@ -10,7 +10,10 @@ list($accounts, $accounts_code2guid, $journal, $nums, $partners) = getKassenbuch
 
 $list = array();
 foreach ($partners as $partner => $info) {
-	$list[$partner] = array_map(create_function('$lot', 'return "".$lot;'), array_keys($info["lots"]));
+	$list[$partner] = array(
+		"label" => $info["account"]["label"],
+		"lots" => array_map(create_function('$lot', 'return "".$lot;'), array_keys($info["lots"]))
+	);
 }
 
 header("Content-Type: application/json");
