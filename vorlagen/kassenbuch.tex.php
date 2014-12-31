@@ -152,6 +152,7 @@ function printBilanz($bereich, $saldoSign) {
  \hline
  \hline \textbf{Konto} & \textbf{Bezeichnung} & \textbf{Betrag} \\
  \hline
+ \hline
  \endhead
 <?php $sum = 0; foreach ($bereich as $account) { if ($account["saldoSign"] == $saldoSign) { $sum += $account["saldo"]; ?>
  \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["saldo"] * $saldoSign )) ?> \\
@@ -171,6 +172,7 @@ function printBereich($label, $bereich, $saldoSign) {
 \begin{longtable}{L{1.7cm}L{9.5cm}R{2.5cm}R{2.5cm}}
  \hline
  \hline \textbf{SKR49} & \textbf{Konto} & \textbf{Einnahmen} & \textbf{Ausgaben} \\
+ \hline
  \hline
  \endhead
 <?php $sums = array(-1 => 0, 1 => 0); foreach ($bereich as $account) { $sums[$account["saldoSign"]] += $account["saldo"]; ?>
@@ -204,10 +206,12 @@ function printBereich($label, $bereich, $saldoSign) {
 <?php printBilanz($cats["bilanz"], -1) ?>
 
 \chapter{Gewinn und Verlustrechnung}
+\label{guv}
 
 \begin{longtable}{L{8.7cm}R{2.5cm}R{2.5cm}R{2.5cm}}
  \hline
  \hline  & \textbf{Einnahmen} & \textbf{Ausgaben} & \textbf{Saldo} \\
+ \hline
  \hline
  \endhead
  \hline Ideeller Bereich & <?php print(latexFormatCurrency($sums["guv-ideell"][-1]*-1)) ?> & <?php print(latexFormatCurrency($sums["guv-ideell"][1])) ?> & <?php print(latexFormatCurrency(($sums["guv-ideell"][-1] + $sums["guv-ideell"][1])*-1)) ?> \\
@@ -316,6 +320,7 @@ printJournal();
  \hline
  \hline \textbf{\#} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
  \hline
+ \hline
  \endhead
 <?php foreach ($accounts as $account) { if (getFiBu($account["code"]) !== false && (!empty($account["transactions"]) || !empty($account["subAccounts"]))) { ?>
  \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print(getFiBu($account["code"])) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["soll"])) ?> & <?php print(latexFormatCurrency($account["haben"])) ?> & <?php print(latexFormatCurrency($account["saldo"]*$account["saldoSign"])) ?> \\
@@ -411,17 +416,18 @@ function printPartners($p, $details) {
 ?> \hline <?php
 					}
 				}
-?>
- \hline
- \hline
-<?php
+
 				if ($sums[$partner]["soll"]+$sums[$partner]["haben"] == 0) {
 ?>
+ \hline
+ \hline
  \multicolumn{4}{l}{\textbf{Umsatz}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["haben"] * $factor)) ?>} \\
 <?php
 				} else {
 					if ($details >= 2) {
 ?>
+ \hline
+ \hline
  \multicolumn{4}{l}{\textbf{Summe Rechnung}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["haben"] * $factor)) ?>} \\ \nopagebreak
  \multicolumn{4}{l}{\textbf{Summe Bezahlt}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["soll"] * -1 * $factor)) ?>} \\ \nopagebreak
 <?php } ?>
@@ -456,6 +462,7 @@ function printPartners($p, $details) {
 \begin{longtable}{L{0.8cm}L{7cm}R{2.5cm}R{2.5cm}R{2.5cm}}
  \hline
  \hline \textbf{\#} & \textbf{Gliederung} & \textbf{Vorjahr} & \textbf{Saldo <?php print($year) ?>} & \textbf{Endbestand} \\
+ \hline
  \hline
  \endhead
 <?php $sums = array("v" => 0, "s" => 0); foreach ($accounts as $account) { if (getEigenkapital($account["code"]) !== false) { $kstaccount = $accounts[$accounts_code2guid["R".getEigenkapital($account["code"])]]; $sums["v"] += $account["saldo"]*-1; $sums["s"] += $kstaccount["saldo"]*-1; ?>
