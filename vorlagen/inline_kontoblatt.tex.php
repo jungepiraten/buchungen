@@ -19,11 +19,15 @@ if (!function_exists("getHierarchyCount")) {
 
 if (!function_exists("printFullPath")) {
 	function printFullPath($guid) {
+		$roots = array("F" => array("ref" => "kontenbuch", "label" => "Finanzbuchhaltung"), "R" => array("ref" => "kostenstellen", "label" => "Kostenrechnung"));
 		global $accounts;
 		if ($accounts[$guid]["parent_guid"] && $accounts[$accounts[$guid]["parent_guid"]]["code"]) {
-			printFullPath($accounts[$guid]["parent_guid"]);
-		} else {
-?>\mbox{\hyperref[kontenbuch]{Kontenbuch}}<?php
+			if (isset($roots[$accounts[$accounts[$guid]["parent_guid"]]["code"]])) {
+				$root = $roots[$accounts[$accounts[$guid]["parent_guid"]]["code"]];
+?>\mbox{\hyperref[<?php print($root["ref"]) ?>]{<?php print(latexSpecialChars($root["label"])) ?>}}<?php
+			} else {
+				printFullPath($accounts[$guid]["parent_guid"]);
+			}
 		}
 ?> :: \mbox{\hyperref[konto:<?php print($guid) ?>]{<?php print(substr($accounts[$guid]["code"],1)) ?> <?php print(latexSpecialChars($accounts[$guid]["label"])) ?>}}<?php
 	}
