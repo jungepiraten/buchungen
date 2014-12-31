@@ -100,21 +100,21 @@ do { if ($r = $sql->store_result()) $r->free(); } while ($sql->next_result());
 // Kontenrahmen
 $fp = fopen("kontenrahmen.csv", "r");
 while (list($kto, $label, $type) = fgetcsv($fp, 4096)) {
-	sqlAddAccount(md5($year . "F" . $kto), "26608e50d05429ad798e286b8b71201a", $type, "F".$kto, "F".$kto." ".$label, "");
+	sqlAddAccount(md5($year . "F" . $kto), "26608e50d05429ad798e286b8b71201a", $type, "F".$kto, $kto." ".$label, "");
 }
 fclose($fp);
 
 // Gliederungen anlegen
 foreach ($gliederungen as $gliederung) {
-	sqlAddAccount(md5($year . "E" . $gliederung["code"]), "6af64b6de64658e846da4e23fc06bf42", "EQUITY", "E".$gliederung["code"], "E".$gliederung["code"]." ".$gliederung["label"], "");
-	sqlAddAccount(md5($year . "R" . $gliederung["code"]), "76c53ef584c5fc41884db195e73cca7e", "EQUITY", "R".$gliederung["code"], "R".$gliederung["code"]." ".$gliederung["label"], "");
+	sqlAddAccount(md5($year . "E" . $gliederung["code"]), "6af64b6de64658e846da4e23fc06bf42", "EQUITY", "E".$gliederung["code"], $gliederung["code"]." ".$gliederung["label"], "");
+	sqlAddAccount(md5($year . "R" . $gliederung["code"]), "76c53ef584c5fc41884db195e73cca7e", "EQUITY", "R".$gliederung["code"], $gliederung["code"]." ".$gliederung["label"], "");
 }
 
 // Partner uebertragen
 $partner_parents = array("K" => "3e88f28388aab619a9fd6d4f9264758b", "D" => "98d2d35a07fbf3038f3d57c96f4c7d22", "E" => "6af64b6de64658e846da4e23fc06bf42");
 $partner_types = array("K" => "PAYABLE", "D" => "RECEIVABLE");
 foreach ($partners as $partner => $info) {
-	sqlAddAccount(md5($year . $partner), $partner_parents[substr($partner,0,1)], $partner_types[substr($partner,0,1)], $partner, $partner." ".$info["account"]["label"], "");
+	sqlAddAccount(md5($year . $partner), $partner_parents[substr($partner,0,1)], $partner_types[substr($partner,0,1)], $partner, substr($partner,1)." ".$info["account"]["label"], "");
 }
 
 // Bilanz uebertragen
