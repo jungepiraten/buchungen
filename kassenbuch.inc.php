@@ -96,7 +96,7 @@ function getBelegkreisDescription($a) {
 	global $accounts, $accounts_code2guid;
 
 	if ($a == "B")
-		return "Jahresanfangs und -abschlussbilanz";
+		return "Jahresanfangsbilanz";
 	if ($a == "BEIO")
 		return "Beitragsordnungen des Jahres";
 	if (substr($a,0,2) == "BK")
