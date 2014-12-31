@@ -1,6 +1,7 @@
 <?php
 
 require_once("sql.inc.php");
+require_once("vpanel.inc.php");
 require_once("login.inc.php");
 loginRequire();
 
@@ -30,17 +31,33 @@ while ($row = $result->fetch_assoc()) {
 	}
 }
 
-$spendenkonten = array("ea8d4718a2bb1a27738eccd771512775", "152e7a7cff14e4039c62f76dec027978", "281e9c206d1c5b8139276bafecc15ab3", "4c320002f54a6584ca6bc08b729f7405", "5a0f343484b7b032dd49bf100c7c06b0", "6657eeac7403e568f63c1283250e8f40", "1a23789215829346907c4d2dd7649b6d", "e62a8dcc90ae44be5b22be9211df0b8a", "f4b78b180eb0172f96145dd61244feae", "ce3e44633645ded2c8f180c6889e7962", "69da5f86428dd8afa3c325d305f4da75", "a3e3add5877fff37359ea2da232559bd", "c587a1ac1d3d4c4ea61d06d589c08143", "dbb2021e07eddbeabd643971d34cdbd4", "7c12c6f83e43dbf9a6f63a6b2d5b17bf");
+$vp = new VPanel(VPANELBASE);
+$vp->startSession(VPANELUSER, VPANELPASS);
+
+$spendenkonten = array("F3221", "F3225", "F3230");
 
 #header("Content-Type: text/csv; charset=utf-8");
 foreach ($transactions as $identifier => $ts) {
+	if (substr($identifier,0,1) == "#") {
+		$mitglied = $vp->getMitglied(substr($identifier,1));
+		$a = array(
+			isset($mitglied->latest->natperson) ? $mitglied->latest->natperson->vorname . " " . $mitglied->latest->natperson->name : $mitglied->jurperson->label,
+			$mitglied->latest->kontakt->adresszusatz,
+			$mitglied->latest->kontakt->strasse . " " . $mitglied->latest->kontakt->hausnummer,
+			$mitglied->latest->kontakt->ort->plz . " " . $mitglied->latest->kontakt->ort->label
+		);
+		$identifier = implode(", ", array_filter($a, create_function('$i', 'return $i != "";')));
+	}
+
 	foreach ($ts as $t) {
 		$b = 0;
 		foreach ($t["splits"] as $s) {
-			if (in_array($s["account_guid"], $spendenkonten)) {
+			if (in_array($s["account_code"], $spendenkonten)) {
 				$b -= $s["value"];
 			}
 		}
-		print(date("d.m.Y", $t["date"]) . ";" . $identifier . ";" . $b . ";" . $t["description"] . "\r\n");
+		if ($b > 0) {
+			print(date("d.m.Y", $t["date"]) . ";" . $identifier . ";" . $b . "\r\n");
+		}
 	}
 }
