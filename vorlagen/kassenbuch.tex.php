@@ -484,6 +484,7 @@ function printPartners($p, $details) {
  \hline
  \hline \textbf{\#} & \textbf{Kostenstelle} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
  \hline
+ \hline
  \endhead
 <?php foreach ($accounts as $account) { if (getKostenrechnung($account["code"]) !== false && $account["code"] !== "R" && (!empty($account["transactions"]) || !empty($account["subAccounts"]))) { if ($details >= 2 || $account["level"] <= 2) { ?>
  \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print(getKostenrechnung($account["code"])) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["soll"])) ?> & <?php print(latexFormatCurrency($account["haben"])) ?> & <?php print(latexFormatCurrency($account["saldo"]*$account["saldoSign"])) ?> \\
@@ -493,7 +494,7 @@ function printPartners($p, $details) {
 \end{longtable}
 
 <?php if ($details >= 2) { ?>
-<?php foreach ($accounts as $account) { if (getKostenrechnung($account["code"]) !== false && (!empty($account["transactions"]) || !empty($account["subAccounts"]))) { ?>
+<?php foreach ($accounts as $account) { if (getKostenrechnung($account["code"]) !== false && $account["code"] !== "R" && (!empty($account["transactions"]) || !empty($account["subAccounts"]))) { ?>
 \clearpage
 <?php include(dirname(__FILE__) . "/inline_kontoblatt.tex.php") ?>
 <?php } } ?>
