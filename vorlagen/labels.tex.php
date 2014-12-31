@@ -22,7 +22,8 @@ for ($i=0;$i<$offset;$i++) {
 	print("\\ \n\n\n");
 }
 
-$enterdate = isset($_REQUEST["last"]) ? intval($_REQUEST["last"]) : null;
+$lastenterdate = isset($_REQUEST["last"]) ? intval($_REQUEST["last"]) : null;
+$firstenterdate = isset($_REQUEST["first"]) ? intval($_REQUEST["first"]) : null;
 
 $belege = array();
 foreach ($partners as $partner => $info) { foreach ($info["lots"] as $lot => $transactions) {
@@ -61,7 +62,7 @@ ksort($belege);
 
 foreach ($belege as $beleg => $rechnungen) {
 	foreach ($rechnungen as $rechnung) {
-		if ($enterdate === null || $enterdate <= $rechnung["lastEnterDate"]) {
+		if (($lastenterdate === null || $lastenterdate <= $rechnung["lastEnterDate"]) && ($firstenterdate === null || $firstenterdate >= $rechnung["lastEnterDate"])) {
 ?>
 \textbf{<?php print(latexSpecialChars($beleg)) ?>}
 \textit{Kreditorennummer}: <?php print(latexSpecialChars(substr($rechnung["partner"],1))) ?>
