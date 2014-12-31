@@ -283,6 +283,37 @@ addTxTemplate("re_erhalten", "Rechnung erhalten", new VorlageBuchung([
 	]
 ));
 
+function _re_ausgestellt(label, konto) {
+	return {
+		"label": label,
+		"vorgang": function() {
+			return "RA " + lots["D"+$("input[name=debitor]").val().split(" ")[0]]["label"] + " [" + $("input[name=nummer]").val() + "]" + ($("input[name=iban]").val() != "" ? " {+INHABER:"+$("input[name=debitor]").val().substring($("input[name=kreditor]").val().indexOf(" ") + 1)+" +IBAN:"+$("input[name=iban]").val().replace(" ","")+" +BIC:"+$("input[name=bic]").val()+" +MANDAT:"+$("input[name=mandatsreferenz]").val()+"}" : "");
+		},
+		"anteile": function () {
+			return [
+				{"konto":"F"+konto, "anteil":-1},
+				{"konto":"F"+$("input[name=sachkonto]").val().split(" ")[0], "anteil":1},
+				{"konto":"D", "anteil":1},
+				{"konto":"D"+$("input[name=debitor]").val().split(" ")[0], "anteil":-1},
+				{"konto":"R", "anteil":-1},
+				{"konto":"R"+$("input[name=kostenstelle]").val().split(" ")[0], "anteil":1},
+			];
+		}
+	};
+}
+addTxTemplate("re_ausgestellt", "Rechnung ausgestellt", new VorlageBuchung([
+		_re_ausgestellt("Bezahlung folgt", "0650"),
+	], [
+		getInputField({"name":"debitor","size":2,"label":"Debitorennummer","type":"konto","prefix":"D"}),
+		getInputField({"name":"nummer","size":2,"label":"Rechnungsnummer","type":"typeahead","callback":createLotTypeAheadCallback("D", "debitor")}),
+		getInputField({"name":"sachkonto","size":2,"label":"Sachkonto","type":"konto","prefix":"F"}),
+		getInputField({"name":"kostenstelle","size":2,"label":"Kostenstellennummer","type":"konto","prefix":"R"}),
+		getInputField({"name":"iban","size":5,"label":"IBAN"}),
+		getInputField({"name":"bic","size":2,"label":"BIC"}),
+		getInputField({"name":"mandatsreferenz","size":5,"label":"Mandatsreferenz"}),
+	]
+));
+
 addTxTemplate("transit", "Geldtransit", new VorlageBuchung([
 		{
 			"label": "Geldtransit",
