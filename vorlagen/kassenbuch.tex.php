@@ -138,8 +138,8 @@ foreach ($accounts as $account) {
 }
 
 $cats["bilanz"][] = array(
-	"guid" => "",
-	"code" => "-",
+	"guid" => "guv",
+	"code" => "GUV",
 	"label" => "Jahresergebnis",
 //	"label" => $gewinn < 0 ? "Jahresüberschuss" : "Jahresfehlbetrag",
 	"saldo" => $gewinn,
@@ -155,7 +155,7 @@ function printBilanz($bereich, $saldoSign) {
  \hline
  \endhead
 <?php $sum = 0; foreach ($bereich as $account) { if ($account["saldoSign"] == $saldoSign) { $sum += $account["saldo"]; ?>
- \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["saldo"] * $saldoSign )) ?> \\
+ \hline \hyperref[<?php if ($account["guid"] != "guv") { ?>konto:<?php } ?><?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[<?php if ($account["guid"] !=	"guv") { ?>konto:<?php } ?><?php print($account["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["saldo"] * $saldoSign )) ?> \\
 <?php } } ?>
  \hline
  \hline & \textbf{Gesamt} & \textbf{<?php print(latexFormatCurrency($sum * $saldoSign)) ?>} \\
@@ -189,6 +189,7 @@ function printBereich($label, $bereich, $saldoSign) {
 ?>
 
 \chapter{Bilanz}
+\label{bilanz}
 
 \pagestyle{fancy}
 \fancyhead{}
