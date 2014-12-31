@@ -29,7 +29,7 @@ if (!function_exists("printFullPath")) {
 				printFullPath($accounts[$guid]["parent_guid"]);
 			}
 		}
-?> :: \mbox{\hyperref[konto:<?php print($guid) ?>]{<?php print(substr($accounts[$guid]["code"],1)) ?> <?php print(latexSpecialChars($accounts[$guid]["label"])) ?>}}<?php
+?> :: \mbox{\hyperref[konto:<?php print($guid) ?>]{<?php print(latexSpecialChars($accounts[$guid]["name"])) ?>}}<?php
 	}
 }
 
