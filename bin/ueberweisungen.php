@@ -14,6 +14,7 @@ databaseLock($year, basename(__FILE__), "localhost");
 list($accounts, $accounts_code2guid, $journal, $nums, $partners) = getKassenbuch(true);
 
 $buchungen = array();
+$lastschriften = array();
 
 foreach ($journal as $transaction) {
 	foreach ($transaction["splits"] as $split) {
@@ -27,14 +28,26 @@ foreach ($journal as $transaction) {
 				array_map(create_function('$r', 'list($k,$v)=explode(":",$r,2);return $v;'), explode(" +", substr($m[2],1)))
 			);
 			if (isset($f["iban"])) {
-				$buchungen[] = array(
-					"inhaber" => $f["inhaber"],
-					"iban" => $f["iban"],
-					"bic" => $f["bic"],
-					"vermerk" => $vermerk,
-					"value" => sprintf("%.2f EUR", (-1) * $split["value"] / 100),
-				);
-				sqlSetTransaction($transaction["guid"], $transaction["num"], $transaction["date"], str_replace(" {".$m[2]."}", "", $transaction["description"]));
+				if ($value < 0) {
+					$buchungen[] = array(
+						"inhaber" => $f["inhaber"],
+						"iban" => $f["iban"],
+						"bic" => $f["bic"],
+						"vermerk" => $vermerk,
+						"value" => sprintf("%.2f EUR", (-1) * $split["value"] / 100),
+					);
+					sqlSetTransaction($transaction["guid"], $transaction["num"], $transaction["date"], str_replace(" {".$m[2]."}", "", $transaction["description"]));
+				} else if ($value > 0 && isset($f["mandat"])) {
+					$lastschriften[] = array(
+						"inhaber" => $f["inhaber"],
+						"iban" => $f["iban"],
+						"bic" => $f["bic"],
+						"mandatsreferenz" => $f["mandat"],
+						"vermerk" => $vermerk,
+						"value" => sprintf("%.2f EUR", $split["value"] / 100),
+					);
+					sqlSetTransaction($transaction["guid"], $transaction["num"], $transaction["date"], str_replace(" {".$m[2]."}", "", $transaction["description"]));
+				}
 			}
 		}
 	}
@@ -42,7 +55,8 @@ foreach ($journal as $transaction) {
 
 foreach ($buchungen as $buchung) {
 	mail("schatzmeister@junge-piraten.de", "Ueberweisung", <<<EOT
-Kontoinhaber: {$buchung["inhaber"]}
+Kontoinhaber:
+	{$buchung["inhaber"]}
 IBAN:
 	{$buchung["iban"]}
 BIC:
@@ -51,6 +65,24 @@ Betrag:
 	{$buchung["value"]}
 Verwendungszweck:
 	{$buchung["vermerk"]}
+EOT
+, "From: schatzmeister@junge-piraten.de");
+}
+
+foreach ($lastschriften as $lastschrift) {
+	mail("schatzmeister@junge-piraten.de", "Lastschrift", <<<EOT
+Kontoinhaber:
+	{$lastschrift["inhaber"]}
+IBAN:
+	{$lastschrift["iban"]}
+BIC:
+	{$lastschrift["bic"]}
+Mandatsreferenz:
+	{$lastschrift["mandatsreferenz"]}
+Betrag:
+	{$lastschrift["value"]}
+Verwendungszweck:
+	{$lastschrift["vermerk"]}
 EOT
 , "From: schatzmeister@junge-piraten.de");
 }
