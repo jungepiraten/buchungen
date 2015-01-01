@@ -470,7 +470,7 @@ function printPartners($p, $details) {
  \hline \hyperref[konto:<?php print($kstaccount["guid"]) ?>]{<?php print(getEigenkapital($account["code"])) ?>} & \hyperref[konto:<?php print($kstaccount["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["saldo"]*-1)) ?> & <?php print(latexFormatCurrency($kstaccount["saldo"]*-1)) ?> & <?php print(latexFormatCurrency($account["saldo"]*(-1)-$kstaccount["saldo"])) ?> \\
 <?php } } ?>
  \hline
- \hline & \textbf{Summe} & <?php print(latexFormatCurrency($sums["v"])) ?> & <?php print(latexFormatCurrency($sums["s"])) ?> & <?php print(latexFormatCurrency($sums["v"]+$sums["s"])) ?> \\
+ \hline & \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($sums["v"])) ?>} & \textbf{<?php print(latexFormatCurrency($sums["s"])) ?>} & \textbf{<?php print(latexFormatCurrency($sums["v"]+$sums["s"])) ?>} \\
  \hline
  \hline
 \end{longtable}
