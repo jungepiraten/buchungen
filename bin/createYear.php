@@ -122,7 +122,7 @@ foreach ($partners as $partner => $info) {
 }
 
 // Bilanz uebertragen
-$guid = md5("Bilanz");
+$guid = md5($year."Bilanz");
 sqlAddTransaction($guid, "B" . ($year - 1), mktime(0,0,0,1,1,$year), "Eröffnungsbilanz");
 sqlAddSplits($guid, array_map(create_function('$split', 'global $year, $partner_parents; return array("account_guid" => isset($partner_parents[$split["code"]]) ? $partner_parents[$split["code"]] : md5($year . $split["code"]), "memo" => $split["label"], "value" => $split["value"]);'), $bilanz_splits));
 

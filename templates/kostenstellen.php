@@ -91,13 +91,6 @@ function cleanForm() {
 	$("form.kostenstellen").find("input").val("");
 }
 
-function get32bitRandom() {
-	return Math.floor((1+Math.random()) * 0x100000000).toString(16).substring(1);
-}
-function get128bitRandom() {
-	return get32bitRandom()+get32bitRandom()+get32bitRandom()+get32bitRandom();
-}
-
 function formatCurrency(value) {
 	if (value == 0)
 		return "";
@@ -110,7 +103,6 @@ $("form").submit(function (event) {
 
 	var errors = [];
 	var kostenstelle = getInputs(["name","ticket","vname","vid","vmail","legitimation","betrag"]);
-	kostenstelle["guid"] = get128bitRandom();
 	kostenstelle["parents"] = [];
 	kostenstelle["parents"].push({"code":"R" + getInput("gliederung").substring(0,2), "name": getInput("gliederung").substring(2)});
 	kostenstelle["parents"].push({"code":"R" + getInput("gliederung").substring(0,2) + getInput("budget").substring(0,2), "name": getInput("budget").substring(2)});

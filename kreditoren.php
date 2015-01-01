@@ -31,7 +31,7 @@ if (isset($_POST["add"])) {
 			}
 		} while ($num != null);
 
-		$guid = $_REQUEST["guid"];
+		$guid = md5($year.$code);
 		$name = substr($code,1)." ".$_REQUEST["name"];
 		$description = "";
 		sqlAddAccount($guid, $parent_guid, $type, $code, $name, $description);

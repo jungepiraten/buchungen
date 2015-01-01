@@ -22,8 +22,8 @@ if (isset($_POST["add"])) {
 				$code = $account["code"];
 				$parent_guid = $account["guid"];
 			} catch (Exception $e) {
-				$guid = md5(rand(100,999).microtime().$parent["code"]);
-				sqlMaybeAddAccount($guid, $parent_guid, $type, $parent["code"], $parent["name"], "");
+				$guid = md5($year.$parent["code"]);
+				sqlMaybeAddAccount($guid, $parent_guid, $type, $parent["code"], substr($parent["code"],0,2)." ".$parent["name"], "");
 				$code = $parent["code"];
 				$parent_guid = $guid;
 			}
@@ -41,7 +41,7 @@ if (isset($_POST["add"])) {
 			}
 		} while ($num != null);
 
-		$guid = $_REQUEST["guid"];
+		$guid = md5($year.$code);
 		$name = substr($code,-2)." ".$_REQUEST["name"];
 		$description = ($_REQUEST["ticket"] != "" ? "Ticket #" . $_REQUEST["ticket"] . ": " : "") . $_REQUEST["legitimation"] . " (".$_REQUEST["vname"]." <".$_REQUEST["vmail"].">)";
 		if ($_REQUEST["betrag"] != "") {

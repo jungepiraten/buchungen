@@ -52,13 +52,6 @@ function cleanForm() {
 	$("form.kreditoren").find("input").val("");
 }
 
-function get32bitRandom() {
-	return Math.floor((1+Math.random()) * 0x100000000).toString(16).substring(1);
-}
-function get128bitRandom() {
-	return get32bitRandom()+get32bitRandom()+get32bitRandom()+get32bitRandom();
-}
-
 function formatCurrency(value) {
 	if (value == 0)
 		return "";
@@ -71,7 +64,6 @@ $("form").submit(function (event) {
 
 	var errors = [];
 	var kreditor = getInputs(["offset","name"]);
-	kreditor["guid"] = get128bitRandom();
 	kreditor["add"] = 1;
 
 	if (errors.length > 0) {
