@@ -1,5 +1,6 @@
+<?php include("sql.inc.php"); ?>
 var kontenview_konten = [];
-$.get("/accounts.json.php", {}, function (data) {kontenview_konten = data; }, "json");
+$.get("/accounts.json.php", {year: "<?php print($year); ?>"}, function (data) {kontenview_konten = data; }, "json");
 
 function getKontoInput(prefix, maxlength) {
 	function _suggestions(q) {

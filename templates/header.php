@@ -18,7 +18,7 @@ header("Content-Type: text/html; charset=UTF-8");
                 <script src="https://static.junge-piraten.de/jquery-1.8.2.min.js"></script>
 -->
                 <link href="res/treeview.css" rel="stylesheet" />
-		<script src="/typeahead.jquery.js"></script>
+		<script src="/typeahead.jquery.js.php?year=<?php print($year); ?>"></script>
 		<script src="https://haushalt.junge-piraten.de/d3.v3.min.js"></script>
                 <link rel="icon" type="image/png" href="https://static.junge-piraten.de/favicon.png" />
 
