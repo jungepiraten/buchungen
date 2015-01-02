@@ -1,4 +1,4 @@
-<?php include("sql.inc.php"); ?>
+<?php header("Content-Type: application/javascript"); include("sql.inc.php"); ?>
 var kontenview_konten = [];
 $.get("/accounts.json.php", {year: "<?php print($year); ?>"}, function (data) {kontenview_konten = data; }, "json");
 

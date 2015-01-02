@@ -65,7 +65,7 @@ function addTxTemplate(id, name, buchen) {
 }
 
 var lots = [];
-$.get("/lots.json.php", {}, function (data) {lots = data; }, "json");
+$.get("/lots.json.php", {year: "<?php print($year); ?>"}, function (data) {lots = data; }, "json");
 function createLotTypeAheadCallback(prefix, fieldname) {
 	return function(q) {
 		var partner = prefix + $("input[name=" + fieldname + "]").val().split(" ")[0];
