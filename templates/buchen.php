@@ -236,7 +236,11 @@ function _re_bezahlt(prefix, label, konto) {
 			];
 		},
 		"vorgang": function () {
-			return prefix + (prefix == "RE" ? " " + lots["K"+$("input[name=kreditor]").val().split(" ")[0]]["label"] : "") + " [" + $("input[name=nummer]").val() + "]";
+			var lot = "";
+			if (prefix == "RE" && lots["K"+$("input[name=kreditor]").val().split(" ")[0]] !== undefined) {
+				lot = " " + lots["K"+$("input[name=kreditor]").val().split(" ")[0]]["label"];
+			}
+			return prefix + lot + " [" + $("input[name=nummer]").val() + "]";
 		}
 	};
 }
@@ -256,7 +260,11 @@ function _re_erhalten(label, konto) {
 	return {
 		"label": label,
 		"vorgang": function() {
-			return "RE " + lots["K"+$("input[name=kreditor]").val().split(" ")[0]]["label"] + " [" + $("input[name=nummer]").val() + "]" + ($("input[name=iban]").val() != "" ? " {+INHABER:"+$("input[name=kreditor]").val().substring($("input[name=kreditor]").val().indexOf(" ") + 1)+" +IBAN:"+$("input[name=iban]").val().replace(" ","")+" +BIC:"+$("input[name=bic]").val()+"}" : "");
+			var lot = "";
+			if (lots["K"+$("input[name=kreditor]").val().split(" ")[0]] !== undefined) {
+				lot = lots["K"+$("input[name=kreditor]").val().split(" ")[0]]["label"];
+			}
+			return "RE " + lot + " [" + $("input[name=nummer]").val() + "]" + ($("input[name=iban]").val() != "" ? " {+INHABER:"+$("input[name=kreditor]").val().substring($("input[name=kreditor]").val().indexOf(" ") + 1)+" +IBAN:"+$("input[name=iban]").val().replace(" ","")+" +BIC:"+$("input[name=bic]").val()+"}" : "");
 		},
 		"anteile": function () {
 			return [
@@ -287,7 +295,11 @@ function _re_ausgestellt(label, konto) {
 	return {
 		"label": label,
 		"vorgang": function() {
-			return "RA " + lots["D"+$("input[name=debitor]").val().split(" ")[0]]["label"] + " [" + $("input[name=nummer]").val() + "]" + ($("input[name=iban]").val() != "" ? " {+INHABER:"+$("input[name=debitor]").val().substring($("input[name=kreditor]").val().indexOf(" ") + 1)+" +IBAN:"+$("input[name=iban]").val().replace(" ","")+" +BIC:"+$("input[name=bic]").val()+" +MANDAT:"+$("input[name=mandatsreferenz]").val()+"}" : "");
+			var lot = "";
+			if (lots["D"+$("input[name=debitor]").val().split(" ")[0]] !== undefined) {
+				lot = lots["D"+$("input[name=debitor]").val().split(" ")[0]]["label"];
+			}
+			return "RA " + lot + " [" + $("input[name=nummer]").val() + "]" + ($("input[name=iban]").val() != "" ? " {+INHABER:"+$("input[name=debitor]").val().substring($("input[name=kreditor]").val().indexOf(" ") + 1)+" +IBAN:"+$("input[name=iban]").val().replace(" ","")+" +BIC:"+$("input[name=bic]").val()+" +MANDAT:"+$("input[name=mandatsreferenz]").val()+"}" : "");
 		},
 		"anteile": function () {
 			return [
