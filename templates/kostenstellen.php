@@ -104,8 +104,8 @@ $("form").submit(function (event) {
 	var errors = [];
 	var kostenstelle = getInputs(["name","ticket","vname","vid","vmail","legitimation","betrag"]);
 	kostenstelle["parents"] = [];
-	kostenstelle["parents"].push({"code":"R" + getInput("gliederung").substring(0,2), "name": getInput("gliederung").substring(2)});
-	kostenstelle["parents"].push({"code":"R" + getInput("gliederung").substring(0,2) + getInput("budget").substring(0,2), "name": getInput("budget").substring(2)});
+	kostenstelle["parents"].push({"code":"R" + getInput("gliederung").substring(0,2), "name": getInput("gliederung").substring(3)});
+	kostenstelle["parents"].push({"code":"R" + getInput("gliederung").substring(0,2) + getInput("budget").substring(0,2), "name": getInput("budget").substring(3)});
 	kostenstelle["add"] = 1;
 
 	if (errors.length > 0) {
