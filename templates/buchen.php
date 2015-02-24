@@ -113,6 +113,7 @@ var vorlagen=[{
 		});
 
 		if (_options[ident] === undefined) {
+			$(".buchen-error").text("Automatische zuordnung fehlgeschlagen, bitte von Hand auswählen!").show().delay(15000).slideUp();
 			return null;
 		}
 		var anteile = _options[ident];
