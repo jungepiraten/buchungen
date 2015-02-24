@@ -49,8 +49,26 @@ if (isset($_POST["add"])) {
 		}
 		sqlAddAccount($guid, $parent_guid, $type, $code, $name, $description);
 
+		$recipients = array($_REQUEST["vmail"]);
 		if ($_REQUEST["ticket"] != "") {
-			mail("ticket+" . $_REQUEST["ticket"] . "@helpdesk.junge-piraten.de", "Kostenstelle angelegt", "Kostenstelle {$code} angelegt", "From: <kostenstellen@junge-piraten.de>");
+			$recipients[] = "ticket+" . $_REQUEST["ticket"] . "@helpdesk.junge-piraten.de";
+		}
+
+		foreach ($recipients as $rec) {
+			mail($rec, "Kostenstelle {$_REQUEST["name"]} angelegt", <<<EOT
+Hey,
+
+deine Kostenstelle {$_REQUEST["name"]} wurde bewilligt und unter der Nummer {$code} angelegt.
+Du kannst diese Daten jetzt benutzen, um Ausgaben für dieses Projekt zu bewilligen. Wie
+das genau geht, kannst du im Wiki [1] nachlesen.
+
+Für alle Fragen stehen wir dir natürlich gerne zur Seite, melde dich einfach per Mail :)
+
+Viele Grüße,
+
+1: https://wiki.junge-piraten.de/wiki/Finanzen/Ausgaben
+EOT
+, "From: <kostenstellen@junge-piraten.de>\r\nContent-Type: text/plain; charset=utf8");
 		}
 
 		databaseUnlock($year);
