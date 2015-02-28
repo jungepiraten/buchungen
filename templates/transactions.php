@@ -153,7 +153,6 @@ include(dirname(__FILE__) . "/header.php");
 				<div class="modal-footer">
 					<a class="btn btn-danger revokeValidation">Freigeben</a>
 					<a class="btn btn-success createValidation">Validieren</a>
-					<a class="btn btn-info createNum">Beleg erstellen</a>
 					<a class="btn btn-danger revokeTransaction">Stornieren</a>
 				</div>
 			</div>
@@ -363,16 +362,6 @@ function showTransaction(data) {
 				$(".transactionDetailsModal").modal("hide");
 			});
 		});
-
-	// createNum-String
-	var belegData = {
-		buchungsDatum: formatTimestamp(data.date),
-		sollKonten: sollKonten.join(", "),
-		habenKonten: habenKonten.join(", "),
-		betrag: betrag/100,
-		anmerkungen: data.description
-	};
-	$(".transactionDetailsModal").find(".createNum").attr("href","belege.php?_=" + encodeURIComponent(JSON.stringify(belegData)));
 
 	var revokeTransactionData = {
 		vorgang: "Storno " + data.description,
