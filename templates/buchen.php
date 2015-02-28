@@ -183,7 +183,7 @@ addTxTemplate("kontofuehrung", "Kontoführungsgebühr", new VorlageBuchung(
 					{"konto": "F0951", "anteil":1},
 					{"konto": "F2900", "anteil":-1},
 					{"konto": "R", "anteil":1},
-					{"konto": "R012201", "anteil":-1},
+					{"konto": "R013101", "anteil":-1},
 				];
 			},
 			"vorgang": function () {return "Kontoführungsgebühr"; },

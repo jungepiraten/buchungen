@@ -114,6 +114,18 @@ foreach ($gliederungen as $gliederung) {
 	sqlAddAccount(md5($year . "R" . $gliederung["code"] . "11"), md5($year . "R" . $gliederung["code"]), "EQUITY", "R".$gliederung["code"]."11", "11 Spenden", "");
 }
 
+// Sonderkostenstellen für bund
+$skst = array(
+	array("31", "", "Verwaltung"),
+		array("01", "31", "Kontoführungsgebühr"),
+		array("02", "31", "Lastschriftgebühren"),
+);
+
+foreach ($skst as $ks) {
+	sqlAddAccount(md5($year . "R01" . $ks[1] . $ks[0]), md5($year . "R01" . $ks[1]), "EQUITY", "R01" . $ks[1] . $ks[0], $ks[0] . " " . $ks[2]);
+}
+
+
 // Partner uebertragen
 $partner_parents = array("K" => "3e88f28388aab619a9fd6d4f9264758b", "D" => "98d2d35a07fbf3038f3d57c96f4c7d22", "E" => "6af64b6de64658e846da4e23fc06bf42");
 $partner_types = array("K" => "PAYABLE", "D" => "RECEIVABLE");
