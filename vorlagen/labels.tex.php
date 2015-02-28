@@ -2,16 +2,16 @@
 \usepackage{textcomp}
 \usepackage[newdimens]{labels}
 \LabelCols=3
-\LabelRows=8
+\LabelRows=7
 % \LabelGridtrue
 \LeftLabelBorder=5mm
 \TopLabelBorder=10mm
 \RightLabelBorder=5mm
 \BottomLabelBorder=10mm
 \LeftPageMargin=7mm
-\TopPageMargin=20mm
-\RightPageMargin=15mm
-\BottomPageMargin=-10mm
+\TopPageMargin=16mm
+\RightPageMargin=12mm
+\BottomPageMargin=-4mm
 \begin{document}
 \fontfamily{pag}\selectfont
 \begin{labels}
