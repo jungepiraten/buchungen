@@ -443,6 +443,48 @@ function formatCurrency(value) {
 	return (value/100).toFixed(2);
 }
 
+function showConfirm(buchung, callback) {
+	var modal = $("<div>").addClass("modal").append(
+		$("<div>").addClass("modal-dialog").append(
+			$("<div>").addClass("modal-content").append([
+				$("<div>").addClass("modal-header").append(
+					$("<h4>").addClass("modal-title").text(buchung["beleg"] + ": " + buchung["description"] + " (" + buchung["postdate"] + ")")
+					),
+				$("<div>").addClass("modal-body").append(
+					$("<table>").addClass("table table-striped").append([
+						$("<thead>")
+							.append($("<tr>")
+									.append($("<th>").text("Konto"))
+									.append($("<th>").text("Soll"))
+									.append($("<th>").text("Haben"))
+								),
+						$("<tbody>")
+							.append(buchung["splits"].map(function (split) {
+								var label = "";
+								var konto = kontenview_konten.filter(function(k) {return k.code === split["konto"];});
+								if (konto.length == 1) label = konto.pop().label;
+								return $("<tr>")
+									.append($("<td>").text(split["konto"] + " - " + label))
+									.append($("<td>").text(split["value"] < 0 ? formatCurrency(split["value"] * (-1)) : ""))
+									.append($("<td>").text(split["value"] > 0 ? formatCurrency(split["value"]) : ""));
+								})),
+						])),
+				$("<div>").addClass("modal-footer").append([
+					$("<button>").addClass("btn btn-default").text("Zurück").click(function () {
+						modal.modal("hide");
+						}),
+					$("<button>").addClass("btn btn-primary").text("Speichern").click(function () {
+						callback();
+						modal.modal("hide");
+						}),
+					])
+				])
+			)
+		);
+	$("body").append(modal);
+	modal.modal();
+}
+
 $("form").submit(function (event) {
 	event.preventDefault();
 	$(".buchen-error").hide();
@@ -464,16 +506,18 @@ $("form").submit(function (event) {
 		$("input[name='" + errors[0].field + "']").focus();
 	} else {
 		var self = this;
-		$(self).find("input").prop("disabled",true);
-		$.post("buchen.php", buchung, function(data) {
-			$(self).find("input").prop("disabled",false);
-			if (data["status"] == "ok") {
-				cleanForm();
-				$(".buchen-success").show().delay(3000).slideUp();
-			} else {
-				$(".buchen-error").text(data["message"]).show();
-			}
-		}, "json");
+		showConfirm(buchung, function () {
+			$(self).find("input").prop("disabled",true);
+			$.post("buchen.php", buchung, function(data) {
+				$(self).find("input").prop("disabled",false);
+				if (data["status"] == "ok") {
+					cleanForm();
+					$(".buchen-success").show().delay(3000).slideUp();
+				} else {
+					$(".buchen-error").text(data["message"]).show();
+				}
+			}, "json");
+		});
 	}
 });
 
