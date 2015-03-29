@@ -16,7 +16,7 @@ include("header.php");
 		<div class="form-group">
 			<label for="ticket" class="col-sm-2 control-label">Ticket</label>
 			<div class="col-sm-10">
-				<input type="text" name="ticket" class="form-control" placeholder="Ticket" />
+				<input type="text" name="ticket" class="form-control" placeholder="Ticketnummer (nur Ziffern)" />
 			</div>
 		</div>
 		<div class="form-group">
