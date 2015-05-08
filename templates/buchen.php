@@ -128,7 +128,7 @@ Object.keys(_bls).forEach(function (bl, i) {
 	for (var t in tts) {
 		var tt = tts[t];
 		var lvKst = target == null ? "R0101"+("0"+(tt+2*(i+1))).slice(-2) : "R"+target+"010"+tt;
-		var anteile = [{"konto":"R","anteil":-1}, {"konto":"F2110","anteil":1}, {"konto":"R01010"+tt, "anteil":0.5}, {"konto":lvKst, "anteil":0.5}];
+		var anteile = [{"konto":"R","anteil":-1}, {"konto":"F2110","anteil":1}, {"konto":"R01010"+tt, "anteil":0.7}, {"konto":lvKst, "anteil":0.3}];
 		vorlagen.push({
 			"label": bl+"-"+t,
 			"_anteile": anteile,
