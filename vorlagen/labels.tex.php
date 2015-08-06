@@ -25,6 +25,7 @@ for ($i=0;$i<$offset;$i++) {
 $lastenterdate = isset($_REQUEST["last"]) ? intval($_REQUEST["last"]) : null;
 $firstenterdate = isset($_REQUEST["first"]) ? intval($_REQUEST["first"]) : null;
 $showUnpaid = isset($_REQUEST["showunpaid"]);
+$nums = isset($_REQUEST["nums"]) ? $_REQUEST["nums"] : null;
 
 $belege = array();
 foreach ($partners as $partner => $info) { foreach ($info["lots"] as $lot => $transactions) {
@@ -34,7 +35,7 @@ foreach ($partners as $partner => $info) { foreach ($info["lots"] as $lot => $tr
 	foreach ($transactions as $data) {
 		$lastEnterDate = max($lastEnterDate, $data["tx"]["enter_date"]);
 		$value += $data["split"]["value"];
-		if (in_array(substr($data["tx"]["num"],0,2), array("RE","ER"))) {
+		if (in_array(substr($data["tx"]["num"],0,2), array("RE","ER","RS"))) {
 			$rechnung[] = array("num" => $data["tx"]["num"], "date" => $data["tx"]["date"], "value" => $data["split"]["value"]);
 		} else {
 			$bezahlt[] = array("num" => $data["tx"]["num"], "date" => $data["tx"]["date"], "value" => $data["split"]["value"]);
@@ -42,8 +43,8 @@ foreach ($partners as $partner => $info) { foreach ($info["lots"] as $lot => $tr
 		$sachkonten = array_merge($sachkonten, array_map(create_function('$s', 'return substr($s["account_code"],1);'), array_filter($data["tx"]["splits"], create_function('$s', 'return in_array(substr($s["account_code"],0,2), array("F2","F3","F4","F5","F6","F7","F8"));'))));
 		$kostenstellen = array_merge($kostenstellen, array_map(create_function('$s', 'return substr($s["account_code"],1);'), array_filter($data["tx"]["splits"], create_function('$s', 'return strlen($s["account_code"]) > 1 && in_array(substr($s["account_code"],0,1), array("R"));'))));
 	}
-	if ($value == 0 || $showUnpaid) {
-		foreach ($rechnung as $re) {
+	foreach ($rechnung as $re) {
+		if ($nums === null && ($value == 0 || $showUnpaid) || $nums !== null && in_array($re["num"], $nums)) {
 			if (!isset($belege[$re["num"]])) {
 				$belege[$re["num"]] = array();
 			}

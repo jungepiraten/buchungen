@@ -10,6 +10,9 @@ function DialogBuchen(mainKontoPrefix, settings) {
 	this.load = function(data) {
 		this._panel.find("input[name=beleg]").val(data["num"]);
 		this._panel.find("input[name=postdate]").val(data["postdate"]);
+		if ("vorgang" in data) {
+			this._panel.find("input[name=vorgang]").val(data["vorgang"]);
+		}
 
 		// Main-KontenView-Splits have to be done before dealing with minors (to activate minors)
 		data["splits"].sort(function (a,b) {

@@ -12,6 +12,7 @@ include("header.php");
 			<div class="col-sm-4">
 				<select name="offset" class="form-control">
 					<option value="10001">Firmen</option>
+					<option value="20001">Sammelkreditoren</option>
 					<option value="30001">Erstattungen</option>
 				</select>
 			</div>

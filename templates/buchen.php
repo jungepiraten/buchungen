@@ -79,7 +79,7 @@ function createLotTypeAheadCallback(prefix, fieldname) {
 addTxTemplate("dialog", "Dialogbuchen", new DialogBuchen("F", {
 	"kosten":	{"kontoprefix":"R", "konto":"", "ausloeser":["2","3","4","6","8"], "label":"Kostenrechnung"},
 	"debitoren":	{"kontoprefix":"D", "konto":"", "ausloeser":["0650", "0655"], "label":"Debitoren"},
-	"kreditoren":	{"kontoprefix":"K", "konto":"", "ausloeser":["0630", "1340"], "label":"Kreditoren"},
+	"kreditoren":	{"kontoprefix":"K", "konto":"", "ausloeser":["0555", "0630", "1340"], "label":"Kreditoren"},
 }));
 
 var konten = {
@@ -225,15 +225,15 @@ addTxTemplate("reisekosten", "Reisekostenerstattung", new VorlageBuchung([
 	]
 ));
 
-function _re_bezahlt(prefix, label, konto) {
+function _re_bezahlt(prefix, label, konto, f) {
 	return {
 		"label": label,
 		"anteile" : function () {
 			return [
-				{"konto":"F"+konto, "anteil":-1},
-				{"konto":"F"+$("select[name=konto]").val(), "anteil":1},
-				{"konto":"K", "anteil":1},
-				{"konto":"K"+$("input[name=kreditor]").val().split(" ")[0], "anteil":-1},
+				{"konto":"F"+konto, "anteil":-1*f},
+				{"konto":"F"+$("select[name=konto]").val(), "anteil":1*f},
+				{"konto":"K", "anteil":1*f},
+				{"konto":"K"+$("input[name=kreditor]").val().split(" ")[0], "anteil":-1*f},
 			];
 		},
 		"vorgang": function () {
@@ -246,10 +246,11 @@ function _re_bezahlt(prefix, label, konto) {
 	};
 }
 addTxTemplate("re_bezahlt", "Rechnung bezahlt", new VorlageBuchung([
-		_re_bezahlt("RE", "Rechnung bereits erhalten", "1340"),
-		_re_bezahlt("RE", "Rechnung folgt (Anzahlung)", "0630"),
-		_re_bezahlt("Reisekosten", "Reisekosten", "1340"),
-		_re_bezahlt("Erstattung", "Erstattung", "1340"),
+		_re_bezahlt("RE", "Rechnung bereits erhalten", "1340", 1),
+		_re_bezahlt("RE", "Rechnung folgt (Anzahlung)", "0630", 1),
+		_re_bezahlt("Kaution", "Kaution zurückerhalten", "0555", -1),
+		_re_bezahlt("Reisekosten", "Reisekosten", "1340", 1),
+		_re_bezahlt("Erstattung", "Erstattung", "1340", 1),
 	], [
 		getInputField({"name":"konto","size":2,"label":"Konto","type":"select","data":konten}),
 		getInputField({"name":"kreditor","size":2,"label":"Kreditorennummer","type":"konto","prefix":"K"}),
