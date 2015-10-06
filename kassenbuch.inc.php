@@ -109,6 +109,8 @@ function getBelegkreisDescription($a) {
 		return "Lastschriftenberichte " . $accounts[$accounts_code2guid["F09".(50+substr($a,2))]]["label"];
 	if (substr($a,0,2) == "RE")
 		return "Eingehende Rechnungen " . $accounts[$accounts_code2guid["K100".substr($a,2,2)]]["label"];
+	if (substr($a,0,2) == "RS")
+		return "Rechnungen Sammelkreditor " . $accounts[$accounts_code2guid["K200".substr($a,2,2)]]["label"];
 	if (substr($a,0,2) == "ER")
 		return $accounts[$accounts_code2guid["K300".substr($a,2,2)]]["label"];
 	return "";

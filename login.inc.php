@@ -85,7 +85,22 @@ function loginInitSession($username) {
 }
 
 function loginMatchPassword($user, $pass) {
-	global $auth;
+	//global $auth;
+
+	// http://pear.php.net/package/Net_LDAP2
+	require_once("Net/LDAP2.php");
+
+	$dn = "uid=".$user.",ou=People,o=Junge Piraten,c=DE";
+	$ldap = Net_LDAP2::connect(array("binddn" => $dn, "bindpw" => $pass, "basedn" => "o=junge piraten,c=de", "host" => "storage"));
+	if (Net_LDAP2::isError($ldap)) {
+		return false;
+	}
+	$groups = array();
+	foreach ($ldap->search("ou=Groups,o=Junge Piraten,c=DE", "(uniqueMember=".$dn.")", array("attributes" => array("cn"))) as $group_dn => $entry) {
+		$groups[] = $entry->getValue("cn","single");
+	}
+	$_SESSION["_groups"][$user] = $groups;
+	return true;
 
 	$reply = json_decode(http_do_post("https://ucp.junge-piraten.de/json/checkUser", array("user" => $user, "password" => $pass)));
 	if ($reply->status == "success") {

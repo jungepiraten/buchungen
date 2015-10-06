@@ -1,8 +1,6 @@
 #!/usr/bin/php
 <?php
 
-$year = 2014;
-
 chdir(dirname(__FILE__) . "/..");
 require_once("sql.inc.php");
 require_once("transaction.inc.php");

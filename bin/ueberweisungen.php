@@ -84,7 +84,7 @@ Betrag:
 Verwendungszweck:
 	{$lastschrift["vermerk"]}
 EOT
-, "From: schatzmeister@junge-piraten.de\r\nContent-Type: text/plain; charset=UTF-8");
+, "From: schatzmeister@junge-piraten.de\r\nContent-Type: text/plain; charset=UTF-8\r\n");
 }
 
 databaseUnlock($year);

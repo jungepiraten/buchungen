@@ -220,8 +220,8 @@ addTxTemplate("reisekosten", "Reisekostenerstattung", new VorlageBuchung([
 		getInputField({"name":"kostenstelle","size":2,"label":"Kostenstellennummer","type":"konto","prefix":"R"}),
 		getInputField({"name":"person","size":5,"label":"Person"}),
 		getInputField({"name":"aktion","size":5,"label":"Aktion"}),
-		getInputField({"name":"iban","size":5,"label":"IBAN"}),
-		getInputField({"name":"bic","size":2,"label":"BIC"}),
+		getInputField({"name":"iban","label":"IBAN","type":"iban"}),
+		getInputField({"name":"bic","label":"BIC","type":"bic"}),
 	]
 ));
 
@@ -238,7 +238,7 @@ function _re_bezahlt(prefix, label, konto, f) {
 		},
 		"vorgang": function () {
 			var lot = "";
-			if (prefix == "RE" && lots["K"+$("input[name=kreditor]").val().split(" ")[0]] !== undefined) {
+			if (prefix == "Zahlung" && lots["K"+$("input[name=kreditor]").val().split(" ")[0]] !== undefined) {
 				lot = " " + lots["K"+$("input[name=kreditor]").val().split(" ")[0]]["label"];
 			}
 			return prefix + lot + " [" + $("input[name=nummer]").val() + "]";
@@ -246,8 +246,8 @@ function _re_bezahlt(prefix, label, konto, f) {
 	};
 }
 addTxTemplate("re_bezahlt", "Rechnung bezahlt", new VorlageBuchung([
-		_re_bezahlt("RE", "Rechnung bereits erhalten", "1340", 1),
-		_re_bezahlt("RE", "Rechnung folgt (Anzahlung)", "0630", 1),
+		_re_bezahlt("Zahlung", "Rechnung bereits erhalten", "1340", 1),
+		_re_bezahlt("Zahlung", "Rechnung folgt (Anzahlung)", "0630", 1),
 		_re_bezahlt("Kaution", "Kaution zurückerhalten", "0555", -1),
 		_re_bezahlt("Reisekosten", "Reisekosten", "1340", 1),
 		_re_bezahlt("Erstattung", "Erstattung", "1340", 1),
@@ -288,8 +288,8 @@ addTxTemplate("re_erhalten", "Rechnung erhalten", new VorlageBuchung([
 		getInputField({"name":"nummer","size":2,"label":"Rechnungsnummer","type":"typeahead","callback":createLotTypeAheadCallback("K", "kreditor")}),
 		getInputField({"name":"sachkonto","size":2,"label":"Sachkonto","type":"konto","prefix":"F"}),
 		getInputField({"name":"kostenstelle","size":2,"label":"Kostenstellennummer","type":"konto","prefix":"R"}),
-		getInputField({"name":"iban","size":5,"label":"IBAN"}),
-		getInputField({"name":"bic","size":2,"label":"BIC"}),
+		getInputField({"name":"iban","type":"iban","label":"IBAN"}),
+		getInputField({"name":"bic","type":"bic","label":"BIC"}),
 	]
 ));
 
@@ -322,8 +322,8 @@ addTxTemplate("re_ausgestellt", "Rechnung ausgestellt", new VorlageBuchung([
 		getInputField({"name":"nummer","size":2,"label":"Rechnungsnummer","type":"typeahead","callback":createLotTypeAheadCallback("D", "debitor")}),
 		getInputField({"name":"sachkonto","size":2,"label":"Sachkonto","type":"konto","prefix":"F"}),
 		getInputField({"name":"kostenstelle","size":2,"label":"Kostenstellennummer","type":"konto","prefix":"R"}),
-		getInputField({"name":"iban","size":5,"label":"IBAN"}),
-		getInputField({"name":"bic","size":2,"label":"BIC"}),
+		getInputField({"name":"iban","type":"iban","label":"IBAN"}),
+		getInputField({"name":"bic","type":"bic","label":"BIC"}),
 		getInputField({"name":"mandatsreferenz","size":5,"label":"Mandatsreferenz"}),
 	]
 ));
@@ -427,6 +427,14 @@ function getInputField(s) {
 			input.append($("<option>").attr("value",i).prop("selected",i == value).text(s["data"][i]));
 		}
 		break;
+	case "iban":
+		input = $('<input class="form-control">').attr("type","text").attr("name",name).val(value).data("init-value",value).keyup(function() {checkIBAN(this);});
+		size = 5;
+		break;
+	case "bic":
+		input = $('<input class="form-control">').attr("type","text").attr("name",name).val(value).data("init-value",value);
+		size = 2;
+		break;
 	default:
 		input = $('<input class="form-control">').attr("type",type).attr("name",name).val(value).data("init-value",value);
 		break;
@@ -436,6 +444,56 @@ function getInputField(s) {
 		.append($('<label class="col-sm-2 control-label">').attr("for",name).text(label))
 		.append($('<div>').addClass("col-sm-"+size)
 			.append(input) );
+}
+
+// Modulo 97 for huge numbers given as digit strings.
+// JS converts huge numbers into floating points, so modulo-arthmetics will fail.
+function mod97(digit_string) {
+	var m = 0;
+	for (var i = 0; i < digit_string.length; ++i)
+		m = (m * 10 + parseInt(digit_string.charAt(i))) % 97;
+	return m;
+}
+
+function iban2ibancheck(check) {
+	check = check.substring(4) + check.substring(0,4);
+	check = check.replace("A","10");
+	check = check.replace("B","11");
+	check = check.replace("C","12");
+	check = check.replace("D","13");
+	check = check.replace("E","14");
+	check = check.replace("F","15");
+	check = check.replace("G","16");
+	check = check.replace("H","17");
+	check = check.replace("I","18");
+	check = check.replace("J","19");
+	check = check.replace("K","20");
+	check = check.replace("L","21");
+	check = check.replace("M","22");
+	check = check.replace("N","23");
+	check = check.replace("O","24");
+	check = check.replace("P","25");
+	check = check.replace("Q","26");
+	check = check.replace("R","27");
+	check = check.replace("S","28");
+	check = check.replace("T","29");
+	check = check.replace("U","30");
+	check = check.replace("V","31");
+	check = check.replace("W","32");
+	check = check.replace("X","33");
+	check = check.replace("Y","34");
+	check = check.replace("Z","35");
+	return check;
+}
+
+function checkIBAN(field) {
+	$($(field).parents(".form-group")[0]).removeClass("has-error").find(".help-inline").remove();
+	field.value = field.value.replace(/\s/g, "").toUpperCase();
+	if (field.value != "") {
+		if (mod97(iban2ibancheck(field.value))) {
+			$($(field).parents(".form-group")[0]).addClass("has-error");
+		}
+	}
 }
 
 function formatCurrency(value) {
