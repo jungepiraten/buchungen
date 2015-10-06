@@ -428,7 +428,7 @@ function getInputField(s) {
 		}
 		break;
 	case "iban":
-		input = $('<input class="form-control">').attr("type","text").attr("name",name).val(value).data("init-value",value).keyup(function() {checkIBAN(this);});
+		input = $('<input class="form-control">').attr("type","text").attr("name",name).val(value).data("init-value",value).blur(function() {checkIBAN(this);});
 		size = 5;
 		break;
 	case "bic":
