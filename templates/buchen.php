@@ -490,7 +490,7 @@ function checkIBAN(field) {
 	$($(field).parents(".form-group")[0]).removeClass("has-error").find(".help-inline").remove();
 	field.value = field.value.replace(/\s/g, "").toUpperCase();
 	if (field.value != "") {
-		if (mod97(iban2ibancheck(field.value))) {
+		if (mod97(iban2ibancheck(field.value)) != 1) {
 			$($(field).parents(".form-group")[0]).addClass("has-error");
 		}
 	}
