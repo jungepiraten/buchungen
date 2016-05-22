@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[a4paper]{article}
 \usepackage{textcomp}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -12,8 +12,11 @@
 \BottomLabelBorder=10mm
 \LeftPageMargin=7mm
 \TopPageMargin=16mm
-\RightPageMargin=12mm
-\BottomPageMargin=-4mm
+\RightPageMargin=7mm
+\BottomPageMargin=16mm
+\usepackage{rotating}
+\usepackage{multirow}
+\usepackage{array}
 \begin{document}
 \fontfamily{pag}\selectfont
 \begin{labels}
@@ -28,6 +31,22 @@ $lastenterdate = isset($_REQUEST["last"]) ? intval($_REQUEST["last"]) : null;
 $firstenterdate = isset($_REQUEST["first"]) ? intval($_REQUEST["first"]) : null;
 $showUnpaid = isset($_REQUEST["showunpaid"]);
 $nums = isset($_REQUEST["nums"]) ? $_REQUEST["nums"] : null;
+
+$belegkreise = array();
+foreach ($journal as $tx) {
+	$kreis = trim(preg_replace('/\d+$/','',$tx["num"]),"_");
+	if ($kreis != "" && ($nums === null || in_array($tx["num"], $nums))) {
+		if (!isset($belegkreise[$kreis])) {
+			$belegkreise[$kreis] = array(
+				"belege" => array(),
+				"firstEnterDate" => $tx["enter_date"],
+			);
+		}
+
+		$belegkreise[$kreis]["belege"][] = $tx["num"];
+		$belegkreise[$kreis]["firstEnterDate"] = min($belegkreise[$kreis]["firstEnterDate"], $tx["enter_date"]);
+	}
+}
 
 $belege = array();
 foreach ($partners as $partner => $info) { foreach ($info["lots"] as $lot => $transactions) {
@@ -64,9 +83,26 @@ foreach ($partners as $partner => $info) { foreach ($info["lots"] as $lot => $tr
 	}
 } }
 
-if (empty($belege)) {
+if (empty($belege) && empty($belegkreise)) {
 	echo "Keine Belege vorhanden";
 }
+
+ksort($belegkreise);
+
+foreach ($belegkreise as $kreis => $info) {
+	if (($lastenterdate === null || $lastenterdate <= $info["firstEnterDate"]) && ($firstenterdate === null || $firstenterdate >= $info["firstEnterDate"])) {
+?>
+\vfill
+\begin{tabular}{b{.5cm}b{4.5cm}}
+\multirow{2}{*}{\raisebox{2em}{\begin{turn}{-90}\huge \textbf{<?php print(latexSpecialChars($kreis)) ?>}\end{turn}}} & \vfill \textbf{<?php print(latexSpecialChars($kreis)) ?>} \\
+& <?php print(latexSpecialChars(getBelegkreisDescription($kreis))) ?>
+
+\end{tabular}
+\vspace{.5cm}
+
+
+<?php
+} }
 
 ksort($belege);
 

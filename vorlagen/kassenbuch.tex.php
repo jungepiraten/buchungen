@@ -78,6 +78,15 @@ function getEigenkapital($accountcode) {
 <?php } ?>
 \makeatother
 
+\frontmatter
+
+\fancyhead{}
+\fancyhead[LE]{\fontfamily{pcr}\selectfont\footnotesize \rightmark}
+\fancyhead[RO]{\fontfamily{pcr}\selectfont\footnotesize \leftmark}
+\fancyfoot{}
+\fancyfoot[C]{\fontfamily{pcr}\selectfont\footnotesize Stand: <?php print(date("Y-m-d")) ?>}
+\fancyfoot[RO,LE]{\fontfamily{pcr}\selectfont\footnotesize \thepage{} / \pageref{LastPage}}
+
 <?php if ($details >= 1) { ?>
 \pagestyle{empty}
 \centering
@@ -105,13 +114,6 @@ function getEigenkapital($accountcode) {
 \fontfamily{pcr}\selectfont
 
 \clearpage
-
-\fancyhead{}
-\fancyhead[LE]{\fontfamily{pcr}\selectfont\footnotesize \rightmark}
-\fancyhead[RO]{\fontfamily{pcr}\selectfont\footnotesize \leftmark}
-\fancyfoot{}
-\fancyfoot[C]{\fontfamily{pcr}\selectfont\footnotesize Stand: <?php print(date("Y-m-d")) ?>}
-\fancyfoot[RO,LE]{\fontfamily{pcr}\selectfont\footnotesize \thepage{} / \pageref{LastPage}}
 
 \pagestyle{fancy}
 
@@ -143,7 +145,12 @@ function getEigenkapital($accountcode) {
 \addtocontents{toc}{\protect\thispagestyle{empty}}
 % middle pages of toc
 \addtocontents{toc}{\protect\pagestyle{empty}}
+<?php } else { ?>
+\footnotesize
+\fontfamily{pcr}\selectfont
 <?php } ?>
+
+\mainmatter
 
 \newcounter{buchungno}
 
@@ -331,10 +338,12 @@ function printJournal($b = 0) {
 <?php if ($i < 3 || count($buchung["splits"])-$i < 10) { ?> \nopagebreak <?php } ?>
  \multicolumn{2}{l}{\hspace{2mm}<?php print($i == 1 ? date("d.m.Y", $buchung["date"]) : "") ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{ <?php print(getFiBu($split["account_code"])) ?>} & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> \\
 <?php } } ?>
-<?php foreach ($buchung["splits"] as $split) { if (getKostenrechnung($split["account_code"]) !== false && getKostenrechnung($split["account_code"]) !== "") { ?>
+<?php foreach ($buchung["splits"] as $split) { if (getKostenrechnung($split["account_code"]) !== false && getKostenrechnung($split["account_code"]) !== "") { $i++; ?>
+<?php if ($i < 3 || count($buchung["splits"])-$i < 10) { ?> \nopagebreak <?php } ?>
  \rowcolor[gray]{.9} \multicolumn{2}{l}{\hspace{2mm}} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{<?php print($split["account_code"]) ?>} & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> \\
 <?php } } ?>
-<?php foreach ($buchung["splits"] as $split) { if (getPartner($split["account_code"]) !== false) { ?>
+<?php foreach ($buchung["splits"] as $split) { if (getPartner($split["account_code"]) !== false) { $i++; ?>
+<?php if ($i < 3 || count($buchung["splits"])-$i < 10) { ?> \nopagebreak <?php } ?>
  \rowcolor[gray]{.9} \multicolumn{2}{l}{\hspace{2mm}} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[partner:<?php print($split["account_code"]) ?>]{<?php print($split["account_code"]) ?>} & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> \\
 <?php } } ?>
 <?php } ?>
