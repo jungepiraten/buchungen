@@ -21,6 +21,8 @@ function latexSpecialChars( $string )
 }
 
 function latexFormatCurrency($cur) {
+	return number_format($cur/100, 2, ",", "");
+	return sprintf("%.2f", $cur/100);
 	return sprintf("%.2f \\texteuro", $cur/100);
 }
 

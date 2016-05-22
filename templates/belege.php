@@ -9,6 +9,7 @@ if (isset($_REQUEST["_"])) {
 ?>
 <form action="" method="post" class="form-horizontal" accept-charset="UTF-8" enctype="multipart/form-data">
 	<fieldset>
+		<input type="hidden" name="year" value="<?php print($year); ?>" />
 		<div class="control-group">
 			<label for="beleg" class="control-label">Beleg-Nummer:</label>
 			<p class="controls">

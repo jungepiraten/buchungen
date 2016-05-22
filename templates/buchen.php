@@ -79,7 +79,7 @@ function createLotTypeAheadCallback(prefix, fieldname) {
 addTxTemplate("dialog", "Dialogbuchen", new DialogBuchen("F", {
 	"kosten":	{"kontoprefix":"R", "konto":"", "ausloeser":["2","3","4","6","8"], "label":"Kostenrechnung"},
 	"debitoren":	{"kontoprefix":"D", "konto":"", "ausloeser":["0650", "0655"], "label":"Debitoren"},
-	"kreditoren":	{"kontoprefix":"K", "konto":"", "ausloeser":["0555", "0630", "1340"], "label":"Kreditoren"},
+	"kreditoren":	{"kontoprefix":"K", "konto":"", "ausloeser":["0555", "0630", "1340", "1360", "1390"], "label":"Kreditoren"},
 }));
 
 var konten = {
@@ -116,24 +116,25 @@ var vorlagen=[{
 			$(".buchen-error").text("Automatische zuordnung fehlgeschlagen, bitte von Hand auswählen!").show().delay(15000).slideUp();
 			return null;
 		}
-		var anteile = _options[ident];
+		var anteile = _options[ident].slice(0);
+		anteile.push({"konto":"F" + (value > 25600 ? "2120" : "2110"),"anteil":1});
 		anteile.push({"konto":"F" + $("select[name=konto]").val(),"anteil":-1});
 		return {"anteile": anteile, "vorgang": "Mitgliedsbeitrag "+$("input[name=jahr]").val()+" "+ident+"#"+$("input[name=mitglied]").val()};
 	},
 }];
-var _bls = {"BB":null,"BE":"11","BW":null,"BY":"16","HB":null,"HE":null,"HH":"12","MV":null,"NI":"17","NW":null,"RP":null,"SH":"14","SL":null,"SN":"15","ST":null,"TH":"13"}
+var _bls = ["BB", "BE", "BW", "BY", "HB", "HE", "HH", "MV", "NI", "NW", "RP", "SH", "SL", "SN", "ST", "TH"]
 Object.keys(_bls).forEach(function (bl, i) {
-	var target = _bls[bl];
 	var tts = {"O":1,"F":2};
 	for (var t in tts) {
 		var tt = tts[t];
-		var lvKst = target == null ? "R0101"+("0"+(tt+2*(i+1))).slice(-2) : "R"+target+"010"+tt;
-		var anteile = [{"konto":"R","anteil":-1}, {"konto":"F2110","anteil":1}, {"konto":"R01010"+tt, "anteil":0.7}, {"konto":lvKst, "anteil":0.3}];
+		var lvKst = "R0101"+("0"+(tt+2*(i+1))).slice(-2);
+		var anteile = [{"konto":"R","anteil":-1}, {"konto":"R01010"+tt, "anteil":0.7}, {"konto":lvKst, "anteil":0.3}];
 		vorlagen.push({
 			"label": bl+"-"+t,
 			"_anteile": anteile,
-			"anteile": function() {
-				var anteile = this._anteile;
+			"anteile": function(txid, beleg, postdate, value) {
+				var anteile = this._anteile.slice(0);
+				anteile.push({"konto":"F" + (value > 25600 ? "2120" : "2110"),"anteil":1});
 				anteile.push({"konto":"F" + $("select[name=konto]").val(),"anteil":-1});
 				return anteile;
 			},
@@ -146,7 +147,7 @@ Object.keys(_bls).forEach(function (bl, i) {
 });
 addTxTemplate("mb", "Mitgliedsbeiträge", new VorlageBuchung(vorlagen, [
 	getInputField({"name":"konto","size":2,"label":"Konto","type":"select","data":konten}),
-	getInputField({"name":"jahr","size":2, "label":"Jahr", "value":new Date().getFullYear()}),
+	getInputField({"name":"jahr","size":2, "label":"Jahr (bei Monatsbeitrag YYYY/MM)", "value":new Date().getFullYear()}),
 	getInputField({"name":"mitglied","size":2, "label":"Mitgliedsnummer"}),
 ]));
 
@@ -248,6 +249,7 @@ function _re_bezahlt(prefix, label, konto, f) {
 addTxTemplate("re_bezahlt", "Rechnung bezahlt", new VorlageBuchung([
 		_re_bezahlt("Zahlung", "Rechnung bereits erhalten", "1340", 1),
 		_re_bezahlt("Zahlung", "Rechnung folgt (Anzahlung)", "0630", 1),
+		_re_bezahlt("Gutschrift", "Gutschrift", "0650", -1),
 		_re_bezahlt("Kaution", "Kaution zurückerhalten", "0555", -1),
 		_re_bezahlt("Reisekosten", "Reisekosten", "1340", 1),
 		_re_bezahlt("Erstattung", "Erstattung", "1340", 1),
@@ -258,7 +260,7 @@ addTxTemplate("re_bezahlt", "Rechnung bezahlt", new VorlageBuchung([
 	]
 ));
 
-function _re_erhalten(label, konto) {
+function _re_erhalten(label, konto, f) {
 	return {
 		"label": label,
 		"vorgang": function() {
@@ -270,19 +272,20 @@ function _re_erhalten(label, konto) {
 		},
 		"anteile": function () {
 			return [
-				{"konto":"F"+konto, "anteil":1},
-				{"konto":"F"+$("input[name=sachkonto]").val().split(" ")[0], "anteil":-1},
-				{"konto":"K", "anteil":-1},
-				{"konto":"K"+$("input[name=kreditor]").val().split(" ")[0], "anteil":1},
-				{"konto":"R", "anteil":1},
-				{"konto":"R"+$("input[name=kostenstelle]").val().split(" ")[0], "anteil":-1},
+				{"konto":"F"+konto, "anteil":1*f},
+				{"konto":"F"+$("input[name=sachkonto]").val().split(" ")[0], "anteil":-1*f},
+				{"konto":"K", "anteil":-1*f},
+				{"konto":"K"+$("input[name=kreditor]").val().split(" ")[0], "anteil":1*f},
+				{"konto":"R", "anteil":1*f},
+				{"konto":"R"+$("input[name=kostenstelle]").val().split(" ")[0], "anteil":-1*f},
 			];
 		}
 	};
 }
 addTxTemplate("re_erhalten", "Rechnung erhalten", new VorlageBuchung([
-		_re_erhalten("Bezahlung folgt", "1340"),
-		_re_erhalten("Bereits per Anzahlung bezahlt", "0630"),
+		_re_erhalten("Bezahlung folgt", "1340", 1),
+		_re_erhalten("Gutschriftsrechnung", "0650", -1),
+		_re_erhalten("Bereits per Anzahlung bezahlt", "0630", 1),
 	], [
 		getInputField({"name":"kreditor","size":2,"label":"Kreditorennummer","type":"konto","prefix":"K"}),
 		getInputField({"name":"nummer","size":2,"label":"Rechnungsnummer","type":"typeahead","callback":createLotTypeAheadCallback("K", "kreditor")}),
@@ -293,7 +296,37 @@ addTxTemplate("re_erhalten", "Rechnung erhalten", new VorlageBuchung([
 	]
 ));
 
-function _re_ausgestellt(label, konto) {
+function _dre_bezahlt(prefix, label, konto, f) {
+	return {
+		"label": label,
+		"anteile" : function () {
+			return [
+				{"konto":"F"+konto, "anteil":1*f},
+				{"konto":"F"+$("select[name=konto]").val(), "anteil":-1*f},
+				{"konto":"D", "anteil":-1*f},
+				{"konto":"D"+$("input[name=debitor]").val().split(" ")[0], "anteil":1*f},
+			];
+		},
+		"vorgang": function () {
+			var lot = "";
+			if (lots["D"+$("input[name=debitor]").val().split(" ")[0]] !== undefined) {
+				lot = " " + lots["D"+$("input[name=debitor]").val().split(" ")[0]]["label"];
+			}
+			return prefix + lot + " [" + $("input[name=nummer]").val() + "]";
+		}
+	};
+}
+addTxTemplate("dre_bezahlt", "Debitorenrechnung bezahlt", new VorlageBuchung([
+		_dre_bezahlt("Zahlung", "Zahlung", "0650", 1),
+		_dre_bezahlt("Gutschrift", "Gutschrift", "0650", 1),
+	], [
+		getInputField({"name":"konto","size":2,"label":"Konto","type":"select","data":konten}),
+		getInputField({"name":"debitor","size":2,"label":"Debitorennummer","type":"konto","prefix":"D"}),
+		getInputField({"name":"nummer","size":2,"label":"Rechnungsnummer","type":"typeahead","callback":createLotTypeAheadCallback("D", "debitor")}),
+	]
+));
+
+function _re_ausgestellt(label, konto, f) {
 	return {
 		"label": label,
 		"vorgang": function() {
@@ -305,18 +338,19 @@ function _re_ausgestellt(label, konto) {
 		},
 		"anteile": function () {
 			return [
-				{"konto":"F"+konto, "anteil":-1},
-				{"konto":"F"+$("input[name=sachkonto]").val().split(" ")[0], "anteil":1},
-				{"konto":"D", "anteil":1},
-				{"konto":"D"+$("input[name=debitor]").val().split(" ")[0], "anteil":-1},
-				{"konto":"R", "anteil":-1},
-				{"konto":"R"+$("input[name=kostenstelle]").val().split(" ")[0], "anteil":1},
+				{"konto":"F"+konto, "anteil":-1*f},
+				{"konto":"F"+$("input[name=sachkonto]").val().split(" ")[0], "anteil":1*f},
+				{"konto":"D", "anteil":1*f},
+				{"konto":"D"+$("input[name=debitor]").val().split(" ")[0], "anteil":-1*f},
+				{"konto":"R", "anteil":-1*f},
+				{"konto":"R"+$("input[name=kostenstelle]").val().split(" ")[0], "anteil":1*f},
 			];
 		}
 	};
 }
 addTxTemplate("re_ausgestellt", "Rechnung ausgestellt", new VorlageBuchung([
-		_re_ausgestellt("Bezahlung folgt", "0650"),
+		_re_ausgestellt("Bezahlung folgt", "0650", 1),
+		_re_ausgestellt("Gutschriftsrechnung", "0650", -1),
 	], [
 		getInputField({"name":"debitor","size":2,"label":"Debitorennummer","type":"konto","prefix":"D"}),
 		getInputField({"name":"nummer","size":2,"label":"Rechnungsnummer","type":"typeahead","callback":createLotTypeAheadCallback("D", "debitor")}),

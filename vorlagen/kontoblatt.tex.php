@@ -8,6 +8,7 @@
 \newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}} % zentriert mit Breitenangabe
 \newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}} % rechtsbündig mit Breitenangabe
 \usepackage{graphicx}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[pdfpagelabels]{hyperref}
 \usepackage{lastpage}
@@ -15,7 +16,6 @@
 \pagestyle{fancy}
 \begin{document}
 
-\fontencoding{T1}
 \fontfamily{pag}\selectfont
 \large
 

@@ -1,19 +1,21 @@
 <?php
-$title = "Kreditoren";
+$title = "Kreditoren / Debitoren";
 include("header.php");
 ?>
-<p class="alert alert-success kreditoren-success"><strong>Gespeichert</strong> Der*die Kreditor*in wurde als <span class="code"></span> gespeichert</p>
+<p class="alert alert-success kreditoren-success"><strong>Gespeichert</strong> Der*die Kreditor*in / Debitor*in wurde als <span class="code"></span> gespeichert</p>
 <p class="alert alert-danger kreditoren-error"></p>
 
 <form action="" method="post" class="form-horizontal kreditoren" role="form">
 	<fieldset>
+		<input type="hidden" name="year" value="<?php print($year); ?>" />
 		<div class="form-group">
 			<label for="offset" class="col-sm-2 control-label">Kategorie</label>
 			<div class="col-sm-4">
 				<select name="offset" class="form-control">
-					<option value="10001">Firmen</option>
-					<option value="20001">Sammelkreditoren</option>
-					<option value="30001">Erstattungen</option>
+					<option value="K10001">Firmen</option>
+					<option value="K20001">Sammelkreditoren</option>
+					<option value="K30001">Erstattungen</option>
+					<option value="D20001">Sammeldebitoren</option>
 				</select>
 			</div>
 		</div>
@@ -65,6 +67,7 @@ $("form").submit(function (event) {
 
 	var errors = [];
 	var kreditor = getInputs(["offset","name"]);
+	kreditor["year"] = "<?php print($year); ?>";
 	kreditor["add"] = 1;
 
 	if (errors.length > 0) {

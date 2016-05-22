@@ -42,7 +42,7 @@ printFullPath($account["guid"]);
 \subsection*{Unterkonten}
 \begin{longtable}{L{1.5cm}L{9.5cm}R{2.5cm}R{2.5cm}}
  \hline
- \hline \textbf{\#} & \textbf{Konto} & \textbf{Teilsaldo} & \textbf{Saldo} \\
+ \hline \rowcolor[gray]{.8} \textbf{\#} & \textbf{Konto} & \textbf{Teilsaldo} & \textbf{Saldo} \\
  \hline
  \hline
  \endhead
@@ -60,7 +60,7 @@ printFullPath($account["guid"]);
 \subsection*{Buchungen}
 \begin{longtable}{R{1cm}L{1.3cm}L{6.2cm}R{2.2cm}R{2.2cm}R{2.5cm}}
  \hline
- \hline \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
+ \hline \rowcolor[gray]{.8} \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
  \hline
  \hline
  \endhead

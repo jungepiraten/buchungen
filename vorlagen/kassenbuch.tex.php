@@ -17,6 +17,13 @@ function getKostenrechnung($accountcode) {
 	return false;
 }
 
+function getPartner($accountcode) {
+	if (substr($accountcode,0,1) == "D" || substr($accountcode,0,1) == "K") {
+		return substr($accountcode,1);
+	}
+	return false;
+}
+
 function getFiBu($accountcode) {
 	if (substr($accountcode,0,1) == "F") {
 		return substr($accountcode,1);
@@ -45,9 +52,12 @@ function getEigenkapital($accountcode) {
 \usepackage{graphicx}
 \usepackage{multicol}
 \usepackage{multirow}
+\usepackage{colortbl}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[pdfpagelabels]{hyperref}
 \usepackage{lastpage}
+\usepackage{tocloft}
 \usepackage{fancyhdr}
 \usepackage[ngerman]{babel}
 \usepackage{titlesec}
@@ -71,9 +81,7 @@ function getEigenkapital($accountcode) {
 <?php if ($details >= 1) { ?>
 \pagestyle{empty}
 \centering
-\fontencoding{T1}
 \fontfamily{pag}\selectfont
-\large
 
 \vspace*{2cm}
 
@@ -81,17 +89,44 @@ function getEigenkapital($accountcode) {
 
 \vspace*{0cm}
 
-{\fontfamily{pag}\selectfont\Huge <?php $D = array("", "Jahresabschluss", "Buchhaltung"); print($D[$details]) ?>}
+{\Huge <?php $D = array("", "Jahresabschluss", "Buchhaltung"); print($D[$details]) ?>}
 
 \vspace*{1.5cm}
 
-{\fontfamily{pag}\selectfont\LARGE <?php print($year) ?>}
+{\LARGE <?php print($year) ?>}
 
-\vspace*{1cm}
+\vspace*{15cm}
+
+{\Large Stand: <?php print(date("Y-m-d")) ?>}
 
 \raggedright
+
+\footnotesize
+\fontfamily{pcr}\selectfont
+
 \clearpage
 
+\fancyhead{}
+\fancyhead[LE]{\fontfamily{pcr}\selectfont\footnotesize \rightmark}
+\fancyhead[RO]{\fontfamily{pcr}\selectfont\footnotesize \leftmark}
+\fancyfoot{}
+\fancyfoot[C]{\fontfamily{pcr}\selectfont\footnotesize Stand: <?php print(date("Y-m-d")) ?>}
+\fancyfoot[RO,LE]{\fontfamily{pcr}\selectfont\footnotesize \thepage{} / \pageref{LastPage}}
+
+\pagestyle{fancy}
+
+\makeatletter
+\setcounter{tocdepth}{2}
+\setlength{\cftbeforetoctitleskip}{0em}
+\setlength{\cftaftertoctitleskip}{0em}
+\renewcommand{\cftdot}{\fontfamily{pcr}\selectfont.}
+\renewcommand{\cfttoctitlefont}{\huge}
+\renewcommand{\@pnumwidth}{1cm}
+\renewcommand{\@tocrmarg}{2cm}
+\renewcommand{\cftchapfont}{\normalsize\fontfamily{pcr}}
+\renewcommand{\cftsecfont}{\normalsize\fontfamily{pcr}}
+\renewcommand{\cftchappagefont}{\normalsize\fontfamily{pcr}}
+\renewcommand{\cftsecpagefont}{\normalsize\fontfamily{pcr}}
 \renewcommand{\chaptername}{}
 \renewcommand{\thechapter}{}
 \renewcommand{\thesection}{}
@@ -99,14 +134,17 @@ function getEigenkapital($accountcode) {
 \renewcommand{\thesubsubsection}{}
 \renewcommand{\chaptermark}[1]{ \markboth{\MakeUppercase{#1}}{} }
 \renewcommand{\sectionmark}[1]{ \markright{\MakeUppercase{#1}}{} }
+\makeatother
 
-% \def\numberline#1{}
-\setcounter{tocdepth}{2}
 \tableofcontents
+% last page of toc
+\thispagestyle{empty}
+% first page of toc
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+% middle pages of toc
+\addtocontents{toc}{\protect\pagestyle{empty}}
 <?php } ?>
 
-\footnotesize
-\fontfamily{pcr}\selectfont
 \newcounter{buchungno}
 
 <?php
@@ -150,7 +188,7 @@ function printBilanz($bereich, $saldoSign) {
 ?>
 \begin{longtable}{L{1.7cm}L{12cm}R{2.5cm}}
  \hline
- \hline \textbf{Konto} & \textbf{Bezeichnung} & \textbf{Betrag} \\
+ \hline \rowcolor[gray]{.8} \textbf{Konto} & \textbf{Bezeichnung} & \textbf{Betrag} \\
  \hline
  \hline
  \endhead
@@ -158,7 +196,7 @@ function printBilanz($bereich, $saldoSign) {
  \hline \hyperref[<?php if ($account["guid"] != "guv") { ?>konto:<?php } ?><?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[<?php if ($account["guid"] !=	"guv") { ?>konto:<?php } ?><?php print($account["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["saldo"] * $saldoSign )) ?> \\
 <?php } } ?>
  \hline
- \hline & \textbf{Gesamt} & \textbf{<?php print(latexFormatCurrency($sum * $saldoSign)) ?>} \\
+ \hline \rowcolor[gray]{.9}  & \textbf{Gesamt} & \textbf{<?php print(latexFormatCurrency($sum * $saldoSign)) ?>} \\
  \hline
  \hline
 \end{longtable}
@@ -171,7 +209,7 @@ function printBereich($label, $bereich, $saldoSign) {
 \section*{<?php print(latexSpecialChars($label)) ?>}
 \begin{longtable}{L{1.7cm}L{9.5cm}R{2.5cm}R{2.5cm}}
  \hline
- \hline \textbf{SKR49} & \textbf{Konto} & \textbf{Einnahmen} & \textbf{Ausgaben} \\
+ \hline \rowcolor[gray]{.8} \textbf{SKR49} & \textbf{Konto} & \textbf{Einnahmen} & \textbf{Ausgaben} \\
  \hline
  \hline
  \endhead
@@ -179,7 +217,7 @@ function printBereich($label, $bereich, $saldoSign) {
  \hline \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print($account["code"]) ?>} & \hyperref[konto:<?php print($account["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php if ($account["saldo"] * $saldoSign > 0) print(latexFormatCurrency($account["saldo"] * $saldoSign )) ?> & <?php if ($account["saldo"] * $saldoSign < 0) print(latexFormatCurrency($account["saldo"] * $saldoSign * -1)) ?> \\
 <?php } ?>
  \hline
- \hline & \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($sums[-1] * $saldoSign)) ?>} & \textbf{<?php print(latexFormatCurrency($sums[1] * -1 * $saldoSign)) ?>} \\
+ \hline \rowcolor[gray]{.9}  & \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($sums[-1] * $saldoSign)) ?>} & \textbf{<?php print(latexFormatCurrency($sums[1] * -1 * $saldoSign)) ?>} \\
  \hline
  \hline
 \end{longtable}
@@ -191,13 +229,6 @@ function printBereich($label, $bereich, $saldoSign) {
 \chapter{Bilanz}
 \label{bilanz}
 
-\pagestyle{fancy}
-\fancyhead{}
-\fancyhead[LE]{\leftmark}
-\fancyhead[RO]{\rightmark}
-\fancyfoot{}
-\fancyfoot[C]{Stand: <?php print(date("d.m.Y")) ?>}
-\fancyfoot[RO,LE]{\thepage{} / \pageref{LastPage}}
 \setcounter{page}{1}
 
 \section*{Aktiva}
@@ -211,7 +242,7 @@ function printBereich($label, $bereich, $saldoSign) {
 
 \begin{longtable}{L{8.7cm}R{2.5cm}R{2.5cm}R{2.5cm}}
  \hline
- \hline  & \textbf{Einnahmen} & \textbf{Ausgaben} & \textbf{Saldo} \\
+ \hline \rowcolor[gray]{.8}  & \textbf{Einnahmen} & \textbf{Ausgaben} & \textbf{Saldo} \\
  \hline
  \hline
  \endhead
@@ -220,7 +251,7 @@ function printBereich($label, $bereich, $saldoSign) {
  \hline Zweckbetriebe & <?php print(latexFormatCurrency($sums["guv-zweck"][-1]*-1)) ?> & <?php print(latexFormatCurrency($sums["guv-zweck"][1])) ?> & <?php print(latexFormatCurrency(($sums["guv-zweck"][-1] + $sums["guv-zweck"][1])*-1)) ?> \\
  \hline Wirtschaftliche Geschäftsbetriebe & <?php print(latexFormatCurrency($sums["guv-wirtschaft"][-1]*-1)) ?> & <?php print(latexFormatCurrency($sums["guv-wirtschaft"][1])) ?> & <?php print(latexFormatCurrency(($sums["guv-wirtschaft"][-1] + $sums["guv-wirtschaft"][1])*-1)) ?> \\
  \hline
- \hline \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($gesamt[-1]*-1)) ?>} & \textbf{<?php print(latexFormatCurrency($gesamt[1])) ?>} & \textbf{<?php print(latexFormatCurrency(($gesamt[-1] + $gesamt[1])*-1)) ?>} \\
+ \hline \rowcolor[gray]{.9} \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($gesamt[-1]*-1)) ?>} & \textbf{<?php print(latexFormatCurrency($gesamt[1])) ?>} & \textbf{<?php print(latexFormatCurrency(($gesamt[-1] + $gesamt[1])*-1)) ?>} \\
  \hline
  \hline
 \end{longtable}
@@ -245,7 +276,7 @@ function printRAP($code) {
 ?>
 \begin{longtable}{R{1cm}L{1.3cm}L{8.4cm}R{2.2cm}R{2.5cm}}
  \hline
- \hline \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Betrag} & \textbf{Saldo} \\
+ \hline \rowcolor[gray]{.8} \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Betrag} & \textbf{Saldo} \\
  \hline
  \hline
  \endhead
@@ -290,7 +321,7 @@ function printJournal($b = 0) {
 \section{<?php print(latexSpecialChars($zeitPeriode)) ?>}
 \begin{longtable}{>{\refstepcounter{buchungno}}R{1cm}L{1.3cm}L{6.7cm}L{1.7cm}R{2.2cm}R{2.2cm}}
  \hline
- \hline \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} \\
+ \hline \rowcolor[gray]{.8} \textbf{\#} & \textbf{Beleg} & \textbf{Vorgang} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} \\
  \hline
  \hline
  \endhead
@@ -298,8 +329,15 @@ function printJournal($b = 0) {
  \hline \label{buchung:<?php print($buchung["id"]) ?>} \textbf{<?php print($buchung["id"]) ?>} & \href{<?php print(getBelegUrl($year, $buchung["num"])) ?>}{<?php print(latexSpecialChars($buchung["num"])) ?>} & \multicolumn{4}{p{14cm}}{<?php print(latexSpecialChars($buchung["description"])) ?>} \\
 <?php $i=0; foreach ($buchung["splits"] as $split) { if (getFiBu($split["account_code"]) !== false) { $i++; ?>
 <?php if ($i < 3 || count($buchung["splits"])-$i < 10) { ?> \nopagebreak <?php } ?>
- \multicolumn{2}{l}{\hspace{2mm}<?php print($i == 1 ? date("d.m.Y", $buchung["date"]) : "") ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{<?php print(getFiBu($split["account_code"])) ?>} & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> \\
-<?php } } } ?>
+ \multicolumn{2}{l}{\hspace{2mm}<?php print($i == 1 ? date("d.m.Y", $buchung["date"]) : "") ?>} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{ <?php print(getFiBu($split["account_code"])) ?>} & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> \\
+<?php } } ?>
+<?php foreach ($buchung["splits"] as $split) { if (getKostenrechnung($split["account_code"]) !== false && getKostenrechnung($split["account_code"]) !== "") { ?>
+ \rowcolor[gray]{.9} \multicolumn{2}{l}{\hspace{2mm}} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[konto:<?php print($split["account_guid"]) ?>]{<?php print($split["account_code"]) ?>} & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> \\
+<?php } } ?>
+<?php foreach ($buchung["splits"] as $split) { if (getPartner($split["account_code"]) !== false) { ?>
+ \rowcolor[gray]{.9} \multicolumn{2}{l}{\hspace{2mm}} & <?php print(latexSpecialChars($split["memo"])) ?> & \hyperref[partner:<?php print($split["account_code"]) ?>]{<?php print($split["account_code"]) ?>} & <?php if ($split["value"] < 0) print(latexFormatCurrency((-1)*$split["value"])) ?> & <?php if ($split["value"] > 0) print(latexFormatCurrency($split["value"])) ?> \\
+<?php } } ?>
+<?php } ?>
  \hline
  \hline
 \end{longtable}
@@ -319,7 +357,7 @@ printJournal();
 
 \begin{longtable}{L{1.7cm}L{7cm}R{2.5cm}R{2.5cm}R{2.5cm}}
  \hline
- \hline \textbf{\#} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
+ \hline \rowcolor[gray]{.8} \textbf{\#} & \textbf{Konto} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
  \hline
  \hline
  \endhead
@@ -363,7 +401,7 @@ function printPartners($p, $details) {
 ?>
 \begin{longtable}{L{1.4cm}L{7cm}R{2.5cm}R{2.5cm}R{2.5cm}}
  \hline
- \hline \textbf{\#} & \textbf{Partner*in} & \textbf{Rechnung} & \textbf{Bezahlt} & \textbf{Offen} \\
+ \hline \rowcolor[gray]{.8} \textbf{\#} & \textbf{Partner*in} & \textbf{Rechnung} & \textbf{Bezahlt} & \textbf{Offen} \\
  \hline
  \hline
  \endhead
@@ -385,7 +423,7 @@ function printPartners($p, $details) {
 	}
 ?>
  \hline
- \hline & \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($totals["haben"] * $factor)) ?>} & \textbf{<?php print(latexFormatCurrency($totals["soll"] * -1 * $factor)) ?>} & \textbf{<?php print(latexFormatCurrency(($totals["soll"]+$totals["haben"]) * $factor)) ?>} \\
+ \hline \rowcolor[gray]{.9}  & \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($totals["haben"] * $factor)) ?>} & \textbf{<?php print(latexFormatCurrency($totals["soll"] * -1 * $factor)) ?>} & \textbf{<?php print(latexFormatCurrency(($totals["soll"]+$totals["haben"]) * $factor)) ?>} \\
  \hline
  \hline
 \end{longtable}
@@ -400,7 +438,7 @@ function printPartners($p, $details) {
 \label{partner:<?php print(latexSpecialChars($partner)) ?>}
 \begin{longtable}{L{8cm}R{1.3cm}L{1.3cm}L{2cm}R{2.5cm}}
  \hline
- \hline \textbf{Rechnung} & \textbf{Buchung} & \textbf{Beleg} & \textbf{Datum} & \textbf{Betrag} \\
+ \hline \rowcolor[gray]{.8} \textbf{Rechnung} & \textbf{Buchung} & \textbf{Beleg} & \textbf{Datum} & \textbf{Betrag} \\
  \hline
  \hline
  \endhead
@@ -408,10 +446,10 @@ function printPartners($p, $details) {
 				foreach ($info["lots"] as $lot => $transactions) {
 					if ($details >= 2 || array_sum(array_map(create_function('$tx', 'return $tx["split"]["value"];'), $transactions)) != 0) {
 ?>
-\multirow{<?php print(count($transactions)) ?>}{8cm}{<?php print(latexSpecialChars($lot)) ?>} & <?php
+\multirow{<?php print(count($transactions)) ?>}{8cm}{\label{partner:<?php print(latexSpecialChars($partner)) ?>:<?php md5($lot) ?>}<?php print(latexSpecialChars($lot)) ?>} & <?php
 						$i = 0;
 						foreach ($transactions as $tx) {
-?> <?php if ($i++ > 0) { ?> & <?php } ?> \hyperref[buchung:<?php print($tx["tx"]["id"]) ?>]{<?php print($tx["tx"]["id"]) ?>} & \href{<?php print(getBelegUrl($year, $tx["tx"]["num"])) ?>}{<?php print(latexSpecialChars($tx["tx"]["num"])) ?>} & <?php print(date("d.m.Y", $tx["tx"]["date"])) ?> & <?php print(latexFormatCurrency($tx["split"]["value"] * $factor)) ?> \\
+?> <?php if ($i++ > 0) { ?> & <?php } ?> \hyperref[buchung:<?php print($tx["tx"]["id"]) ?>]{<?php print($tx["tx"]["id"]) ?>} & \href{<?php print(getBelegUrl($year, $tx["tx"]["num"])) ?>}{<?php print(latexSpecialChars($tx["tx"]["num"])) ?>} & <?php print(date("d.m.Y", $tx["tx"]["date"])) ?> & <?php print(latexFormatCurrency($tx["split"]["value"] * $factor)) ?> \\ \nopagebreak
 <?php
 						}
 ?> \hline <?php
@@ -422,18 +460,18 @@ function printPartners($p, $details) {
 ?>
  \hline
  \hline
- \multicolumn{4}{l}{\textbf{Umsatz}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["haben"] * $factor)) ?>} \\
+ \rowcolor[gray]{.9} \multicolumn{4}{>{\columncolor[gray]{.9}}l}{\textbf{Umsatz}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["haben"] * $factor)) ?>} \\
 <?php
 				} else {
 					if ($details >= 2) {
 ?>
  \hline
  \hline
- \multicolumn{4}{l}{\textbf{Summe Rechnung}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["haben"] * $factor)) ?>} \\ \nopagebreak
- \multicolumn{4}{l}{\textbf{Summe Bezahlt}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["soll"] * -1 * $factor)) ?>} \\ \nopagebreak
+ \rowcolor[gray]{.95} \multicolumn{4}{>{\columncolor[gray]{.95}}l}{\textbf{Summe Rechnung}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["haben"] * $factor)) ?>} \\ \nopagebreak
+ \rowcolor[gray]{.95} \multicolumn{4}{>{\columncolor[gray]{.95}}l}{\textbf{Summe Bezahlt}} & \textbf{<?php print(latexFormatCurrency($sums[$partner]["soll"] * -1 * $factor)) ?>} \\ \nopagebreak
 <?php } ?>
  \hline
- \multicolumn{4}{l}{\textbf{Differenz (Offene Posten)}} & \textbf{<?php print(latexFormatCurrency(($sums[$partner]["soll"]+$sums[$partner]["haben"]) * $factor)) ?>} \\
+ \rowcolor[gray]{.9} \multicolumn{4}{>{\columncolor[gray]{.9}}l}{\textbf{Differenz (Offene Posten)}} & \textbf{<?php print(latexFormatCurrency(($sums[$partner]["soll"]+$sums[$partner]["haben"]) * $factor)) ?>} \\
 <?php
 				}
 ?>
@@ -462,7 +500,7 @@ function printPartners($p, $details) {
 
 \begin{longtable}{L{0.8cm}L{7cm}R{2.5cm}R{2.5cm}R{2.5cm}}
  \hline
- \hline \textbf{\#} & \textbf{Gliederung} & \textbf{Vorjahr} & \textbf{Saldo <?php print($year) ?>} & \textbf{Endbestand} \\
+ \hline \rowcolor[gray]{.8} \textbf{\#} & \textbf{Gliederung} & \textbf{Vorjahr} & \textbf{Saldo <?php print($year) ?>} & \textbf{Endbestand} \\
  \hline
  \hline
  \endhead
@@ -470,7 +508,7 @@ function printPartners($p, $details) {
  \hline \hyperref[konto:<?php print($kstaccount["guid"]) ?>]{<?php print(getEigenkapital($account["code"])) ?>} & \hyperref[konto:<?php print($kstaccount["guid"]) ?>]{<?php print(latexSpecialChars($account["label"])) ?>} & <?php print(latexFormatCurrency($account["saldo"]*-1)) ?> & <?php print(latexFormatCurrency($kstaccount["saldo"]*-1)) ?> & <?php print(latexFormatCurrency($account["saldo"]*(-1)-$kstaccount["saldo"])) ?> \\
 <?php } } ?>
  \hline
- \hline & \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($sums["v"])) ?>} & \textbf{<?php print(latexFormatCurrency($sums["s"])) ?>} & \textbf{<?php print(latexFormatCurrency($sums["v"]+$sums["s"])) ?>} \\
+ \hline \rowcolor[gray]{.9}  & \textbf{Summe} & \textbf{<?php print(latexFormatCurrency($sums["v"])) ?>} & \textbf{<?php print(latexFormatCurrency($sums["s"])) ?>} & \textbf{<?php print(latexFormatCurrency($sums["v"]+$sums["s"])) ?>} \\
  \hline
  \hline
 \end{longtable}
@@ -482,7 +520,7 @@ function printPartners($p, $details) {
 
 \begin{longtable}{L{1.7cm}L{7cm}R{2.5cm}R{2.5cm}R{2.5cm}}
  \hline
- \hline \textbf{\#} & \textbf{Kostenstelle} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
+ \hline \rowcolor[gray]{.8} \textbf{\#} & \textbf{Kostenstelle} & \textbf{Soll} & \textbf{Haben} & \textbf{Saldo} \\
  \hline
  \hline
  \endhead

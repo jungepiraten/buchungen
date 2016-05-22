@@ -1,6 +1,10 @@
 #!/usr/bin/php
 <?php
 
+if (count($_SERVER["argv"]) > 1) {
+	$_REQUEST["year"] = $_SERVER["argv"][1];
+}
+
 chdir(dirname(__FILE__) . "/..");
 require_once("sql.inc.php");
 require_once("transaction.inc.php");
@@ -14,7 +18,7 @@ while ($row = $result->fetch_assoc()) {
 		if (in_array(substr($split["account_code"],0,2), array("R", "F2", "F3", "F4", "F5", "F6", "F7", "F8"))) {
 			$subBooks["Kostenrechnung"] += $split["value"];
 		}
-		if (in_array($split["account_code"], array("F1340", "F1360", "F0630", "F0555", "K"))) {
+		if (in_array($split["account_code"], array("F1340", "F1360", "F1390", "F0630", "F0555", "K"))) {
 			$subBooks["Kreditoren"] += $split["value"];
 		}
 		if (in_array($split["account_code"], array("F0650", "F0655", "D"))) {

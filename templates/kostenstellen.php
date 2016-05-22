@@ -7,6 +7,7 @@ include("header.php");
 
 <form action="" method="post" class="form-horizontal kostenstellen" role="form">
 	<fieldset>
+		<input type="hidden" name="year" value="<?php print($year); ?>" />
 		<div class="form-group">
 			<label for="name" class="col-sm-2 control-label">Name</label>
 			<div class="col-sm-10">

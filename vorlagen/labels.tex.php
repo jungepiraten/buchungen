@@ -1,5 +1,7 @@
 \documentclass{article}
 \usepackage{textcomp}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage[newdimens]{labels}
 \LabelCols=3
 \LabelRows=7
@@ -43,6 +45,8 @@ foreach ($partners as $partner => $info) { foreach ($info["lots"] as $lot => $tr
 		$sachkonten = array_merge($sachkonten, array_map(create_function('$s', 'return substr($s["account_code"],1);'), array_filter($data["tx"]["splits"], create_function('$s', 'return in_array(substr($s["account_code"],0,2), array("F2","F3","F4","F5","F6","F7","F8"));'))));
 		$kostenstellen = array_merge($kostenstellen, array_map(create_function('$s', 'return substr($s["account_code"],1);'), array_filter($data["tx"]["splits"], create_function('$s', 'return strlen($s["account_code"]) > 1 && in_array(substr($s["account_code"],0,1), array("R"));'))));
 	}
+	$sachkonten = array_unique($sachkonten);
+	$kostenstellen = array_unique($kostenstellen);
 	foreach ($rechnung as $re) {
 		if ($nums === null && ($value == 0 || $showUnpaid) || $nums !== null && in_array($re["num"], $nums)) {
 			if (!isset($belege[$re["num"]])) {

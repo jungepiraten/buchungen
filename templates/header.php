@@ -59,7 +59,7 @@ header("Content-Type: text/html; charset=UTF-8");
 						<li><a href="kostenstellen.php">Kostenstellen</a></li>
 <?php } ?>
 <?php if ($auth != null && $auth["kreditoren"]) { ?>
-						<li><a href="kreditoren.php">Kreditoren</a></li>
+						<li><a href="kreditoren.php">Kreditoren / Debitoren</a></li>
 <?php } ?>
 					</ul>
 				</div>

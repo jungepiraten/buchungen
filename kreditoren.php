@@ -5,8 +5,6 @@ require_once("login.inc.php");
 require_once("lock.inc.php");
 loginRequire("kreditoren");
 
-$type = 'PAYABLE';
-
 if (isset($_POST["add"])) {
 	try {
 		if (databaseIsLocked($year)) {
@@ -14,12 +12,21 @@ if (isset($_POST["add"])) {
 		}
 		databaseLock($year, basename(__FILE__), "localhost");
 
-		$code = "K";
+		$offset = $_REQUEST["offset"];
+		$code = substr($offset,0,1);
+		$num = substr($offset,1);
+
+		if ($code == "K") {
+			$type = 'PAYABLE';
+		} elseif ($code == "D") {
+			$type = 'RECEIVABLE';
+		} else {
+			die("error");
+		}
 
 		$account = sqlGetAccountByCode($code);
 		$parent_guid = $account["guid"];
 
-		$num = $_REQUEST["offset"];
 		do {
 			// While account already exists, increase $num
 			try {

@@ -86,6 +86,18 @@ $bilanz_splits[] = array(
 	"value" => $eigenkapital * (-1),
 );
 
+// Zusätzliche Kostenstellen für Mitgliedsbeitraege Bund
+$mb_ksts = array();
+foreach ($accounts[$accounts_code2guid["R0101"]]["subAccounts"] as $code => $guid) {
+	// 01 und 02 sind normale Kostenstellen
+	if (intval(substr($code,-2)) > 2) {
+		$mb_ksts[] = array(
+			"code" => $code,
+			"label" => $accounts[$guid]["label"],
+		);
+	}
+}
+
 // Speichere Informationen in neuem Jahr
 $year = $_SERVER["argv"][1];
 
@@ -110,7 +122,7 @@ foreach ($gliederungen as $gliederung) {
 	sqlAddAccount(md5($year . "R" . $gliederung["code"]), "76c53ef584c5fc41884db195e73cca7e", "EQUITY", "R".$gliederung["code"], $gliederung["code"]." ".$gliederung["label"], "");
 	sqlAddAccount(md5($year . "R" . $gliederung["code"] . "01"), md5($year . "R" . $gliederung["code"]), "EQUITY", "R".$gliederung["code"]."01", "01 Mitgliedsbeiträge", "");
 	sqlAddAccount(md5($year . "R" . $gliederung["code"] . "0101"), md5($year . "R" . $gliederung["code"] . "01"), "EQUITY", "R".$gliederung["code"]."0101", "01 Ordentlich", "");
-	sqlAddAccount(md5($year . "R" . $gliederung["code"] . "0102"), md5($year . "R" . $gliederung["code"] . "02"), "EQUITY", "R".$gliederung["code"]."0102", "02 Förder", "");
+	sqlAddAccount(md5($year . "R" . $gliederung["code"] . "0102"), md5($year . "R" . $gliederung["code"] . "01"), "EQUITY", "R".$gliederung["code"]."0102", "02 Förder", "");
 	sqlAddAccount(md5($year . "R" . $gliederung["code"] . "11"), md5($year . "R" . $gliederung["code"]), "EQUITY", "R".$gliederung["code"]."11", "11 Spenden", "");
 }
 
@@ -121,8 +133,12 @@ $skst = array(
 		array("02", "31", "Lastschriftgebühren"),
 );
 
+foreach ($mb_ksts as $mb_kst) {
+	$skst[] = array(substr($mb_kst["code"], -2), "01", $mb_kst["label"]);
+}
+
 foreach ($skst as $ks) {
-	sqlAddAccount(md5($year . "R01" . $ks[1] . $ks[0]), md5($year . "R01" . $ks[1]), "EQUITY", "R01" . $ks[1] . $ks[0], $ks[0] . " " . $ks[2]);
+	sqlAddAccount(md5($year . "R01" . $ks[1] . $ks[0]), md5($year . "R01" . $ks[1]), "EQUITY", "R01" . $ks[1] . $ks[0], $ks[0] . " " . $ks[2], "");
 }
 
 
