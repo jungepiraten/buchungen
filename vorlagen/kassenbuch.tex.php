@@ -78,7 +78,7 @@ function getEigenkapital($accountcode) {
 <?php } ?>
 \makeatother
 
-\frontmatter
+\pagenumbering{Roman}
 
 \fancyhead{}
 \fancyhead[LE]{\fontfamily{pcr}\selectfont\footnotesize \rightmark}
@@ -149,8 +149,6 @@ function getEigenkapital($accountcode) {
 \footnotesize
 \fontfamily{pcr}\selectfont
 <?php } ?>
-
-\mainmatter
 
 \newcounter{buchungno}
 
@@ -236,6 +234,7 @@ function printBereich($label, $bereich, $saldoSign) {
 \chapter{Bilanz}
 \label{bilanz}
 
+\pagenumbering{arabic}
 \setcounter{page}{1}
 
 \section*{Aktiva}

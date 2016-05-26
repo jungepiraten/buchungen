@@ -130,7 +130,7 @@ Object.keys(_bls).forEach(function (bl, i) {
 		var lvKst = "R0101"+("0"+(tt+2*(i+1))).slice(-2);
 		var anteile = [{"konto":"R","anteil":-1}, {"konto":"R01010"+tt, "anteil":0.7}, {"konto":lvKst, "anteil":0.3}];
 		vorlagen.push({
-			"label": bl+"-"+t,
+			"label": _bls[bl]+"-"+t,
 			"_anteile": anteile,
 			"anteile": function(txid, beleg, postdate, value) {
 				var anteile = this._anteile.slice(0);

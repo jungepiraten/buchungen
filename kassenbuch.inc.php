@@ -95,6 +95,8 @@ function getKassenbuch($ignorePermissions = false) {
 function getBelegkreisDescription($a) {
 	global $accounts, $accounts_code2guid;
 
+	if ($a == "")
+		return "Ohne Beleg";
 	if ($a == "B")
 		return "Jahresanfangsbilanz";
 	if ($a == "BEIO")
